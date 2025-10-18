@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class StudentParent extends Model
 {
-    //
+    protected $fillable = ['student_id', 'user_id'];
 }
