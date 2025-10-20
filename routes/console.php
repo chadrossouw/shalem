@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
+use App\Http\Controllers\EdAdminFetch;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+Schedule::call(new EdAdminFetch())->twiceDaily(6, 15); // Schedule to run at 6 AM and 3 PM daily
