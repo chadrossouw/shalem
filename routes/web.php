@@ -11,13 +11,15 @@ use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Dashboard;
 use App\Models\Field;
+use App\Models\Avatar;
 
 Route::get('/', function () {
     $user = Auth::user();
-    if($user){
+    $viewAs = session()->get('viewAs');
+    if($user && $viewAs!=='anonymous' ){
         return redirect('/dashboard');
     }
-    return view('home',['user'=>$user, 'fields'=>Field::where('location','home')->get()]);
+    return view('home',['user'=>$user, 'fields'=>Field::where('location','home')->get(), 'avatars'=>Avatar::all()]);
 }); 
 
 Route::get('/fetch-edadmin', [EdAdminFetch::class, '__invoke']);
@@ -27,10 +29,11 @@ Route::get('/login/student', [GoogleAuthController::class,'redirect'])->name('lo
 Route::get('/login/staff', [GoogleAuthController::class,'redirect'])->name('login.staff');
 Route::get('/auth/google', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
 Route::get('/login/parent', [LoginController::class,'parent'])->name('login.parent');
+
 Route::get('/dashboard',[Dashboard::class,'show'])->middleware('auth')->name('dashboard');
 
 Route::get('/edit/{location}/{name}', function ($location, $name) {
     $id = Field::where('location', $location)->where('name', $name)->value('id');
-    return redirect(env('CMS_URL') . "/post.php?post=$id&action=edit");
+    return redirect(env('CMS_URL') . "/post.php?post=$id&action=edit#$name");
 })->name('editable_field');
 

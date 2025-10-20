@@ -4,4 +4,4 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 
-Route::post('/login', [LoginController::class, 'authenticate'])->middleware('auth:sanctum');
+Route::post('/login', [LoginController::class, 'authenticate'])->middleware('auth:sanctum')->name('api.login');

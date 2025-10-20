@@ -12,7 +12,12 @@ class Dashboard extends Controller
     public function show(Request $request){
         $user  = Auth::user();
         $fields = Field::where('location','dashboard')->get();
-        switch($user->type){
+        $type = $user->type;
+        $viewAs = session()->get('viewAs', $type);
+        if($viewAs && $viewAs !== $type){
+            $type = $viewAs;
+        }
+        switch($type){
             case 'student':
                 return view('dashboard.student', ['user' => $user, 'fields' => $fields]);
             case 'staff':
