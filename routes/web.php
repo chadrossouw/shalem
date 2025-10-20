@@ -1,9 +1,36 @@
 <?php
 
+
+//Facades
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+//Controllers
+use App\Http\Controllers\EdAdminFetch;
+use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\Dashboard;
+use App\Models\Field;
+
 Route::get('/', function () {
-    return view('welcome');
+    $user = Auth::user();
+    if($user){
+        return redirect('/dashboard');
+    }
+    return view('home',['user'=>$user, 'fields'=>Field::where('location','home')->get()]);
 }); 
 
-Route::get('/fetch-edadmin', [App\Http\Controllers\EdAdminFetch::class, '__invoke']);
+Route::get('/fetch-edadmin', [EdAdminFetch::class, '__invoke']);
+
+Route::get('/login',[LoginController::class,'default'])->name('login');
+Route::get('/login/student', [GoogleAuthController::class,'redirect'])->name('login.student');
+Route::get('/login/staff', [GoogleAuthController::class,'redirect'])->name('login.staff');
+Route::get('/auth/google', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
+Route::get('/login/parent', [LoginController::class,'parent'])->name('login.parent');
+Route::get('/dashboard',[Dashboard::class,'show'])->middleware('auth')->name('dashboard');
+
+Route::get('/edit/{location}/{name}', function ($location, $name) {
+    $id = Field::where('location', $location)->where('name', $name)->value('id');
+    return redirect(env('CMS_URL') . "/post.php?post=$id&action=edit");
+})->name('editable_field');
+

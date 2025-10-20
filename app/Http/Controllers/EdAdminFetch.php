@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\User;
 use App\Models\StudentParent;
 use App\Models\Mentor;
+use Illuminate\Support\Str;
 
 
 class EdAdminFetch extends Controller
@@ -73,6 +74,8 @@ class EdAdminFetch extends Controller
                             'email' => $staff_member['Email'],
                             'type' => 'staff',
                             'edadmin_id' => $staff_member['ID'],
+                            'password' => bcrypt(Str::random(16)),
+                            'email_verified_at' => now(),
                         ]);
                     }
                     if($staffMember->wasRecentlyCreated){
@@ -124,7 +127,7 @@ class EdAdminFetch extends Controller
             $xml = simplexml_load_string($staff_classes);
             $json = json_encode($xml);
             $staff_classes_array = json_decode($json,TRUE);
-            $this->mentors = array_filter($staff_classes_array['StaffClasses'], function($class) {
+            $this->mentors = array_filter($staff_classes_array['EducatorSubjects'], function($class) {
                 return in_array($class['SubjectID'], $this->mentorSubjects);
             });
         }
@@ -147,37 +150,46 @@ class EdAdminFetch extends Controller
             $this->parents = $parents_array['Parents'];
             if(is_array($this->parents)){
                 foreach($this->parents as $parent){
+                    
                     if($parent['FEmail']){
-                        $user=User::updateOrCreate(
-                            ['edadmin_id' => $parent['ID']],
-                            [
+                        $user=User::where('edadmin_id', $parent['ID'].'_1')->first();
+                        if($user){
+                            $user->update([
+                                'first_name' => $parent['FatherFName'],
+                                'last_name' => $parent['FatherLName'],
+                                'email' => $parent['FEmail'],
+                            ]);
+                        }
+                        else{
+                            $user = User::create([
                                 'first_name' => $parent['FatherFName'],
                                 'last_name' => $parent['FatherLName'],
                                 'email' => $parent['FEmail'],
                                 'type' => 'parent',
-                            ]
-                        );
-                        if($user->wasRecentlyCreated){
-                            // Create associated parent login record
-                            $user->parentLogin()->create([
-                                'user_id' => $user->id,
+                                'edadmin_id' => $parent['ID'].'_1',
+                                'password' => bcrypt(Str::random(16)),
+                                'email_verified_at' => now(),
                             ]);
                         }
                     }
                     if($parent['MEmail']){
-                        $user=User::updateOrCreate(
-                            ['edadmin_id' => $parent['ID']],
-                            [
+                        $user=User::where('edadmin_id', $parent['ID'].'_2')->first();
+                        if($user){
+                            $user->update([
+                                'first_name' => $parent['MotherFName'],
+                                'last_name' => $parent['MotherLName'],
+                                'email' => $parent['MEmail'],
+                            ]);
+                        }
+                        else{
+                            $user=User::create([
                                 'first_name' => $parent['MotherFName'],
                                 'last_name' => $parent['MotherLName'],
                                 'email' => $parent['MEmail'],
                                 'type' => 'parent',
-                            ]
-                        );
-                        if($user->wasRecentlyCreated){
-                            // Create associated parent login record
-                            $user->parentLogin()->create([
-                                'user_id' => $user->id,
+                                'edadmin_id' => $parent['ID'].'_2',
+                                'password' => bcrypt(Str::random(16)),
+                                'email_verified_at' => now(),
                             ]);
                         }
                     }
@@ -185,7 +197,6 @@ class EdAdminFetch extends Controller
             }
         }
     }
-   
 
     private function fetchStudentClasses()
     {
@@ -225,6 +236,7 @@ class EdAdminFetch extends Controller
             });
         }
     }   
+    
     private function fetchStudents():void
     {
         // Logic to fetch students from EdAdmin API
