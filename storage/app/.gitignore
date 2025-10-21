@@ -1,5 +1,7 @@
 *
 !private/
+!test.svg
 !public/
 !avatars/
+!avatars/*.svg
 !.gitignore
