@@ -8,11 +8,15 @@ export class ShalemLoginForm extends BaseClass {
         loading: { type: Boolean, state: true },
     };
 
-    constructor() {
+    constructor() { 3
         super();
         if(!this.showlogin){
             this.showlogin = false;
         }
+    }
+
+    updated(){
+        super.updated();
     }
 
     render(){

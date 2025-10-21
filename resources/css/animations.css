@@ -1,0 +1,26 @@
+@keyframes blink {
+    0%, 20%, 24%, 100% {
+        transform: scaleY(1);
+    }
+    21%, 23% {
+        transform: scaleY(0.1);
+    }
+}
+.blinking {
+    animation-name: blink;
+    animation-iteration-count: infinite;
+    transform-origin: center bottom;
+}
+@keyframes throb {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+.throbbing {
+    animation-name: throb;
+    animation-iteration-count: infinite;
+    transform-origin: center bottom;
+}

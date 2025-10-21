@@ -1,11 +1,25 @@
+@import './animations.css';
 html{
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --transition:300ms;
+    --blinktransition: 5s;
+    --blinkdelay: 1s;
 }
 
+@media (prefers-reduced-motion: reduce) {
+    html {
+        --transition: 0ms;
+        --blinktransition: 0ms;
+        --blinkdelay: 0ms;
+    }
+}
 
 @layer base {
     body {
         font-family: 'serif';
     }
 }
+
+
+ 
