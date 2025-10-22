@@ -7,7 +7,7 @@
         @endif
         <main id="primary" class="margins">
             <div class="block bg_blue inner-padding radius " id="welcome">
-                {{ count($avatars)?file_get_contents($avatars[rand(0, count($avatars) - 1)]->path):'' }}
+                {!! count($avatars)?file_get_contents(storage_path('app/'.$avatars[rand(0, count($avatars) - 1)]->path)):'' !!}
                 <shalem-login-form studentroute="{{ route('login.student') }}" staffroute="{{ route('login.staff') }}" loginroute="{{ route('api.login') }}">
                     <div slot="general">
                         <h1 class="white">

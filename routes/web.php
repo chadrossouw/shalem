@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 //Controllers
 use App\Http\Controllers\EdAdminFetch;
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Dashboard;
 use App\Models\Field;
@@ -23,6 +24,7 @@ Route::get('/', function () {
 }); 
 
 Route::get('/fetch-edadmin', [EdAdminFetch::class, '__invoke']);
+Route::get('/populate-avatars', AvatarController::class);
 
 Route::get('/login',[LoginController::class,'default'])->name('login');
 Route::get('/login/student', [GoogleAuthController::class,'redirect'])->name('login.student');

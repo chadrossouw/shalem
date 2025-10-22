@@ -1,5 +1,6 @@
 import { html, css } from 'lit';
 import { BaseClass } from '../BaseClass';
+import { safeFetch } from '../../common/xsrf';
 export class ShalemLoginForm extends BaseClass {
     static properties = {
         studentroute: { type: String },
@@ -8,7 +9,7 @@ export class ShalemLoginForm extends BaseClass {
         loading: { type: Boolean, state: true },
     };
 
-    constructor() { 3
+    constructor() { 
         super();
         if(!this.showlogin){
             this.showlogin = false;
@@ -65,11 +66,27 @@ export class ShalemLoginForm extends BaseClass {
         event.preventDefault();
         this.loading = true;
         const formData = new FormData(event.target);
-        const username = formData.get('username');
+        const email = formData.get('email');
         const password = formData.get('password');
-
-        // Implement your login logic here
-        console.log('Logging in with', username, password);
+        const body = {
+            email:email,
+            password:password
+        }
+        let response = await safeFetch(`${this.restUrl}login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+        });
+        response = await response.json();
+        console.log(response);
+        if(response.success){
+            window.location.href = response.redirectUrl || '/dashboard';
+        } else {
+            alert(response.message || 'Login failed');
+        }
+        this.loading = false;
     }
 
     static styles = [

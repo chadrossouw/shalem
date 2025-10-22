@@ -1,8 +1,8 @@
 @keyframes blink {
-    0%, 20%, 24%, 100% {
+    0%, 20.75%, 21.5%, 100% {
         transform: scaleY(1);
     }
-    21%, 23% {
+    21%, 21.25% {
         transform: scaleY(0.1);
     }
 }
@@ -10,6 +10,7 @@
     animation-name: blink;
     animation-iteration-count: infinite;
     transform-origin: center bottom;
+    transform-box: fill-box;
 }
 @keyframes throb {
     0%, 100% {

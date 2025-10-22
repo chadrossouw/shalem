@@ -7,16 +7,18 @@ export class BaseClass extends LitElement {
         baseStyles,
         css`
             @keyframes blink {
-                0%, 20%, 24%, 100% {
+                0%, 20.75%, 21.5%, 100% {
                     transform: scaleY(1);
                 }
-                21%, 23% {
+                21%, 21.25% {
                     transform: scaleY(0.1);
                 }
             }
             .blinking {
                 animation-name: blink;
                 animation-iteration-count: infinite;
+                transform-box: fill-box;
+                transform-origin: center bottom;
             }
             @keyframes throb {
                 0%, 100% {
@@ -29,12 +31,18 @@ export class BaseClass extends LitElement {
             .throbbing {
                 animation-name: throb;
                 animation-iteration-count: infinite;
+                transform-box: fill-box;
+                transform-origin: center bottom;
             }
         `
     ];
 
     constructor() {
         super();
+        this.updateComplete.then(() => {
+            this.goBlink();
+        });
+        this.restUrl = '/api/';
     }
 
     get eyes(){
@@ -45,7 +53,7 @@ export class BaseClass extends LitElement {
         return this.shadowRoot.querySelectorAll('.throb');
     }
 
-    updated(){
+    goBlink(){
         this.eyes.forEach(eye => {
             blink(eye);
         });

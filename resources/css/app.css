@@ -3,8 +3,8 @@ html{
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
     --transition:300ms;
-    --blinktransition: 5s;
-    --blinkdelay: 1s;
+    --blinktransition: 15s;
+    --blinkdelay: 5s;
 }
 
 @media (prefers-reduced-motion: reduce) {

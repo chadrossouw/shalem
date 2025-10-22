@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,7 +18,7 @@ class LoginController extends Controller
         return view('login.parent');
     }
 
-    public function authenticate(Request $request): RedirectResponse
+    public function authenticate(Request $request)
     {
         // Authentication logic here
         $credentials = $request->validate([
@@ -30,13 +30,10 @@ class LoginController extends Controller
         $remember = $request->has('remember');
         if (Auth::attempt($credentials,$remember)) {
             $request->session()->regenerate();
- 
-            return redirect()->intended('dashboard');
+            return response()->json(['message' => 'Success!','redirect' => '/dashboard'], 200);
         }
- 
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
+
+        return response()->json(['error' => 'The provided credentials do not match our records.'], 401);
     }
 
 }
