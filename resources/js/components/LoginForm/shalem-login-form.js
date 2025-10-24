@@ -6,6 +6,7 @@ export class ShalemLoginForm extends BaseClass {
         studentroute: { type: String },
         staffroute: { type: String },
         showlogin: { type: Boolean, state: true },
+        showreset: { type: Boolean },
         loading: { type: Boolean, state: true },
     };
 
@@ -35,13 +36,22 @@ export class ShalemLoginForm extends BaseClass {
                             <label for="password">Password</label>
                             <input type="password" id="password" name="password" required />
                         </div>
-                        <a href="/password/reset" class="forgot-password-link">Forgot Password?</a>
+                        <button @click=${this._showResetForm} class="forgot-password-link">Forgot Password?</button>
+                        <button @click=${this._showResetForm} class="forgot-password-link">First time login?</button>
                         <button type="submit">Login</button>
                     </form>
                     <button @click=${this._showHideForm} class="button bg_White blue">Back</button>
                 </div>
                 `;
 
+        }
+        if(this.showreset){
+            return html`
+                <div class="login-form">
+                    
+                    <button @click=${this._showForm} class="button bg_White blue">Back</button>
+                </div>
+                `;
         }
         return html`
             <div class="login-form">
@@ -57,8 +67,19 @@ export class ShalemLoginForm extends BaseClass {
             </div>
         `;
     }
+    
+    _showResetForm(){
+        this.showlogin = false;
+        this.showreset = true;
+    }
+
+    _showForm(){
+        this.showreset = false;
+        this.showlogin = true;
+    }
 
     _showHideForm(){
+        this.showreset = false;
         this.showlogin = !this.showlogin;
     }
 

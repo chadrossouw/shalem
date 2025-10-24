@@ -6,6 +6,9 @@ use Illuminate\Support\ServiceProvider;
 
 use Illuminate\Support\Facades\Gate;
 
+use App\Models\User;
+use Illuminate\Auth\Notifications\ResetPassword;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -40,6 +43,11 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('student', function ($user) {
             return $user->type === 'student';
+        });
+       
+
+        ResetPassword::createUrlUsing(function (User $user, string $token) {
+            return 'https://example.com/reset-password/'.$token.'?email='.$user->email;
         });
     }
 }

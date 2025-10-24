@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //
         $middleware->statefulApi();
         $middleware->redirectGuestsTo('/?error=unauthenticated');
+        $middleware->trustHosts(at: [env('APP_HOST', 'shalem.local')]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
