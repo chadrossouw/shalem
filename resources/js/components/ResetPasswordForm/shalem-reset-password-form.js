@@ -24,7 +24,7 @@ export class ShalemResetPasswordForm extends BaseClass {
     render(){
         let slots = '';
         if(this.firstset){
-                slots = html`<slot name="first-set"></slot>`;
+            slots = html`<slot name="first-set"></slot>`;
         }
         else{
             slots = html`<slot name="reset"></slot>`;
@@ -41,12 +41,11 @@ export class ShalemResetPasswordForm extends BaseClass {
                     <div class="form-group">
                         <label for="password">Password</label>
                         <input type="password" id="password" name="password" required />
-                        
+
                     </div>
                     <div class="form-group">
                         <label for="password_confirmation">Password Confirmation</label>
                         <input type="password" id="password_confirmation" name="password_confirmation" required />
-                        
                     </div>
                     <input type="hidden" id="token" name="token" value="${this.token}" />
                     <button type="submit">${this.firstset ? 'Set Password' : 'Reset Password'}</button>

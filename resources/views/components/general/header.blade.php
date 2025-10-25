@@ -16,6 +16,7 @@
             <style>
             </style>
         @endif
+        <script src='https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_SITE_KEY') }}'></script>
         {{ $slot }}
     </head>
     <body class="{{ implode(' ', $classes) }}">
