@@ -2,9 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Http;
+
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\UserAvatarsController;
 
 Route::post('/grecaptcha', function (Request $request) {
     $request->validate(['token' => 'required|string']);
@@ -22,6 +24,7 @@ Route::post('/grecaptcha', function (Request $request) {
         return response()->json(['success' => false, 'error-codes' => $result['error-codes'] ?? []], 400);
     }
 });
+
 Route::post('/login', [LoginController::class, 'authenticate'])->name('api.login');
 
 Route::post('/reset-password', function (Request $request) {
@@ -64,3 +67,8 @@ Route::post('/update-password', function (Request $request) {
         return response()->json(['error' => __($status)], 500);
     }
 })->name('password.update');
+
+
+Route::get('/avatars', [UserAvatarsController::class, 'getAvatars'])->name('api.avatars');
+Route::post('/avatars', [UserAvatarsController::class, 'store'])->name('api.avatars.store');
+

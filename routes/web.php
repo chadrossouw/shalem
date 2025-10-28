@@ -36,11 +36,24 @@ Route::get('/reset-password/{token}', function (string $token) {
     return view('login.reset-password', ['token' => $token, 'email' => $email]);
 })->middleware('guest')->name('password.reset');
 
-Route::get('/dashboard',[Dashboard::class,'show'])->middleware('auth')->name('dashboard');
+Route::get('/dashboard/{dashboard}/{panel}/{view?}',[Dashboard::class,'show'])->middleware('auth');
+Route::get('/dashboard/{dashboard}/{panel?}',[Dashboard::class,'show'])->middleware('auth');
+Route::get('/dashboard/{dashboard?}',[Dashboard::class,'show'])->middleware('auth')->name('dashboard');
 
 Route::get('/edit/{location}/{name}', function ($location, $name) {
     $id = Field::where('location', $location)->where('name', $name)->value('id');
     return redirect(env('CMS_URL') . "/post.php?post=$id&action=edit#$name");
 })->name('editable_field');
 
+Route::get('/admin/view-as/{type}', function ($type) {
+    $user = Auth::user();
+    if (!$user || $user->staffRole->role !== 'admin') {
+        return redirect('/dashboard');
+    }
+    $validTypes = ['student', 'staff', 'parent', 'anonymous'];
+    if (in_array($type, $validTypes)) {
+        session()->put('viewAs', $type);
+    }
+    return redirect('/dashboard');
+})->middleware('auth')->name('admin.view-as');
 

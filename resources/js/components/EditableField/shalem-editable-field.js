@@ -24,8 +24,6 @@ export class ShalemEditableField extends LitElement {
                 </a>
             `;
         }
-        else return html`
-            
-        `;
+        else return html``;
     }
 }

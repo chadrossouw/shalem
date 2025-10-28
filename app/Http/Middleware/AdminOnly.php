@@ -15,7 +15,7 @@ class AdminOnly
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->user() || $request->user()->staffRole() !== 'admin') {
+        if (!$request->user() || ($request->user()->staffRole->role !== 'admin' && $request->user()->staffRole->role !== 'superadmin')) {
             abort(403, 'Unauthorized action.');
         }
         return $next($request);

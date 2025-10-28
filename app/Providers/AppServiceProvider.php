@@ -26,11 +26,11 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         Gate::define('admin', function ($user) {
-            return $user->staffRole()->role === 'admin';
+            return $user->staffRole->role === 'admin';
         });
 
         Gate::define('grade_head', function ($user) {
-            return $user->staffRole()->role === 'grade_head';
+            return $user->staffRole->role === 'grade_head';
         });
 
         Gate::define('staff', function ($user) {
