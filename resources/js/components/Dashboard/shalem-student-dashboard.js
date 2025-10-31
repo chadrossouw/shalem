@@ -1,17 +1,16 @@
-import {  html } from "lit";
+import {  html,css, LitElement } from "lit";
 import { ShalemBaseDashboard } from "./shalem-base-dashboard";
+import { BaseClass } from "../BaseClass";
 
-export class ShalemStudentDashboard extends ShalemBaseDashboard{
-    static properties = {
-        ...super.properties,
-    }
-
-    constructor(){
-        super();
-    }
-
+export class ShalemStudentDashboard extends ShalemBaseDashboard(BaseClass(LitElement)) {
     connectedCallback(){
         super.connectedCallback();
+        console.log(this.properties);
+        console.log(this.user);
+        console.log(this.fields);
+        console.log(this.dashboard);
+        console.log(this.panel);
+        console.log(this.view);
     }
 
     render(){
@@ -24,7 +23,7 @@ export class ShalemStudentDashboard extends ShalemBaseDashboard{
             </h1>
             <h2>
                 <shalem-editable-field name="student_dashboard_select_avatar_instruction" location="student-dashboard" admin="true">
-                    ${this.fields?.student_dashboard_select_avatar_instruction ?? '' }
+                    ${this.fields?.student_dashboard_select_avatar_instruction ?? 'Before we get started, pick an avatar' }
                 </shalem-editable-field>
             </h2>
             <shalem-avatar-selector

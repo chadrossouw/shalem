@@ -1,22 +1,20 @@
-import { BaseClass } from "../base-class.js";
+import { BaseClass } from "../BaseClass.js";
+import { LitElement } from "lit";
 import { ContextConsumer } from "@lit/context";
 import { dashboardContext } from "../../utilities/context.js";
 import { EventManager } from "../../utilities/events.js";
 
-export class ShalemBaseDashboardConsumer extends BaseClass {
+export const ShalemBaseDashboardConsumer = (superClass) => class extends superClass{
     
     static properties = {
+        ...super.properties,
         identifier: { type: String },
-    }
-
-    constructor() {
-        super();
     }
     
     connectedCallback(){
         super.connectedCallback();
         this._eventManager = new EventManager(this);
-        this._dashboard = new ContextConsumer(this, {context:dashboardContext,callback:this._handleContextUpdate.bind(this),subscribe:true});
+        this._consumer = new ContextConsumer(this, {context:dashboardContext,callback:this._handleContextUpdate.bind(this),subscribe:true});
     }
 
     _handleContextUpdate(value){

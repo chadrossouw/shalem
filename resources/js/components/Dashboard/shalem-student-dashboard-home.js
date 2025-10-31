@@ -11,4 +11,9 @@ export class ShalemStudentDashboardHome extends ShalemBaseDashboardConsumer {
         super();
     }
 
+    render(){
+        return html`
+        <h1>Hi</h1>
+        `;
+    }
 }

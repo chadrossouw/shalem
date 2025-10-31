@@ -1,9 +1,9 @@
-import { html, css } from 'lit';
+import {LitElement, html, css } from 'lit';
 import { BaseClass } from '../BaseClass';
 import { safeFetch } from '../../common/xsrf';
 import { eyeSvg } from '../../icons/icons';
 import { validateForm,gRecaptcha,hideRevealPassword} from '../../utilities/formUtilities';
-export class ShalemLoginForm extends BaseClass {
+export class ShalemLoginForm extends BaseClass(LitElement ) {
     static properties = {
         studentroute: { type: String },
         staffroute: { type: String },

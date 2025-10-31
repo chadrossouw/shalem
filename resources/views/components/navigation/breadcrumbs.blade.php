@@ -1,1 +1,1 @@
-<shalem-breadcrumbs />
+<shalem-breadcrumbs ></shalem-breadcrumbs>

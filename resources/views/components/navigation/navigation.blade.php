@@ -1,4 +1,3 @@
-
-<shalem-navigation user="{{ $user->toJson() }}" >
+<shalem-navigation user="{{ $user ? $user->toJson() : null }}" >
 
 </shalem-navigation>

@@ -1,8 +1,11 @@
 import { baseStyles } from '../utilities/baseStyles';
 import { LitElement, css } from 'lit';
 import {blink,throb} from '../common/blink.js';
-export class BaseClass extends LitElement {
+export const BaseClass = (superClass) => class extends superClass {
     // Common functionality for all components
+    static properties = {
+        ...super.properties,
+    };
     static styles = [
         baseStyles,
         css`
@@ -42,7 +45,8 @@ export class BaseClass extends LitElement {
         this.updateComplete.then(() => {
             this.goBlink();
         });
-        this.restUrl = '/api/';
+        //Vite env variable for API base URL
+        this.restUrl = import.meta.env.VITE_API_URL;
     }
 
     get eyes(){

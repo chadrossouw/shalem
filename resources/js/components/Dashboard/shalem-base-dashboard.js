@@ -1,10 +1,10 @@
-import { LitElement, html} from 'lit';
+import { html, css, LitElement} from 'lit';
 import { BaseClass } from '../BaseClass';
 import {ContextProvider} from '@lit/context';
 import { dashboardContext } from '../../utilities/context.js';
 import { EventManager } from '../../utilities/events.js';
 
-export class ShalemBaseDashboard  extends BaseClass {
+export const ShalemBaseDashboard = (superClass) => class extends superClass {
     static styles = [
         css`
             :host {
@@ -20,10 +20,10 @@ export class ShalemBaseDashboard  extends BaseClass {
         dashboard: { type: String },
         panel: {type: String},
         view: {type: String},
-    }
+    };
 
-    constructor() {
-        super();
+    connectedCallback(){
+        super.connectedCallback();
         this.dashboardContext = {
             user: this.user,
             fields: this.fields,
@@ -34,12 +34,9 @@ export class ShalemBaseDashboard  extends BaseClass {
             title: this._setTitle(),
             nav: this._setNav(),
         };
-    }
-
-    connectedCallback(){
-        super.connectedCallback();
         this.eventManager = new EventManager(this);
         this.eventManager.listen(`shalem-dashboard-${this.identifier}-update`,this._handleUpdate);
+        console.log('Dashboard context initialized:', this.dashboardContext);
         this.dashboardProvider = new ContextProvider(this, {context:dashboardContext, initialValue: this.dashboardContext});
         this.eventManager.initHistory({dashboard: this.dashboard, panel: this.panel, view: this.view});
     }

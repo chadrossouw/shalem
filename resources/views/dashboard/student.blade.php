@@ -2,7 +2,7 @@
         <x-navigation.masthead :user="$user" />
         <main id="primary" class="margins">
             <x-navigation.navbar :user="$user" />
-            <x-navigation.breadcrumb />
+            <x-navigation.breadcrumbs />
             <shalem-student-dashboard 
                 identifier="student" 
                 user="{{ $user->toJson() }}" 

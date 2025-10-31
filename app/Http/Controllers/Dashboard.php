@@ -20,6 +20,7 @@ class Dashboard extends Controller
         switch($type){
             case 'student':
                 $fields = Field::where('location','student_dashboard')->get();
+                $user->load('student')->load('student.avatar');
                 return view('dashboard.student', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view]);
             case 'staff':
                 $role = $user->staffRole->role ?? 'staff';
