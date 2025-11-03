@@ -32,18 +32,17 @@ export class ShalemStudentDashboard extends ShalemBaseDashboard(BaseClass(LitEle
         }
         else if(this.updates && this.updates.length > 0){
             return html`
-            <h2>
-                <shalem-editable-field name="student_dashboard_notifications" location="student-dashboard" admin="true">
-                    ${this.fields?.student_dashboard_notifications ?? 'You have new notifications' }
-                </shalem-editable-field>
-            </h2>
-            <p>${this.updates[0].message}</p>`
+            <shalem-updates  
+                identifier="${this.identifier}"
+            ></shalem-updates>
+            `;
+            
         }
         else{
             return html`
             <shalem-student-dashboard-${this.dashboard}
                 identifier="${this.identifier}"
-            ></shalem-studentdashboard-${this.dashboard}>`;
+            ></shalem-student-dashboard-${this.dashboard}>`;
         }
     }
     
