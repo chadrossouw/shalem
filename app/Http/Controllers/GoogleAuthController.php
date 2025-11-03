@@ -17,8 +17,9 @@ class GoogleAuthController extends Controller
      /**
      * Redirect the user to Google’s OAuth page.
      */
-    public function redirect()
+    public function redirect(Request $request): RedirectResponse
     {
+        $request->session()->invalidate();
         return Socialite::driver('google')->redirect();
     }
 
@@ -33,7 +34,6 @@ class GoogleAuthController extends Controller
         } catch (Throwable $e) {
             return redirect('/')->with('error', 'Google authentication failed.');
         }
-
         // Check if the user already exists in the database
         $existingUser = User::where('email', $user->email)->first();
 
@@ -41,14 +41,30 @@ class GoogleAuthController extends Controller
             // Log the user in if they already exist
             Auth::login($existingUser, true); // true for remember me
             
-            // Regenerate session for security
             $request->session()->regenerate();
-            
-            // Redirect the user to the dashboard or any other secure page
-            return redirect()->intended('/dashboard');
+            $token_permission = ['user:'.$existingUser->type];
+            if( $existingUser->staffRole ){
+                $token_permission[] = ['staff:'.$existingUser->staffRole->role];
+            }
+            $token = $existingUser->createToken('auth_token',$token_permission); 
+            session_start();
+            $_SESSION['auth_token'] = $token->plainTextToken;
+            return redirect(env('APP_URL').'/dashboard')->with('auth_token', $token->plainTextToken);
         } else {
-            // Otherwise, create a new user and log them in
             return redirect('/')->with('error', 'No Herzlia account associated with this Google email.');
         }
+    }
+
+    /**
+     * Handle OAuth success and ensure CSRF tokens are ready
+     */
+    public function oauthSuccess(Request $request)
+    {
+        $user = Auth::user();
+        // Force CSRF cookie to be set
+        $request->session()->regenerateToken();
+        
+        // Simple redirect page that ensures CSRF is ready before going to dashboard
+        return view('auth.oauth-success');
     }
 }

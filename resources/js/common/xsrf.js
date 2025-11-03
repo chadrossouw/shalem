@@ -9,13 +9,18 @@ function getCsrfTokenFromCookie() {
 
 async function safeFetch(url, options = {}) {
   // Default options with credentials included
+  let authToken = window.sessionStorage.getItem('auth_token');
+  
   const defaultOptions = {
-    credentials: 'same-origin',
+    credentials: 'same-origin', 
     headers: {
       'Content-Type': 'application/json',
-      'Referer': window.location.origin
+      'Accept': 'application/json',
     }
   };
+  if(authToken){
+      defaultOptions.headers['Authorization'] = `Bearer ${authToken}`;
+  }
 
   // Merge options
   const mergedOptions = {
@@ -26,17 +31,41 @@ async function safeFetch(url, options = {}) {
       ...options.headers
     }
   };
-
-  // Only add CSRF token for non-GET requests
-  if (mergedOptions.method && mergedOptions.method.toLowerCase() !== 'get') {
-    const csrfToken = getCsrfTokenFromCookie();
+  if(!authToken){
+    let csrfToken = getCsrfTokenFromCookie();
     if(!csrfToken){
-        csrfToken = await fetch('/sanctum/csrf-cookie');
+        let baseUrl = import.meta.env.VITE_BASE_URL;
+        await fetch(`${baseUrl}sanctum/csrf-cookie`, { 
+          credentials: 'same-origin',
+          method: 'GET'
+        });
+        csrfToken = getCsrfTokenFromCookie();
+        if(url == `${baseUrl}sanctum/csrf-cookie`){
+            return;
+        }
     }
-    mergedOptions.headers['X-CSRF-Token'] = csrfToken;
+    
+    // Send both XSRF and CSRF tokens for maximum compatibility
+    if (csrfToken) {
+      mergedOptions.headers['X-XSRF-TOKEN'] = csrfToken;
+    }
   }
-
-  return fetch(url, mergedOptions);
+  
+  let response;
+  try {
+    response = await fetch(url, mergedOptions);
+    if(!response.ok){
+        throw {status: response.status, message: response.statusText};
+    }
+  } catch (error) {
+    // if error is 419 or 401 
+    console.log('Request failed with error:', error);
+    if (error.status === 419 || error.status === 401) {
+      window.location.href='/?error=auth';
+    }
+    throw error;
+  }
+  return response;
 }
 
 export { safeFetch };

@@ -1,8 +1,8 @@
 <x-general.header title="Welcome to {{ config('app.name') }}!" />
         <x-navigation.masthead :user="$user" />
-        @if(isset($_GET['error'])&& $_GET['error'] == 'unauthenticated')
+        @if(isset($error)&&$error!='')
             <div class="notification is-error">
-                You must be logged in to access that page.
+                {{ $error }}
             </div>
         @endif
         <main id="primary" class="margins">

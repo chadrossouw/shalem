@@ -22,6 +22,11 @@ export class ShalemLoginForm extends BaseClass(LitElement ) {
         this.firstLogin = false;
     }
 
+    async connectedCallback(){
+        super.connectedCallback();
+       // let response = await safeFetch(`${this.baseUrl}sanctum/csrf-cookie`, { credentials: 'include' }, true);
+    }
+
     updated(){
         super.updated();
     }
@@ -57,11 +62,11 @@ export class ShalemLoginForm extends BaseClass(LitElement ) {
                                 <span class="screen-reader-text">Show password</span>${eyeSvg}</button>
                             </div>
                         </div>
-                        <button @click=${this._showResetForm} class="forgot-password-link">Forgot Password?</button>
-                        <button @click=${this._showResetForm} data-first-login="true" class="forgot-password-link">First time login?</button>
                         <button type="submit">Login</button>
                         <div class="message"></div>
                     </form>
+                    <button @click=${this._showResetForm} class="forgot-password-link">Forgot Password?</button>
+                    <button @click=${this._showResetForm} data-first-login="true" class="forgot-password-link">First time login?</button>
                     <button @click=${this._showHideForm} class="button bg_White blue">Back</button>
                 </div>
                 `;
@@ -87,9 +92,9 @@ export class ShalemLoginForm extends BaseClass(LitElement ) {
             <div class="login-form">
                 <slot name="general"></slot>
                 <div class="login-buttons">
-                    <a href="${this.studentroute}" class="button bg_pink white">Pupil login</a>
+                    <a href="${this.studentroute}" @click=${this._clearCookiesBeforeFollow} class="button bg_pink white">Pupil login</a>
                     <button @click=${this._showHideForm} class="button bg_White blue">Parent login</button>
-                    <a href="${this.staffroute}" class="button bg_white blue">Staff login</a>
+                    <a href="${this.staffroute}" @click=${this._clearCookiesBeforeFollow} class="button bg_white blue">Staff login</a>
                 </div>
             </div>
         `;
@@ -129,7 +134,7 @@ export class ShalemLoginForm extends BaseClass(LitElement ) {
             this._setLoadingState(false);
             return;
         }
-        const formData = new FormData(event.target);
+        const formData = new FormData(this.form);
         const email = formData.get('email');
         const password = formData.get('password');
         const body = {
@@ -148,7 +153,7 @@ export class ShalemLoginForm extends BaseClass(LitElement ) {
         if(response.success){
             window.location.href = response.redirectUrl || '/dashboard';
         } else {
-           this.message.innerHTML = response.message;
+           this.formResponse.innerHTML = response.message;
         }
         this._setLoadingState(false);
     }
@@ -183,6 +188,13 @@ export class ShalemLoginForm extends BaseClass(LitElement ) {
             this.formResponse.innerHTML = response.error || 'Reset failed';
         }
         this._setLoadingState(false);
+    }
+
+    _clearCookiesBeforeFollow(e){
+        e.preventDefault();
+        document.cookie = 'XSRF-TOKEN=; Max-Age=0; path=/; domain=' + window.location.hostname;
+        document.cookie = 'laravel_session=; Max-Age=0; path=/; domain=' + window.location.hostname;
+        window.location.href = e.currentTarget.href;
     }
 
     _setLoadingState(isLoading){

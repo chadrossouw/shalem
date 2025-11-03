@@ -10,6 +10,9 @@
                 dashboard="{{ $dashboard }}" 
                 panel="{{ $panel }}"
                 view="{{ $view }}"
+                @if(isset($token))
+                    token="{{ $token }}"
+                @endif
                 />
         </main>
 <x-general.footer />

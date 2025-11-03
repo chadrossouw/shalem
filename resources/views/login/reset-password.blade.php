@@ -3,7 +3,7 @@
     <main id="primary" class="margins">
         <div class="block bg_blue inner-padding radius " id="welcome">
             {!! count($avatars)?file_get_contents(storage_path('app/'.$avatars[rand(0, count($avatars) - 1)]->path)):'' !!}
-            <shalem-reset-password-form resetroute="{{ route('api.password.update') }}" token="{{ $token }}" email="{{ $email }}">
+            <shalem-reset-password-form resetroute="{{ route('password.update') }}" token="{{ $token }}" email="{{ $email }}">
                 <div slot="reset">
                     <shalem-editable-field name="home_parent_login_text" location="home" admin="true">
                         {{ $field['home_parent_login_text']??'Parents can log in here to view their child\'s progress and communicate with staff.' }}

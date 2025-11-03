@@ -7,11 +7,12 @@ use App\Models\Avatar;
 use App\Models\User;
 use App\Models\Student;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class UserAvatarsController extends Controller
 {
-    public function getAvatars()
-    {
+    public function getAvatars(Request $request)
+    { 
         $avatars = Avatar::all();
         $avatars = $avatars->map(function ($avatar) {
             return [
@@ -24,18 +25,17 @@ class UserAvatarsController extends Controller
         return response()->json(['avatars' => $avatars], 200);
     }
 
-    public function store(Request $request)
+    public function setAvatar(Request $request)
     {
         $request->validate([
             'avatar_id' => 'required|exists:avatars,id',
         ]);
 
         $user  = Auth::user();
-        $avatar = Avatar::find($request->avatar_id);
         $student = Student::where('user_id', $user->id)->first();
-        $student->avatar()->associate($avatar);
+        $student->avatar = $request->avatar_id;
         $student->save();
 
-        return response()->json(['message' => 'Avatar updated successfully.'], 200);
+        return response()->json(['success' => true, 'message' => 'Avatar updated successfully.'], 200);
     }
 }

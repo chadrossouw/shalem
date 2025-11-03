@@ -17,22 +17,30 @@ class Dashboard extends Controller
         if($viewAs && $viewAs !== $type){
             $type = $viewAs;
         }
+        //Using php session here as flash is not persisting in laravel correctly after login redirection
+        if(!isset($_SESSION)){
+            session_start();
+        }
+        $token = isset($_SESSION['auth_token']) ? $_SESSION['auth_token'] : '';
         switch($type){
             case 'student':
                 $fields = Field::where('location','student_dashboard')->get();
                 $user->load('student')->load('student.avatar');
-                return view('dashboard.student', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view]);
+                $user->load(['notifications' => function ($query) {
+                    $query->where('read_at', null);
+                }]);
+                return view('dashboard.student', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'token' => $token]);
             case 'staff':
                 $role = $user->staffRole->role ?? 'staff';
                 $fields = Field::where('location','staff_dashboard')->get();
                 if($role=='admin'||$role=='superadmin'){
-                    return view('dashboard.admin', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view]);
+                    return view('dashboard.admin', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'token' => $token]);
                 }
                 elseif($role=='grade_head'){
                     $fields = Field::where('location','staff_dashboard')->get();
-                    return view('dashboard.grade_head', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view]);
+                    return view('dashboard.grade_head', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'token' => $token]);
                 }
-                return view('dashboard.staff', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view]);
+                return view('dashboard.staff', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'token' => $token]);
             case 'parent':
                 $fields = Field::where('location','parent_dashboard')->get();
                 return view('dashboard.parent', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view]);
@@ -40,5 +48,10 @@ class Dashboard extends Controller
                 $fields = Field::where('location','dashboard')->get();
                 return view('dashboard', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view]);
         }
+    }
+
+    public function login(Request $request){
+        $user  = Auth::user();
+        return view('dashboard.login', ['user' => $user]);
     }
 }

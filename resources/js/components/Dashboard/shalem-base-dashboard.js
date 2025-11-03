@@ -16,18 +16,35 @@ export const ShalemBaseDashboard = (superClass) => class extends superClass {
     static properties = {
         identifier: { type: String },
         user: { type: Object },
+        notifications: { type: Array },
+        updates: { type: Array },
         fields: { type: Array },
         dashboard: { type: String },
         panel: {type: String},
         view: {type: String},
+        token: {type: String, reflect: true},
     };
 
     connectedCallback(){
         super.connectedCallback();
+        if(this.token){
+            this._setAuthToken();
+        }
+        else{
+            window.sessionStorage.removeItem('auth_token');
+            this.token = null;
+            window.location.href='/?error=auth';
+        }
+        if(this.user.notifications){
+            this.notifications = this.user.notifications??[];
+            this.updates = this.notifications.filter(notification => notification.type === 'update');
+        }
         this.dashboardContext = {
             user: this.user,
             fields: this.fields,
             dashboard: this.dashboard,
+            notifications: this.notifications,
+            updates: this.updates,
             panel: this.panel,
             view: this.view,
             breadcrumb: this._setBreadcrumb(),
@@ -36,7 +53,6 @@ export const ShalemBaseDashboard = (superClass) => class extends superClass {
         };
         this.eventManager = new EventManager(this);
         this.eventManager.listen(`shalem-dashboard-${this.identifier}-update`,this._handleUpdate);
-        console.log('Dashboard context initialized:', this.dashboardContext);
         this.dashboardProvider = new ContextProvider(this, {context:dashboardContext, initialValue: this.dashboardContext});
         this.eventManager.initHistory({dashboard: this.dashboard, panel: this.panel, view: this.view});
     }
@@ -52,6 +68,7 @@ export const ShalemBaseDashboard = (superClass) => class extends superClass {
             ...this.dashboardContext,
             ...detail
         };
+        ({user: this.user, notifications: this.notifications, updates: this.updates, fields: this.fields, dashboard: this.dashboard, panel: this.panel, view: this.view} = this.dashboardContext);
         this.dashboardProvider.setValue(this.dashboardContext);
     }
 
@@ -67,4 +84,12 @@ export const ShalemBaseDashboard = (superClass) => class extends superClass {
         return {};
     }
 
+    _setAuthToken(){
+        window.sessionStorage.setItem('auth_token', this.token);
+        this.token = null;
+    }
+
+    _getAuthToken(){
+        return window.sessionStorage.getItem('auth_token');
+    }
 }

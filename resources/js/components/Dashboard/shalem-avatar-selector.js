@@ -69,7 +69,7 @@ export class ShalemAvatarSelector extends ShalemBaseDashboardConsumer(BaseClass(
     }
 
     async _updateAvatar(avatar) {
-        let response = await safeFetch(`${this.restUrl}avatars`, {
+        let response = await safeFetch(`${this.restUrl}set-avatars`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

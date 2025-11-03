@@ -47,6 +47,7 @@ export const BaseClass = (superClass) => class extends superClass {
         });
         //Vite env variable for API base URL
         this.restUrl = import.meta.env.VITE_API_URL;
+        this.baseUrl = import.meta.env.VITE_BASE_URL;
     }
 
     get eyes(){
