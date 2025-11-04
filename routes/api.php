@@ -7,10 +7,11 @@ use Illuminate\Support\Facades\Http;
 
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserAvatarsController;
-
+use App\Http\Controllers\NotificationController;
 use App\Models\User;
-use phpseclib3\Crypt\RC2;
 
+
+//Recaptcha
 Route::post('/grecaptcha', function (Request $request) {
     $request->validate(['token' => 'required|string']);
     $api_key= env('GOOGLE_API_KEY');
@@ -28,17 +29,10 @@ Route::post('/grecaptcha', function (Request $request) {
     }
 });
 
+// Authentication routes
 Route::post('/login', [LoginController::class, 'authenticate'])->name('api.login');
 Route::post('/login-redirect', [LoginController::class, 'authenticateRedirect'])->name('api.login.redirect');
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth:sanctum')->name('api.logout');
-
-// Group authenticated API routes to ensure consistent middleware
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/avatars', [UserAvatarsController::class, 'getAvatars'])->name('api.avatars');
-    Route::post('/set-avatars', [UserAvatarsController::class, 'setAvatar'])->name('api.avatars.store');
-    Route::get('/session-test', [\App\Http\Controllers\SessionTestController::class, 'test'])->name('api.session.test');
-});
-
 Route::post('/reset-password', function (Request $request) {
     $request->validate(['email' => 'required|email']);
     $firstLogin = $request->firstlogin??false;
@@ -80,3 +74,15 @@ Route::post('/update-password', function (Request $request) {
         return response()->json(['error' => __($status)], 500);
     }
 })->name('password.update');
+
+// Avatar routes
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/avatars', [UserAvatarsController::class, 'getAvatars'])->name('api.avatars');
+    Route::post('/set-avatars', [UserAvatarsController::class, 'setAvatar'])->name('api.avatars.store');
+});
+
+
+// Notifications routes
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/notifications/{id}/{status}', [NotificationController::class, 'handleStatusUpdate'])->name('api.notifications.status');
+});
