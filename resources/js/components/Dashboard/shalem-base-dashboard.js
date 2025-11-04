@@ -39,10 +39,12 @@ export const ShalemBaseDashboard = (superClass) => class extends superClass {
             this.notifications = this.user.notifications??[];
             this.updates = this.notifications.filter(notification => notification.type === 'update');
         }
+        this.history=[{ dashboard: this.dashboard, panel: this.panel, view: this.view }];
         this.dashboardContext = {
             user: this.user,
             fields: this.fields,
             dashboard: this.dashboard,
+            history: this.history,
             notifications: this.notifications,
             updates: this.updates,
             panel: this.panel,
@@ -64,11 +66,18 @@ export const ShalemBaseDashboard = (superClass) => class extends superClass {
 
     _handleUpdate = (e) => {
         const detail = e.detail;
+        let newHistory = this.history;
+        if(this.dashboard !== detail.dashboard || this.panel !== detail.panel || this.view !== detail.view){
+            this.eventManager.addHistory(`/dashboard/${detail.dashboard}/${detail.panel}/${detail.view}`,{dashboard: detail.dashboard, panel: detail.panel, view: detail.view});
+            newHistory.push({ dashboard: detail.dashboard, panel: detail.panel, view: detail.view });
+        }
         this.dashboardContext = {
             ...this.dashboardContext,
             ...detail
         };
-        ({user: this.user, notifications: this.notifications, updates: this.updates, fields: this.fields, dashboard: this.dashboard, panel: this.panel, view: this.view} = this.dashboardContext);
+        ({user: this.user, notifications: this.notifications, updates: this.updates, fields: this.fields, dashboard: this.dashboard, history: this.history, panel: this.panel, view: this.view} = this.dashboardContext);
+        this.history = [...this.history, ...newHistory];
+        this.dashboardContext.history = this.history;
         this.dashboardProvider.setValue(this.dashboardContext);
     }
 

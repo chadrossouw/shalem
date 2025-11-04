@@ -43,7 +43,7 @@ export class ShalemAvatarSelector extends ShalemBaseDashboardConsumer(BaseClass(
         avatars = avatars.avatars;
         let currentAvatar = this.user.student.avatar;
         let avatarDeclaration = '';
-        let backButton = html`<button @click=${() => window.history.back()}><span aria-hidden="true">${unsafeSVG(arrowLeftSvg)}</span>Back</button>`;
+        let backButton = html`<button @click=${() => this._goBack()}><span aria-hidden="true">${unsafeSVG(arrowLeftSvg)}</span>Back</button>`;
         if(!currentAvatar){
             avatarDeclaration = html`<h3>I'm <span class="screen-reader-text">selecting an avatar</span>${unsafeSVG(anonymousAvatar)}</h3>`;
             backButton = '';

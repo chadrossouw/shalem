@@ -9,6 +9,7 @@ export const ShalemBaseDashboardConsumer = (superClass) => class extends superCl
     static properties = {
         ...super.properties,
         identifier: { type: String },
+        _dashboard: { type: Object, state: true },
     }
     
     connectedCallback(){
@@ -27,5 +28,19 @@ export const ShalemBaseDashboardConsumer = (superClass) => class extends superCl
             ...newValues
         };
         this._eventManager.emit(`shalem-dashboard-${this.identifier}-update`, updatedContext);
+    }
+
+    _goBack(e){
+        e?.preventDefault();
+        let history = this._dashboard.history;
+        if(history.length > 1){
+            history.pop();
+            const previousDashboard = history[history.length - 1];
+            this._updateContext({dashboard: previousDashboard.dashboard, panel: previousDashboard.panel, view: previousDashboard.view });
+        }
+    }
+
+    _handleAction(action){
+        this._updateContext({...action});
     }
 }
