@@ -81,7 +81,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/set-avatars', [UserAvatarsController::class, 'setAvatar'])->name('api.avatars.store');
 });
 
-
 // Notifications routes
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/notifications/{id}/{status}', [NotificationController::class, 'handleStatusUpdate'])->name('api.notifications.status');

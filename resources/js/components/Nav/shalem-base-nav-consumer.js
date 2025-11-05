@@ -1,10 +1,8 @@
-import { BaseClass } from "../BaseClass.js";
-import { LitElement } from "lit";
 import { ContextConsumer } from "@lit/context";
 import { dashboardContext } from "../../utilities/context.js";
 import { EventManager } from "../../utilities/events.js";
 
-export const ShalemBaseDashboardConsumer = (superClass) => class extends superClass{
+export const ShalemBaseNavConsumer = (superClass) => class extends superClass{
     
     static properties = {
         ...super.properties,
@@ -29,16 +27,6 @@ export const ShalemBaseDashboardConsumer = (superClass) => class extends superCl
             ...newValues
         };
         this._eventManager.emit(`shalem-dashboard-${this.identifier}-update`, updatedContext);
-    }
-
-    _goBack(e){
-        e?.preventDefault();
-        let history = this._dashboard.history;
-        if(history.length > 1){
-            history.pop();
-            const previousDashboard = history[history.length - 1];
-            this._updateContext({dashboard: previousDashboard.dashboard, panel: previousDashboard.panel, view: previousDashboard.view });
-        }
     }
 
     _handleAction(action){

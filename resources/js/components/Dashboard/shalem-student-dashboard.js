@@ -11,18 +11,19 @@ export class ShalemStudentDashboard extends ShalemBaseDashboard(BaseClass(LitEle
         console.log(this.dashboard);
         console.log(this.panel);
         console.log(this.view);
+        this.isAdmin = this.user?.roles?.includes('admin') || false;
     }
 
     render(){
         if(!this.user.student.avatar){
             return html`
             <h1>
-                <shalem-editable-field name="student_dashboard_new_avatar" location="student-dashboard" admin="true">
+                <shalem-editable-field name="student_dashboard_new_avatar" location="student-dashboard" ?admin=${this.isAdmin}>
                     ${this.fields?.student_dashboard_new_avatar ?? 'Hey there' }, ${this.user.first_name}!
                 </shalem-editable-field>
             </h1>
             <h2>
-                <shalem-editable-field name="student_dashboard_select_avatar_instruction" location="student-dashboard" admin="true">
+                <shalem-editable-field name="student_dashboard_select_avatar_instruction" location="student-dashboard" ?admin=${this.isAdmin}>
                     ${this.fields?.student_dashboard_select_avatar_instruction ?? 'Before we get started, pick an avatar' }
                 </shalem-editable-field>
             </h2>
@@ -36,13 +37,21 @@ export class ShalemStudentDashboard extends ShalemBaseDashboard(BaseClass(LitEle
                 identifier="${this.identifier}"
             ></shalem-updates>
             `;
-            
         }
         else{
-            return html`
-            <shalem-student-dashboard-${this.dashboard}
-                identifier="${this.identifier}"
-            ></shalem-student-dashboard-${this.dashboard}>`;
+            console.log('Rendering dashboard view:', this.dashboard);
+            switch(this.dashboard){
+                case 'home':
+                    return html`
+                    <shalem-student-dashboard-home
+                        identifier="${this.identifier}"
+                    ></shalem-student-dashboard-home>`;
+                default:
+                    return html`
+                    <shalem-student-dashboard-home
+                        identifier="${this.identifier}"
+                    ></shalem-student-dashboard-home>`;
+            }
         }
     }
     

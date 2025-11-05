@@ -68,7 +68,17 @@ export const ShalemBaseDashboard = (superClass) => class extends superClass {
         const detail = e.detail;
         let newHistory = this.history;
         if(this.dashboard !== detail.dashboard || this.panel !== detail.panel || this.view !== detail.view){
-            this.eventManager.addHistory(`/dashboard/${detail.dashboard}/${detail.panel}/${detail.view}`,{dashboard: detail.dashboard, panel: detail.panel, view: detail.view});
+            let url = `/dashboard/`;
+            if(detail.dashboard){
+                url += `${detail.dashboard}/`;
+                if(detail.panel){
+                    url += `${detail.panel}/`;
+                    if(detail.view){
+                        url += `${detail.view}/`;
+                    }
+                }
+            }
+            this.eventManager.addHistory(`${url}`,{dashboard: detail.dashboard, panel: detail.panel, view: detail.view});
             newHistory.push({ dashboard: detail.dashboard, panel: detail.panel, view: detail.view });
         }
         this.dashboardContext = {

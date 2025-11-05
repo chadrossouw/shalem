@@ -28,8 +28,14 @@ export class ShalemUpdates extends ShalemBaseDashboardConsumer(BaseClass(LitElem
         <h1>${this._update.subject}</h1>
         <p>${this._update.message}</p>
         ${this._update.actions.map(action => html`<button @click=${(e) => {e.preventDefault(); this._handleActionClick(action.action)}}>${action.title}</button>`)}
-        <button @click=${this._goBack}>Back to Dashboard</button>
+        <button @click=${this._handleDismissClick}>Dismiss</button>
         `
+    }
+
+    _handleDismissClick(e) {
+        e.preventDefault();
+        this._markUpdateAsRead();
+        this._goBack();
     }
 
     _handleActionClick(action) {
@@ -38,7 +44,7 @@ export class ShalemUpdates extends ShalemBaseDashboardConsumer(BaseClass(LitElem
     }
 
     async _markUpdateAsRead() {
-        const response = await safeFetch(`${this.restUrl}notifications/${this._update.id}/mark-read`, {
+        const response = await safeFetch(`${this.restUrl}notifications/${this._update.id}/read`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

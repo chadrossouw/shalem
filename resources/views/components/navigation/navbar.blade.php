@@ -1,1 +1,1 @@
-<shalem-navbar user="{{ $user->toJson() }}" ></shalem-navbar>
+<shalem-navbar identifier="{{ $user->type }}" ></shalem-navbar>
