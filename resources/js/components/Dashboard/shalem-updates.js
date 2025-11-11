@@ -1,7 +1,6 @@
 import { ShalemBaseDashboardConsumer } from "./shalem-base-dashboard-consumer";
 import { LitElement,html, css } from "lit";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
-import { Task } from "@lit/task";
 import { BaseClass } from "../BaseClass.js";
 import { safeFetch } from "../../common/xsrf.js";
 import FredGeek from '../../../../public/avatars/fred-geek.svg';
@@ -9,10 +8,8 @@ import FredGeek from '../../../../public/avatars/fred-geek.svg';
 export class ShalemUpdates extends ShalemBaseDashboardConsumer(BaseClass(LitElement)) {
     connectedCallback() {
         super.connectedCallback();
-        console.log(document);
         document.body.classList.add('updates');
         ({updates:this.updates} = this._dashboard);
-        console.log(this.updates);
         this._update = this.updates[0];
         this._update.actions = JSON.parse(this._update.actions);
     }
@@ -23,8 +20,15 @@ export class ShalemUpdates extends ShalemBaseDashboardConsumer(BaseClass(LitElem
     }
 
     render() {
+        let avatar = '';
+        if (this._update.avatar_id) {
+            avatar = html`<shalem-avatar avatarid="${this._update.avatar_id}"></shalem-avatar>`;
+        }
+        else{
+            avatar = html`${unsafeSVG(FredGeek)}`;
+        }
         return html`
-        ${unsafeSVG(FredGeek)}
+        ${avatar}
         <h1>${this._update.subject}</h1>
         <p>${this._update.message}</p>
         ${this._update.actions.map(action => html`<button @click=${(e) => {e.preventDefault(); this._handleActionClick(action.action)}}>${action.title}</button>`)}
@@ -35,7 +39,7 @@ export class ShalemUpdates extends ShalemBaseDashboardConsumer(BaseClass(LitElem
     _handleDismissClick(e) {
         e.preventDefault();
         this._markUpdateAsRead();
-        this._goBack();
+        //this._goBack();
     }
 
     _handleActionClick(action) {
@@ -44,7 +48,7 @@ export class ShalemUpdates extends ShalemBaseDashboardConsumer(BaseClass(LitElem
     }
 
     async _markUpdateAsRead() {
-        const response = await safeFetch(`${this.restUrl}notifications/${this._update.id}/read`, {
+        let response = await safeFetch(`${this.restUrl}notifications/${this._update.id}/read`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -55,7 +59,7 @@ export class ShalemUpdates extends ShalemBaseDashboardConsumer(BaseClass(LitElem
             console.error('Failed to mark update as read');
             return;
         }
-        console.log('Update marked as read');
+        response = await response.json();
         this.updates = [];
         this.notifications = response.notifications;
         this._updateContext({ updates: this.updates, notifications: this.notifications });

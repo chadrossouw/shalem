@@ -28,6 +28,7 @@ export class ShalemStudentDashboardHome extends ShalemBaseDashboardConsumer(Base
 
     render(){
         return html`
+        <slot></slot>
         <shalem-editable-field name="student_dashboard_welcome_message" location="student-dashboard" ?admin=${this.isAdmin}>
             <h1>${this.fields?.student_dashboard_welcome_message ?? 'Hey there'},<br> ${this.user.first_name}</h1>
         </shalem-editable-field>
@@ -53,7 +54,7 @@ export class ShalemStudentDashboardHome extends ShalemBaseDashboardConsumer(Base
                     </shalem-editable-field>
                 </h2>
                 ${uploadIcon ? html`<div class="icon" aria-hidden="true">${unsafeSVG(uploadIcon)}</div>` : ''}
-                <button @click=${() => this._handleAction({panel: 'upload', view: null})}>
+                <button @click=${() => this._handleAction({dashboard: 'documents', panel: 'upload', view: null})}>
                     Let's go
                 </button>
             </div>

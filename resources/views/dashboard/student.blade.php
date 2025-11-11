@@ -1,9 +1,7 @@
 <x-general.header title="Welcome to {{ config('app.name') }}!" />
         <x-navigation.masthead :user="$user" />
         <main id="primary" class="margins">
-            <x-navigation.navbar :user="$user" />
-            <x-navigation.breadcrumbs />
-            <shalem-student-dashboard 
+            <shalem-base-provider 
                 identifier="student" 
                 user="{{ $user->toJson() }}" 
                 fields="{{ $fields->toJson() }}" 
@@ -13,6 +11,10 @@
                 @if(isset($token))
                     token="{{ $token }}"
                 @endif
-                />
+            >
+
+                <shalem-student-dashboard 
+                identifier="student" />
+            </shalem-context-provider>
         </main>
 <x-general.footer />

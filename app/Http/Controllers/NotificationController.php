@@ -16,7 +16,6 @@ class NotificationController extends Controller
         }
         if($status === 'read'){
             $notification->read_at = now();
-
         }
         elseif($status === 'unread'){
             $notification->read_at = null;
@@ -31,6 +30,7 @@ class NotificationController extends Controller
             return response()->json(['error' => 'Invalid status.'], 400);
         }
         $notification->save();
-        return response()->json(['message' => 'Notification status updated successfully.'], 200);
+        $notifications = Notification::where('user_id', $user->id)->whereNull('read_at')->where('archived', false)->get();
+        return response()->json(['message' => 'Notification status updated successfully.', 'notifications' => $notifications], 200);
     }
 }

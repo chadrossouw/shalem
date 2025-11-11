@@ -25,6 +25,21 @@ class UserAvatarsController extends Controller
         return response()->json(['avatars' => $avatars], 200);
     }
 
+    public function getAvatar($id)
+    {
+        $avatar = Avatar::find($id);
+        if (!$avatar) {
+            return response()->json(['error' => 'Avatar not found.'], 404);
+        }
+        $avatarData = [
+            'id' => $avatar->id,
+            'name' => $avatar->name,
+            'path' => asset('storage/' . $avatar->path),
+            'svg' => file_get_contents(storage_path('app/' . $avatar->path)),
+        ];
+        return response()->json(['avatar' => $avatarData], 200);
+    }
+    
     public function setAvatar(Request $request)
     {
         $request->validate([

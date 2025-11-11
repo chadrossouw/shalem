@@ -106,7 +106,6 @@ export class ShalemResetPasswordForm extends BaseClass(LitElement) {
             body: JSON.stringify(body),
         });
         response = await response.json();
-        console.log(response);
         if(response.success){
             window.location.href = response.redirectUrl || '/dashboard';
         } else {

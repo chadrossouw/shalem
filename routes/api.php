@@ -78,6 +78,7 @@ Route::post('/update-password', function (Request $request) {
 // Avatar routes
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/avatars', [UserAvatarsController::class, 'getAvatars'])->name('api.avatars');
+    Route::get('/avatar/{id}', [UserAvatarsController::class, 'getAvatar'])->name('api.avatar');
     Route::post('/set-avatars', [UserAvatarsController::class, 'setAvatar'])->name('api.avatars.store');
 });
 

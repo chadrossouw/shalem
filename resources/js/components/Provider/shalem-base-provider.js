@@ -1,17 +1,9 @@
-import { html, css, LitElement} from 'lit';
-import { BaseClass } from '../BaseClass';
 import {ContextProvider} from '@lit/context';
 import { dashboardContext } from '../../utilities/context.js';
+import { LitElement, html } from 'lit';
 import { EventManager } from '../../utilities/events.js';
 
-export const ShalemBaseDashboard = (superClass) => class extends superClass {
-    static styles = [
-        css`
-            :host {
-                display: block;
-            }
-        `
-    ];
+export class ShalemBaseProvider extends LitElement {
 
     static properties = {
         identifier: { type: String },
@@ -24,6 +16,11 @@ export const ShalemBaseDashboard = (superClass) => class extends superClass {
         view: {type: String},
         token: {type: String, reflect: true},
     };
+
+    constructor(){
+        super();
+
+    }
 
     connectedCallback(){
         super.connectedCallback();
@@ -64,8 +61,13 @@ export const ShalemBaseDashboard = (superClass) => class extends superClass {
         this.eventManager.disconnect();
     }
 
+    render(){
+        return html`<slot></slot>`;
+    }
+    
     _handleUpdate = (e) => {
         const detail = e.detail;
+        console.log('Received dashboard update:', detail);
         let newHistory = this.history;
         if(this.dashboard !== detail.dashboard || this.panel !== detail.panel || this.view !== detail.view){
             let url = `/dashboard/`;

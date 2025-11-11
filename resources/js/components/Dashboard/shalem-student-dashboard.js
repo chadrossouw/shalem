@@ -1,20 +1,22 @@
 import {  html,css, LitElement } from "lit";
-import { ShalemBaseDashboard } from "./shalem-base-dashboard";
+import { ShalemBaseDashboardConsumer } from "./shalem-base-dashboard-consumer";
 import { BaseClass } from "../BaseClass";
 
-export class ShalemStudentDashboard extends ShalemBaseDashboard(BaseClass(LitElement)) {
+export class ShalemStudentDashboard extends ShalemBaseDashboardConsumer(BaseClass(LitElement)) {
+        static properties = {
+        ...super.properties,
+        }
+
     connectedCallback(){
         super.connectedCallback();
-        console.log(this.properties);
-        console.log(this.user);
-        console.log(this.fields);
-        console.log(this.dashboard);
-        console.log(this.panel);
-        console.log(this.view);
+
         this.isAdmin = this.user?.roles?.includes('admin') || false;
     }
 
     render(){
+        if(!this._dashboard){
+            return html`<p>Loading dashboard...</p>`;
+        }
         if(!this.user.student.avatar){
             return html`
             <h1>
@@ -39,18 +41,32 @@ export class ShalemStudentDashboard extends ShalemBaseDashboard(BaseClass(LitEle
             `;
         }
         else{
-            console.log('Rendering dashboard view:', this.dashboard);
+            let nav = html`
+            <shalem-navbar identifier="${this.identifier}" ></shalem-navbar>
+            <shalem-breadcrumbs identifier="${this.identifier}" ></shalem-breadcrumbs>
+            `;
             switch(this.dashboard){
                 case 'home':
                     return html`
                     <shalem-student-dashboard-home
                         identifier="${this.identifier}"
-                    ></shalem-student-dashboard-home>`;
+                    >
+                        ${nav}
+                    </shalem-student-dashboard-home>`;
+                case 'documents':
+                    return html`
+                    <shalem-student-dashboard-documents
+                        identifier="${this.identifier}"
+                    >
+                        ${nav}
+                    </shalem-student-dashboard-upload>`;
                 default:
                     return html`
                     <shalem-student-dashboard-home
                         identifier="${this.identifier}"
-                    ></shalem-student-dashboard-home>`;
+                    >
+                        ${nav}
+                    </shalem-student-dashboard-home>`;
             }
         }
     }
