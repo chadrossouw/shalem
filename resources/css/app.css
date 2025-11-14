@@ -1,6 +1,7 @@
 @import './animations.css';
+@import './fonts.css';
 html{
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Geologica', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
     --transition:300ms;
     --blinktransition: 15s;
@@ -14,10 +15,98 @@ html{
         --blinkdelay: 0ms;
     }
 }
+@layer accessibility{
+    .screen-reader-text {
+        border: 0;
+        clip: rect(1px, 1px, 1px, 1px);
+        clip-path: inset(50%);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute !important;
+        width: 1px;
+        word-wrap: normal !important; 
+    }
+
+    .screen-reader-text:focus {
+            background-color: #fff;
+            border-radius: 3px;
+            box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.6);
+            clip: auto !important;
+            clip-path: none;
+            color: #000;
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            height: auto;
+            left: 5px;
+            line-height: normal;
+            padding: 15px 23px 14px;
+            text-decoration: none;
+            top: 5px;
+            width: auto;
+            z-index: 100000;
+        }
+    /* Do not show the outline on the skip link target. */
+    #primary[tabindex="-1"]:focus {
+        outline: 0;
+    }
+}
 
 @layer base {
+    html{
+        --header-height: 4rem;
+        --margins:5vw;
+        --blue:#00316A;
+        --light-blue:#0083D7;
+        --green:#8AB61E;
+        --purple:#901065;
+        --yellow:#FFA700;
+        --aqua:#04898D;
+        --black:#000; 
+        --white:#fff;
+        --blue-shade-1:#3074C3;
+        --blue-shade-2:#93C1F7;
+        --light-blue-shade-1:#5EBFFD;
+        --light-blue-shade-2:#BFE6FF;
+        --green-shade-1:#B6D95F;
+        --green-shade-2:#E7F4C7;
+        --purple-shade-1:#DD70B8;
+        --purple-shade-2:#FFA9E2;
+        --yellow-shade-1:#FFA700;
+        --yellow-shade-2:#FFF3A3;
+        --margins:10vw;
+    }
+    @media screen and (min-width: 700px) {
+        html{
+            --header-height:6rem;
+            --margins:15vw;
+        }
+    }
+    @media screen and (min-width: 1000px) {
+        html{
+            --header-height:10rem;
+            --margins:calc((100vw - 780px) / 2);
+        }
+    }
+    @media screen and (min-width: 1200px) {
+        html{
+            --margins:calc((100vw - 1024px) / 2);
+        }
+    }
     body {
-        font-family: 'serif';
+        font-family: 'Geologica','serif';
+        margin:0;
+    }
+    header{
+        height: var(--header-height);
+        padding:1rem var(--margins);
+        display:block;
+    }
+    .grid{
+        display:grid;
+        gap:1rem;
     }
 }
 
