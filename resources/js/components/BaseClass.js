@@ -51,11 +51,11 @@ export const BaseClass = (superClass) => class extends superClass {
     }
 
     get eyes(){
-        return this.shadowRoot.querySelectorAll('.eyes');
+        return this.shadowRoot.querySelectorAll('.eyes,[data-eyes]');
     }
 
     get throb(){
-        return this.shadowRoot.querySelectorAll('.throb');
+        return this.shadowRoot.querySelectorAll('.throb,[data-throb]');
     }
 
     goBlink(){

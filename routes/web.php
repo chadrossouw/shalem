@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\EdAdminFetch;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\AvatarController;
+use App\Http\Controllers\PillarController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Dashboard;
 use App\Utilities\ShalemError;
@@ -32,6 +33,7 @@ Route::get('/', function (Request $request) {
 
 Route::get('/fetch-edadmin', [EdAdminFetch::class, '__invoke'])->middleware('auth:sanctum');
 Route::get('/populate-avatars', AvatarController::class)->middleware('auth:sanctum');
+Route::get('/populate-pillars', PillarController::class)->middleware('auth:sanctum');
 
 Route::get('/login',[LoginController::class,'default'])->name('login');
 Route::get('/login/student', [GoogleAuthController::class,'redirect'])->name('login.student');

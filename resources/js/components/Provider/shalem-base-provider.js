@@ -12,6 +12,7 @@ export class ShalemBaseProvider extends LitElement {
         updates: { type: Array },
         fields: { type: Array },
         dashboard: { type: String },
+        pillars: { type: Array },
         panel: {type: String},
         view: {type: String},
         token: {type: String, reflect: true},
@@ -43,6 +44,7 @@ export class ShalemBaseProvider extends LitElement {
             dashboard: this.dashboard,
             history: this.history,
             notifications: this.notifications,
+            pillars: this.pillars,
             updates: this.updates,
             panel: this.panel,
             view: this.view,
@@ -64,7 +66,7 @@ export class ShalemBaseProvider extends LitElement {
     render(){
         return html`<slot></slot>`;
     }
-    
+
     _handleUpdate = (e) => {
         const detail = e.detail;
         console.log('Received dashboard update:', detail);

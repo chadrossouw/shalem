@@ -1,11 +1,15 @@
 import { html, LitElement } from "lit";
-import { ShalemBaseDashboardConsumer } from "./shalem-base-dashboard-consumer.js";
+import { BaseDashboardConsumer } from "./base-dashboard-consumer.js";
 import { BaseClass } from "../BaseClass.js";
 import uploadIcon from "../../icons/upload-icon.svg";
+import uploadHappyIcon from "../../icons/upload-happy-icon.svg";
+import fredParty from "../../icons/fred-party.svg";
+import backArrow from "../../icons/arrow-left.svg";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { cardLinks } from "../../common/accessibility.js";
+import JSConfetti from 'js-confetti'
 
-export class ShalemStudentDashboardDocuments extends ShalemBaseDashboardConsumer(BaseClass(LitElement)){
+export class ShalemStudentDashboardDocuments extends BaseDashboardConsumer(BaseClass(LitElement)){
 
     static properties = {
         ...super.properties,
@@ -17,7 +21,20 @@ export class ShalemStudentDashboardDocuments extends ShalemBaseDashboardConsumer
 
     connectedCallback(){
         super.connectedCallback();
+        this.jsConfetti = new JSConfetti();
+        this.confettiOptions = {
+            confettiColors: [
+                '#04898D', '#00316A', '#FFA700', '#0083D7', '#901065', '#8AB61E',
+            ],
+            confettiRadius: 9,
+            confettiNumber: 1500,
+        };
         ({fields: this.fields, user: this.user} = this._dashboard);
+    }
+
+    disconnectedCallback(){
+        super.disconnectedCallback();
+        this.jsConfetti.removeCanvas();
     }
 
     updated(changedProperties){
@@ -28,7 +45,32 @@ export class ShalemStudentDashboardDocuments extends ShalemBaseDashboardConsumer
     render(){
         let panel = '';
         if(this.panel == 'upload'){
-            panel = html`
+            let header = '';
+            if(this.view == 'success'){
+                this.jsConfetti.addConfetti(
+                    this.confettiOptions
+                );
+                header = html`
+                <div class="header_with_icon">
+                    ${unsafeSVG(uploadHappyIcon)}
+                    <shalem-editable-field name="student_dashboard_documents_upload_success_header" location="student-dashboard" ?admin=${this.isAdmin}>
+                        <h1>${this.fields?.student_dashboard_documents_upload_success_header ?? 'Success!'}</h1>
+                    </shalem-editable-field>
+                    ${unsafeSVG(fredParty)}
+                </div>
+                <div class="upload_success_message">
+                    ${this.user.mentor.mentorUser.honorific} ${this.user.mentor.mentorUser.last_name} will approve within 5 days. You will be notified when your points are awarded.
+                </div>
+                <div class="button_group">
+                    <button @click=${() => this._handleAction({dashboard:'documents',panel: 'upload', view: null})}>Do it again</button>
+                    <button @click=${() => this._handleAction({dashboard:'documents',panel: 'my-documents', view: null})}>See my documents</button>
+                    <button @click=${() => this._handleAction({dashboard:'goals',panel: null, view: null})}>Set a goal</button>
+                </div>
+                `;
+            }
+            else{
+                
+                header = html`
                 <div class="header_with_icon">
                     ${unsafeSVG(uploadIcon)}
                     <shalem-editable-field name="student_dashboard_documents_upload_header" location="student-dashboard" ?admin=${this.isAdmin}>
@@ -38,9 +80,24 @@ export class ShalemStudentDashboardDocuments extends ShalemBaseDashboardConsumer
                         <p>${this.fields?.student_dashboard_documents_upload_instructions ?? 'Upload your documents here. These will award you points!'}</p>
                     </shalem-editable-field>
                 </div>
+                `;
+            }
+            panel = html`
+                ${header}
                 <shalem-student-panel-document-upload
                     identifier="${this.identifier}"
                 ></shalem-student-panel-document-upload>
+                <button class="back" @click=${() => this._handleAction({dashboard:'documents',panel: 'my-documents', view: null})}>
+                    <span>${unsafeSVG(backArrow)}</span> Back to my documents
+                </button>
+            `
+        }
+        else if (this.panel == 'my-documents'){
+            panel = html`
+                <shalem-student-panel-my-documents
+                    identifier="${this.identifier}"
+                >
+                </shalem-student-panel-my-documents>
             `
         }
         return html`

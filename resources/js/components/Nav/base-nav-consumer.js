@@ -2,7 +2,7 @@ import { ContextConsumer } from "@lit/context";
 import { dashboardContext } from "../../utilities/context.js";
 import { EventManager } from "../../utilities/events.js";
 
-export const ShalemBaseNavConsumer = (superClass) => class extends superClass{
+export const BaseNavConsumer = (superClass) => class extends superClass{
     async _markAsRead(id) {
         const response = await safeFetch(`${this.restUrl}notifications/${id}/read`, {
             method: 'POST',

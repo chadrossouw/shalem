@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Field;
+use App\Models\Pillar;
 
 class Dashboard extends Controller
 {
@@ -29,7 +30,9 @@ class Dashboard extends Controller
                 $user->load(['notifications' => function ($query) {
                     $query->where('read_at', null);
                 }]);
-                return view('dashboard.student', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'token' => $token]);
+                $user->load('mentor')->load('mentor.mentorUser');
+                $pillars = Pillar::all(['id','name','description']);
+                return view('dashboard.student', ['user' => $user, 'fields' => $fields, 'pillars' => $pillars, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'token' => $token]);
             case 'staff':
                 $role = $user->staffRole->role ?? 'staff';
                 $fields = Field::where('location','staff_dashboard')->get();

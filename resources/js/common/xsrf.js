@@ -7,7 +7,7 @@ function getCsrfTokenFromCookie() {
   return cookieValue ? decodeURIComponent(cookieValue) : null;
 }
 
-async function safeFetch(url, options = {}) {
+async function safeFetch(url, options = {},multipart=false) {
   // Default options with credentials included
   let authToken = window.sessionStorage.getItem('auth_token');
   
@@ -18,6 +18,10 @@ async function safeFetch(url, options = {}) {
       'Accept': 'application/json',
     }
   };
+  if(multipart){
+      delete defaultOptions.headers['Content-Type'];
+      delete defaultOptions.headers['Accept'];
+  }
   if(authToken){
       defaultOptions.headers['Authorization'] = `Bearer ${authToken}`;
   }

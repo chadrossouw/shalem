@@ -1,12 +1,12 @@
 import { html, LitElement } from "lit";
-import { ShalemBaseDashboardConsumer } from "./shalem-base-dashboard-consumer";
+import { BaseDashboardConsumer } from "./base-dashboard-consumer.js";
 import { BaseClass } from "../BaseClass.js";
 import uploadIcon from "../../icons/upload-icon.svg";
 import goalsIcon from "../../icons/goals-icon.svg";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { cardLinks } from "../../common/accessibility.js";
 
-export class ShalemStudentDashboardHome extends ShalemBaseDashboardConsumer(BaseClass(LitElement)){
+export class ShalemStudentDashboardHome extends BaseDashboardConsumer(BaseClass(LitElement)){
 
     static properties = {
         ...super.properties,

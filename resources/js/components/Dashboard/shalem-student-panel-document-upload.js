@@ -1,12 +1,12 @@
 import { html, LitElement } from "lit";
-import { ShalemBaseDashboardConsumer } from "./shalem-base-dashboard-consumer.js";
+import { BaseDashboardConsumer } from "./base-dashboard-consumer.js";
 import { BaseClass } from "../BaseClass.js";
-import { BaseForm } from "../Forms/base-form.js";
+import { BaseForm } from "../Form/base-form.js";
 import uploadIcon from "../../icons/upload-icon.svg";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { cardLinks } from "../../common/accessibility.js";
 
-export class ShalemStudentPanelDocumentUpload extends BaseForm(ShalemBaseDashboardConsumer(BaseClass(LitElement))){
+export class ShalemStudentPanelDocumentUpload extends BaseForm(BaseDashboardConsumer(BaseClass(LitElement))){
 
     static properties = {
         ...super.properties,
@@ -25,7 +25,6 @@ export class ShalemStudentPanelDocumentUpload extends BaseForm(ShalemBaseDashboa
         cardLinks(this.shadowRoot);
     }
 
-
     render(){
        if(this.view == 'success'){
             return html`
@@ -36,7 +35,7 @@ export class ShalemStudentPanelDocumentUpload extends BaseForm(ShalemBaseDashboa
         }
         else{
             return html`
-            <form @submit=${this._handleSubmit}>
+            <form @submit=${this._handleSubmit} action="${this.restUrl}document/upload" enctype="multipart/form-data">
                 <div class="input_group">
                     <label for="document_title">Document Title 
                         <shalem-tooltip>
@@ -57,12 +56,7 @@ export class ShalemStudentPanelDocumentUpload extends BaseForm(ShalemBaseDashboa
                     </label>
                     <select id="document_pillar" name="document_pillar" required>
                         <option value="" disabled selected>Select a pillar</option>
-                        <option value="academics">Academics</option>
-                        <option value="arts-and-culture">Arts and Culture</option>
-                        <option value="jewish-life">Jewish Life</option>  
-                        <option value="menschlichkeit">Menschlichkeit</option>
-                        <option value="service-and-leadership">Service and Leadership</option>     
-                        <option value="sport">Sport</option>
+                        ${this.pillars?.map(pillar => html`<option value="${pillar.id}">${pillar.name}</option>`)}
                     </select>
                 </div>
                 <div class="input_group">

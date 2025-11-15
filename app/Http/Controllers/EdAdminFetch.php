@@ -67,12 +67,13 @@ class EdAdminFetch extends Controller
                             if ($staffMember->trashed()) {
                                 $staffMember->restore();
                             }
-                            $new = $staffMember->first_name !== $staff_member['FirstName'] || $staffMember->last_name !== $staff_member['LastName'] || $staffMember->email !== $staff_member['Email'];
+                            $new = $staffMember->first_name !== $staff_member['FirstName'] || $staffMember->last_name !== $staff_member['LastName'] || $staffMember->email !== $staff_member['Email'] || $staffMember->honorific !== $staff_member['Title'];
                             if($new){
                                 $staffMember->update([
                                         'first_name' => $staff_member['FirstName'] ?: '',
                                         'last_name' => $staff_member['LastName'] ?: '',
                                         'email' => $staff_member['Email'] ?: '',
+                                        'honorific' => $staff_member['Title'] ?: '',
                                 ]);
                             }
                         }
@@ -80,6 +81,7 @@ class EdAdminFetch extends Controller
                             $staffMember = User::create([
                                 'first_name' => $staff_member['FirstName'] ?: '',
                                 'last_name' => $staff_member['LastName'] ?: '',
+                                'honorific' => $staff_member['Title'] ?: '',
                                 'email' => $staff_member['Email'] ?: '',
                                 'type' => 'staff',
                                 'edadmin_id' => $staff_member['ID'],

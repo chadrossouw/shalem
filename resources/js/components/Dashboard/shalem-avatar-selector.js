@@ -1,4 +1,4 @@
-import { ShalemBaseDashboardConsumer } from "./shalem-base-dashboard-consumer";
+import { BaseDashboardConsumer } from "./base-dashboard-consumer.js";
 import { LitElement,html, css } from "lit";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { Task } from "@lit/task";
@@ -7,7 +7,7 @@ import arrowLeftSvg from "../../icons/arrow-left.svg";
 import { BaseClass } from "../BaseClass.js";
 import { safeFetch } from "../../common/xsrf.js";
 
-export class ShalemAvatarSelector extends ShalemBaseDashboardConsumer(BaseClass(LitElement)) {
+export class ShalemAvatarSelector extends BaseDashboardConsumer(BaseClass(LitElement)) {
 
     connectedCallback() {
         super.connectedCallback();

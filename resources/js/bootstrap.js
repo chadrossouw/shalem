@@ -23,6 +23,10 @@ import { ShalemLoginRedirector } from "./components/LoginForm/shalem-login-redir
 import { ShalemUpdates } from "./components/Dashboard/shalem-updates.js";
 import { ShalemStudentDashboardDocuments } from "./components/Dashboard/shalem-student-dashboard-documents.js";
 
+//Documents
+import { ShalemStudentPanelDocumentUpload } from "./components/Dashboard/shalem-student-panel-document-upload.js";
+import { ShalemStudentPanelMyDocuments } from "./components/Dashboard/shalem-student-panel-my-documents.js";
+
 //Nav elements
 import { ShalemNavNotifications } from "./components/Notifications/shalem-nav-notifications.js";
 import { ShalemNavbar } from "./components/Nav/shalem-navbar.js";
@@ -45,6 +49,10 @@ window.customElements.define("shalem-avatar-selector", ShalemAvatarSelector);
 window.customElements.define("shalem-login-redirector", ShalemLoginRedirector);
 window.customElements.define("shalem-updates", ShalemUpdates);
 window.customElements.define("shalem-student-dashboard-documents", ShalemStudentDashboardDocuments);
+
+//Documents
+window.customElements.define("shalem-student-panel-document-upload", ShalemStudentPanelDocumentUpload);
+window.customElements.define("shalem-student-panel-my-documents", ShalemStudentPanelMyDocuments);
 
 //Nav elements
 window.customElements.define("shalem-nav-notifications", ShalemNavNotifications);

@@ -1,11 +1,11 @@
-import { ShalemBaseDashboardConsumer } from "./shalem-base-dashboard-consumer";
+import { BaseDashboardConsumer } from "./base-dashboard-consumer.js";
 import { LitElement,html, css } from "lit";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { BaseClass } from "../BaseClass.js";
 import { safeFetch } from "../../common/xsrf.js";
 import FredGeek from '../../../../public/avatars/fred-geek.svg';
 
-export class ShalemUpdates extends ShalemBaseDashboardConsumer(BaseClass(LitElement)) {
+export class ShalemUpdates extends BaseDashboardConsumer(BaseClass(LitElement)) {
     connectedCallback() {
         super.connectedCallback();
         document.body.classList.add('updates');

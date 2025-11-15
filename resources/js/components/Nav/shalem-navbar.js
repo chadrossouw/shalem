@@ -1,6 +1,6 @@
-import { ShalemBaseNavConsumer } from "./shalem-base-nav-consumer";
+import { BaseNavConsumer } from "./base-nav-consumer";
 import { BaseClass } from "../BaseClass";
-import { ShalemBaseDashboardConsumer } from "../Dashboard/shalem-base-dashboard-consumer";
+import { BaseDashboardConsumer } from "../Dashboard/base-dashboard-consumer";
 import { html, LitElement, css } from "lit";
 
 import dashboardNav from "../../icons/dashboard-nav.svg";
@@ -11,7 +11,7 @@ import notificationsNavClosed from "../../icons/notifications-nav-closed.svg";
 import notificationsNavOpen from "../../icons/notifications-nav-open.svg";
 import close from "../../icons/close.svg";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
-export class ShalemNavbar extends ShalemBaseNavConsumer(ShalemBaseDashboardConsumer(BaseClass(LitElement))) {
+export class ShalemNavbar extends BaseNavConsumer(BaseDashboardConsumer(BaseClass(LitElement))) {
     static properties = {
         ...super.properties,
         _dismissedNotifications: { type: Boolean, state: true },
@@ -60,11 +60,11 @@ export class ShalemNavbar extends ShalemBaseNavConsumer(ShalemBaseDashboardConsu
                 <div class="navbar">      
                     <nav>
                         <ul>
-                            <li><a href="/dashboard" @click=${(e) => this._handleNavigation(e, 'dashboard')} aria-current="${currentPage === '' ? 'page' : 'false'}"><span aria-hidden="true">${unsafeSVG(dashboardNav)}</span><span class="screen-reader-text">Dashboard</span></a></li>
-                            <li><a href="/dashboard/points" @click=${(e) => this._handleNavigation(e, 'points')} aria-current="${currentPage === 'points' ? 'page' : 'false'}"><span aria-hidden="true">${unsafeSVG(pointsNav)}</span><span class="screen-reader-text">Points</span></a></li>
-                            <li><a href="/dashboard/upload" @click=${(e) => this._handleNavigation(e, 'upload')} aria-current="${currentPage === 'upload' ? 'page' : 'false'}"><span aria-hidden="true">${unsafeSVG(uploadNav)}</span><span class="screen-reader-text">Upload</span></a></li>
-                            <li><a href="/dashboard/goals" @click=${(e) => this._handleNavigation(e, 'goals')} aria-current="${currentPage === 'goals' ? 'page' : 'false'}"><span aria-hidden="true">${unsafeSVG(goalsNav)}</span><span class="screen-reader-text">Goals</span></a></li>
-                            <li><a href="/dashboard/notifications" @click=${(e) => this._handleNavigation(e, 'notifications')} aria-current="${currentPage === 'notifications' ? 'page' : 'false'}"><span aria-hidden="true">${unsafeSVG(navIcon)}</span><span class="screen-reader-text">Notifications</span></a></li>
+                            <li><a href="/dashboard" @click=${(e) => this._handleNavigation(e, null, null)} aria-current="${currentPage === '' ? 'page' : 'false'}"><span aria-hidden="true">${unsafeSVG(dashboardNav)}</span><span class="screen-reader-text">Dashboard</span></a></li>
+                            <li><a href="/dashboard/points" @click=${(e) => this._handleNavigation(e, 'points', null)} aria-current="${currentPage === 'points' ? 'page' : 'false'}"><span aria-hidden="true">${unsafeSVG(pointsNav)}</span><span class="screen-reader-text">Points</span></a></li>
+                            <li><a href="/dashboard/upload" @click=${(e) => this._handleNavigation(e, 'documents','upload')} aria-current="${currentPage === 'upload' ? 'page' : 'false'}"><span aria-hidden="true">${unsafeSVG(uploadNav)}</span><span class="screen-reader-text">Upload</span></a></li>
+                            <li><a href="/dashboard/goals" @click=${(e) => this._handleNavigation(e, 'goals',null)} aria-current="${currentPage === 'goals' ? 'page' : 'false'}"><span aria-hidden="true">${unsafeSVG(goalsNav)}</span><span class="screen-reader-text">Goals</span></a></li>
+                            <li><a href="/dashboard/notifications" @click=${(e) => this._handleNavigation(e, 'notifications', null)} aria-current="${currentPage === 'notifications' ? 'page' : 'false'}"><span aria-hidden="true">${unsafeSVG(navIcon)}</span><span class="screen-reader-text">Notifications</span></a></li>
                         </ul>
                     </nav>
                 </div>
@@ -91,9 +91,9 @@ export class ShalemNavbar extends ShalemBaseNavConsumer(ShalemBaseDashboardConsu
         });
     }
 
-    _handleNavigation(e, panel){
+    _handleNavigation(e, dashboard, panel){
         e.preventDefault();
-        this._handleAction({panel: panel, view: null});
+        this._handleAction({dashboard:dashboard, panel:panel,view: null});
     }
 
     _getNotificationIcon(){

@@ -65,4 +65,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Notification::class);
     }
+
+    public function mentor(): HasOne
+    {
+        return $this->hasOne(Mentor::class,'student_id','id');
+    }
+
+    public function mentee(): HasMany
+    {
+        return $this->hasMany(Mentor::class, 'user_id', 'id');
+    }
 }

@@ -1,7 +1,7 @@
 import { safeFetch } from "../../common/xsrf";
 import { css } from "lit";
 
-export const ShalemBaseNotificationsConsumer = (superClass) => class extends superClass{
+export const BaseNotificationsConsumer = (superClass) => class extends superClass{
 
     _goBack(e){
         e?.preventDefault();

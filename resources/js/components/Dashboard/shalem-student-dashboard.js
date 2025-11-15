@@ -1,15 +1,15 @@
 import {  html,css, LitElement } from "lit";
-import { ShalemBaseDashboardConsumer } from "./shalem-base-dashboard-consumer";
+import { BaseDashboardConsumer } from "./base-dashboard-consumer";
 import { BaseClass } from "../BaseClass";
 
-export class ShalemStudentDashboard extends ShalemBaseDashboardConsumer(BaseClass(LitElement)) {
-        static properties = {
+export class ShalemStudentDashboard extends BaseDashboardConsumer(BaseClass(LitElement)) {
+    static properties = {
         ...super.properties,
-        }
+    }
 
     connectedCallback(){
         super.connectedCallback();
-
+        console.log('Student Dashboard connected');
         this.isAdmin = this.user?.roles?.includes('admin') || false;
     }
 

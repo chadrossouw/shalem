@@ -4,7 +4,7 @@ import { ContextConsumer } from "@lit/context";
 import { dashboardContext } from "../../utilities/context.js";
 import { EventManager } from "../../utilities/events.js";
 
-export const ShalemBaseDashboardConsumer = (superClass) => class extends superClass{
+export const BaseDashboardConsumer = (superClass) => class extends superClass{
     
     static properties = {
         ...super.properties,
@@ -16,6 +16,7 @@ export const ShalemBaseDashboardConsumer = (superClass) => class extends superCl
         fields: { type: Array, state:true },
         dashboard: { type: String , state:true},
         panel: {type: String, state:true},
+        pillars: { type: Array, state:true },
         view: {type: String, state:true},
     }
     
@@ -31,7 +32,6 @@ export const ShalemBaseDashboardConsumer = (superClass) => class extends superCl
     }
 
     _handleContextUpdate(value){
-        console.log('Dashboard context updated:', value);
         this._dashboard = value;
         this._populateStateFromContext();
         if(!this.isAdmin){
@@ -40,7 +40,7 @@ export const ShalemBaseDashboardConsumer = (superClass) => class extends superCl
     }
 
     _populateStateFromContext(){
-        ({user: this.user, notifications: this.notifications, updates: this.updates, fields: this.fields, dashboard: this.dashboard, history: this.history, panel: this.panel, view: this.view} = this._dashboard);
+        ({user: this.user, notifications: this.notifications, updates: this.updates, pillars:this.pillars, fields: this.fields, dashboard: this.dashboard, history: this.history, panel: this.panel, view: this.view} = this._dashboard);
     }
 
     _updateContext(newValues){

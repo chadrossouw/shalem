@@ -1,10 +1,10 @@
-import { ShalemBaseNotificationsConsumer } from "./shalem-base-notification-consumer";
-import { ShalemBaseDashboardConsumer } from "../Dashboard/shalem-base-dashboard-consumer";
+import { BaseNotificationsConsumer } from "./base-notification-consumer";
+import { BaseDashboardConsumer } from "../Dashboard/base-dashboard-consumer";
 import { BaseClass } from "../BaseClass";
 import { html, LitElement,css } from "lit";
 
 
-export class ShalemNavNotifications extends ShalemBaseNotificationsConsumer(ShalemBaseDashboardConsumer(BaseClass(LitElement))) {
+export class ShalemNavNotifications extends BaseNotificationsConsumer(BaseDashboardConsumer(BaseClass(LitElement))) {
     constructor(){
         super();
     }

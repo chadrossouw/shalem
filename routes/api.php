@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserAvatarsController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\DocumentController;
 use App\Models\User;
 
 
@@ -85,4 +86,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 // Notifications routes
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/notifications/{id}/{status}', [NotificationController::class, 'handleStatusUpdate'])->name('api.notifications.status');
+});
+
+//Document Routes
+Route::middleware(['auth:sanctum'])->group(function(){
+    Route::post('/document/upload', [DocumentController::class, 'upload'])->name('api.document.upload');
 });
