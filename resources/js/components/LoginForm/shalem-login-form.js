@@ -24,6 +24,16 @@ export class ShalemLoginForm extends BaseClass(LitElement ) {
 
     async connectedCallback(){
         super.connectedCallback();
+        //Get URL query string parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const loggedOut = urlParams.get('logged_out');
+        if(loggedOut){
+            this.formResponse.innerHTML = 'You have been logged out successfully.';
+            //clear local storage
+            window.sessionStorage.removeItem('auth_token');
+            //clear google cookies
+
+        }
        // let response = await safeFetch(`${this.baseUrl}sanctum/csrf-cookie`, { credentials: 'include' }, true);
     }
 

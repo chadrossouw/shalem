@@ -17,3 +17,5 @@ Schedule::command('auth:clear-resets')->everyFifteenMinutes();
 Schedule::call(PillarController::class)->dailyAt('0:00'); // Update pillars daily at midnight
 
 Schedule::call(NotificationMailController::class)->dailyAt('7:30'); // Send notification summary emails daily at 8 AM
+
+Schedule::command('sanctum:prune-expired --hours=24')->daily();

@@ -35,9 +35,10 @@ class Dashboard extends Controller
                 return view('dashboard.student', ['user' => $user, 'fields' => $fields, 'pillars' => $pillars, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'token' => $token]);
             case 'staff':
                 $role = $user->staffRole->role ?? 'staff';
+                $pillars = Pillar::all(['id','name','description']);
                 $fields = Field::where('location','staff_dashboard')->get();
                 if($role=='admin'||$role=='superadmin'){
-                    return view('dashboard.admin', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'token' => $token]);
+                    return view('dashboard.staff', ['user' => $user, 'fields' => $fields, 'pillars'=>$pillars,'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'token' => $token]);
                 }
                 elseif($role=='grade_head'){
                     $fields = Field::where('location','staff_dashboard')->get();

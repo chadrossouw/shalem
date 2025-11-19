@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Document extends Model
 {
@@ -13,8 +14,13 @@ class Document extends Model
         return $this->hasOne(User::class, 'id', 'user_id');
     }
 
-    public function status(): HasOne
+    public function document_status(): HasOne
     {
-        return $this->hasOne(DocumentStatus::class, 'id', 'document_status_id');
+        return $this->hasOne(DocumentStatus::class,  'document_id', 'id')->latestOfMany();
+    }
+
+    public function document_statuses()
+    {
+        return $this->hasMany(DocumentStatus::class,  'document_id', 'id');
     }
 }

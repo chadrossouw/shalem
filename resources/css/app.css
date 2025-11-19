@@ -6,6 +6,7 @@ html{
     --transition:300ms;
     --blinktransition: 15s;
     --blinkdelay: 5s;
+    --throbtransition: 2s;
 }
 
 @media (prefers-reduced-motion: reduce) {

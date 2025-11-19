@@ -1,3 +1,18 @@
-<div>
-    Hello Worlds
-    <!-- The navigation menu will be implemented here in the future. -->
+<x-general.header title="Welcome to {{ config('app.name') }}!" />
+        <x-navigation.masthead :user="$user" />
+        <main id="primary" class="margins">
+            <shalem-base-provider 
+                identifier="staff" 
+                user="{{ $user->toJson() }}" 
+                fields="{{ $fields->toJson() }}" 
+                dashboard="{{ $dashboard }}" 
+                panel="{{ $panel }}"
+                view="{{ $view }}"
+                pillars="{{ $pillars->toJson() }}"
+                @if(isset($token))
+                    token="{{ $token }}"
+                @endif
+            >
+            </shalem-context-provider>
+        </main>
+<x-general.footer />

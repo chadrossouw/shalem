@@ -14,6 +14,7 @@ import { ShalemResetPasswordForm } from "./components/ResetPasswordForm/shalem-r
 //Utility components
 import { ShalemEditableField } from "./components/EditableField/shalem-editable-field";
 import { ShalemAvatar } from "./components/Avatar/shalem-avatar.js";
+import { ShalemPaginator } from "./components/Pagination/shalem-paginator.js";
 
 //Student Dashboard elements
 import { ShalemStudentDashboard } from "./components/Dashboard/shalem-student-dashboard.js";
@@ -24,8 +25,9 @@ import { ShalemUpdates } from "./components/Dashboard/shalem-updates.js";
 import { ShalemStudentDashboardDocuments } from "./components/Dashboard/shalem-student-dashboard-documents.js";
 
 //Documents
-import { ShalemStudentPanelDocumentUpload } from "./components/Dashboard/shalem-student-panel-document-upload.js";
-import { ShalemStudentPanelMyDocuments } from "./components/Dashboard/shalem-student-panel-my-documents.js";
+import { ShalemStudentPanelDocumentUpload } from "./components/Dashboard/Panel/shalem-student-panel-document-upload.js";
+import { ShalemStudentPanelMyDocuments } from "./components/Dashboard/Panel/shalem-student-panel-my-documents.js";
+import { ShalemStudentPanelMyDocumentsList } from "./components/Dashboard/Panel/shalem-student-panel-my-documents-list.js";
 
 //Nav elements
 import { ShalemNavNotifications } from "./components/Notifications/shalem-nav-notifications.js";
@@ -41,7 +43,7 @@ window.customElements.define("shalem-reset-password-form", ShalemResetPasswordFo
 //Utility components
 window.customElements.define("shalem-editable-field", ShalemEditableField);
 window.customElements.define("shalem-avatar", ShalemAvatar);
-
+window.customElements.define("shalem-paginator", ShalemPaginator);
 //Student Dashboard elements
 window.customElements.define("shalem-student-dashboard", ShalemStudentDashboard);
 window.customElements.define("shalem-student-dashboard-home", ShalemStudentDashboardHome);
@@ -53,6 +55,7 @@ window.customElements.define("shalem-student-dashboard-documents", ShalemStudent
 //Documents
 window.customElements.define("shalem-student-panel-document-upload", ShalemStudentPanelDocumentUpload);
 window.customElements.define("shalem-student-panel-my-documents", ShalemStudentPanelMyDocuments);
+window.customElements.define("shalem-student-panel-my-documents-list", ShalemStudentPanelMyDocumentsList);
 
 //Nav elements
 window.customElements.define("shalem-nav-notifications", ShalemNavNotifications);

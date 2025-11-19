@@ -8,7 +8,7 @@ const blink = (eye) => {
 
 const throb = (eye) => {
     if(!eye.classList.contains('throbbing')){
-        eye.style.animationDuration = `calc(${Math.random()} * var(--throbtransition) + 2000ms)`;
+        eye.style.animationDuration = `calc(var(--throbtransition))`;
         eye.classList.add('throbbing');
     }
 };

@@ -32,13 +32,7 @@ class ProcessDocumentNotifications
         $mentor = $user->mentor;
 
         if ($mentor) {
-            $notification = new Notification();
-            $notification->user_id = $mentor->user_id;
-            $notification->type = 'document_uploaded';
-            $notification->sender_id = $user->id;
-            $notification->subject = 'New Document Uploaded';
-            $notification->message = "A new document '{$document->title}' has been uploaded by {$user->first_name} {$user->last_name}.";
-            $notification->action = [
+            $actions = [
                 ["title"=>"Approve Document",
                     "action"=>[
                         "view"=> null,
@@ -47,6 +41,13 @@ class ProcessDocumentNotifications
                     ]
                 ]
             ];
+            $notification = new Notification();
+            $notification->user_id = $mentor->user_id;
+            $notification->type = 'document_uploaded';
+            $notification->sender_id = $user->id;
+            $notification->subject = 'New Document Uploaded';
+            $notification->message = "A new document '{$document->title}' has been uploaded by {$user->first_name} {$user->last_name}.";
+            $notification->actions = json_encode($actions);
             $notification->save();
         }
     }

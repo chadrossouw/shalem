@@ -36,7 +36,6 @@ class GoogleAuthController extends Controller
         }
         // Check if the user already exists in the database
         $existingUser = User::where('email', $user->email)->first();
-
         if ($existingUser && in_array($existingUser->type, ['student', 'staff'])) {
             // Log the user in if they already exist
             Auth::login($existingUser, true); // true for remember me

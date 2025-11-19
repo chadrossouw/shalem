@@ -9,6 +9,7 @@ export class ShalemBaseProvider extends LitElement {
         identifier: { type: String },
         user: { type: Object },
         notifications: { type: Array },
+        documents: { type: Object },
         updates: { type: Array },
         fields: { type: Array },
         dashboard: { type: String },
@@ -37,6 +38,9 @@ export class ShalemBaseProvider extends LitElement {
             this.notifications = this.user.notifications??[];
             this.updates = this.notifications.filter(notification => notification.type === 'update');
         }
+        if(!this.documents){
+            this.documents = [];
+        }
         this.history=[{ dashboard: this.dashboard, panel: this.panel, view: this.view }];
         this.dashboardContext = {
             user: this.user,
@@ -44,6 +48,7 @@ export class ShalemBaseProvider extends LitElement {
             dashboard: this.dashboard,
             history: this.history,
             notifications: this.notifications,
+            documents: this.documents,
             pillars: this.pillars,
             updates: this.updates,
             panel: this.panel,
@@ -51,6 +56,7 @@ export class ShalemBaseProvider extends LitElement {
             breadcrumb: this._setBreadcrumb(),
             title: this._setTitle(),
             nav: this._setNav(),
+            documentApprovalTime: 3, //days
         };
         this.eventManager = new EventManager(this);
         this.eventManager.listen(`shalem-dashboard-${this.identifier}-update`,this._handleUpdate);

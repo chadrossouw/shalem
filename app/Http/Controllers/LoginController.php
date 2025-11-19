@@ -65,7 +65,9 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         $user = Auth::user();
-        $user->tokens()->delete();
+        if($user){
+            $user->tokens()->delete();
+        }
         
         Auth::logout();
     
@@ -73,6 +75,6 @@ class LoginController extends Controller
     
         $request->session()->regenerateToken();
     
-        return redirect('/');
+        return redirect('/?logged_out=true');
     }
 }

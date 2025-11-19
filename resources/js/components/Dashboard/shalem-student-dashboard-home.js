@@ -18,6 +18,7 @@ export class ShalemStudentDashboardHome extends BaseDashboardConsumer(BaseClass(
 
     connectedCallback(){
         super.connectedCallback();
+        
         ({fields: this.fields, user: this.user} = this._dashboard);
     }
 
@@ -25,6 +26,9 @@ export class ShalemStudentDashboardHome extends BaseDashboardConsumer(BaseClass(
         cardLinks(this.shadowRoot);
     }
 
+    firstUpdated(){
+        this._setDocumentTitle('My dashboard');
+    }
 
     render(){
         return html`
@@ -43,7 +47,7 @@ export class ShalemStudentDashboardHome extends BaseDashboardConsumer(BaseClass(
                     </shalem-editable-field>
                 </h2>
                 <shalem-points-icon></shalem-points-icon>
-                <button @click=${() => this._handleAction({panel: 'points', view: null})}>
+                <button class="card_target" @click=${() => this._handleAction({panel: 'points', view: null})}>
                     Let's go
                 </button>
             </div>
@@ -54,7 +58,7 @@ export class ShalemStudentDashboardHome extends BaseDashboardConsumer(BaseClass(
                     </shalem-editable-field>
                 </h2>
                 ${uploadIcon ? html`<div class="icon" aria-hidden="true">${unsafeSVG(uploadIcon)}</div>` : ''}
-                <button @click=${() => this._handleAction({dashboard: 'documents', panel: 'upload', view: null})}>
+                <button class="card_target" @click=${() => this._handleAction({dashboard: 'documents', panel: 'upload', view: null})}>
                     Let's go
                 </button>
             </div>
@@ -65,7 +69,7 @@ export class ShalemStudentDashboardHome extends BaseDashboardConsumer(BaseClass(
                     </shalem-editable-field>
                 </h2>
                 ${goalsIcon ? html`<div class="icon" aria-hidden="true">${unsafeSVG(goalsIcon)}</div>` : ''}
-                <button @click=${() => this._handleAction({panel: 'goals', view: null})}>
+                <button class="card_target" @click=${() => this._handleAction({panel: 'goals', view: null})}>
                     Let's go
                 </button>
             </div>

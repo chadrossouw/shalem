@@ -21,6 +21,7 @@ class User extends Authenticatable
         'email', 
         'first_name', 
         'last_name', 
+        'honorific',
         'type', 
         'edadmin_id', 
         'password', 

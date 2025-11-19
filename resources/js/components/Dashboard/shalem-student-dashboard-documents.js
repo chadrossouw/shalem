@@ -47,6 +47,7 @@ export class ShalemStudentDashboardDocuments extends BaseDashboardConsumer(BaseC
         if(this.panel == 'upload'){
             let header = '';
             if(this.view == 'success'){
+                this._setDocumentTitle('Upload Success');
                 this.jsConfetti.addConfetti(
                     this.confettiOptions
                 );
@@ -57,9 +58,11 @@ export class ShalemStudentDashboardDocuments extends BaseDashboardConsumer(BaseC
                         <h1>${this.fields?.student_dashboard_documents_upload_success_header ?? 'Success!'}</h1>
                     </shalem-editable-field>
                     ${unsafeSVG(fredParty)}
-                </div>
+                </div>`;
+                panel = html`
+                ${header}
                 <div class="upload_success_message">
-                    ${this.user.mentor.mentorUser.honorific} ${this.user.mentor.mentorUser.last_name} will approve within 5 days. You will be notified when your points are awarded.
+                    ${this.user.mentor.mentor_user.honorific} ${this.user.mentor.mentor_user.last_name} will approve within ${this.documentApprovalTime} days. You will be notified when your points are awarded.
                 </div>
                 <div class="button_group">
                     <button @click=${() => this._handleAction({dashboard:'documents',panel: 'upload', view: null})}>Do it again</button>
@@ -69,7 +72,7 @@ export class ShalemStudentDashboardDocuments extends BaseDashboardConsumer(BaseC
                 `;
             }
             else{
-                
+                this._setDocumentTitle('Upload a document');
                 header = html`
                 <div class="header_with_icon">
                     ${unsafeSVG(uploadIcon)}
@@ -81,16 +84,17 @@ export class ShalemStudentDashboardDocuments extends BaseDashboardConsumer(BaseC
                     </shalem-editable-field>
                 </div>
                 `;
+                panel = html`
+                    ${header}
+                    <shalem-student-panel-document-upload
+                        identifier="${this.identifier}"
+                    ></shalem-student-panel-document-upload>
+                    <button class="back" @click=${() => this._handleAction({dashboard:'documents',panel: 'my-documents', view: null})}>
+                        <span>${unsafeSVG(backArrow)}</span> Back to my documents
+                    </button>
+                `
             }
-            panel = html`
-                ${header}
-                <shalem-student-panel-document-upload
-                    identifier="${this.identifier}"
-                ></shalem-student-panel-document-upload>
-                <button class="back" @click=${() => this._handleAction({dashboard:'documents',panel: 'my-documents', view: null})}>
-                    <span>${unsafeSVG(backArrow)}</span> Back to my documents
-                </button>
-            `
+            
         }
         else if (this.panel == 'my-documents'){
             panel = html`

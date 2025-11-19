@@ -91,4 +91,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
 //Document Routes
 Route::middleware(['auth:sanctum'])->group(function(){
     Route::post('/document/upload', [DocumentController::class, 'upload'])->name('api.document.upload');
+    Route::get('/documents', [DocumentController::class, 'list'])->name('api.documents.list');
 });
