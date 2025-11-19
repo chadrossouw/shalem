@@ -48,11 +48,11 @@ export class ShalemStudentPanelMyDocumentsList extends BaseDashboardConsumer(Bas
         if (document.document_status.status === 'pending') {
             //compare document created time to current time, if more than 3 days have passed, allow help button
             let createdDate = new Date(document.created_at);
-            let createdDatePlus5 =  new Date(createdDate);
-            createdDatePlus5.setDate(createdDate.getDate() + this.documentApprovalTime);
+            let createdDatePlusAppTime =  new Date(createdDate);
+            createdDatePlusAppTime.setDate(createdDate.getDate() + this.documentApprovalTime);
             let currentDate = new Date();
             let helpButton = '';
-            if (currentDate > createdDatePlus5) {
+            if (currentDate > createdDatePlusAppTime) {
                 helpButton = html`<button @click=${() => this._helpWithDocument(document)}>${unsafeSVG(help)}Help</button>`;
             }
             return html`
