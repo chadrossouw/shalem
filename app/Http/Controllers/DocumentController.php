@@ -48,4 +48,18 @@ class DocumentController extends Controller
         });
         return response()->json(['documents' => $documents], 200);
     }
+
+    public function search(Request $request){
+        $user = $request->user();
+        $query = $request->input('query','');
+        $documents = Document::search($query)
+            ->where('user_id', $user->id)
+            ->get();
+        $documents->load('document_status');
+        $documents->map(function($document) {
+            $document->document_status->load('user');
+            return $document;
+        });
+        return response()->json(['documents' => $documents], 200);
+    }
 }
