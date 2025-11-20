@@ -6,6 +6,5 @@ export const PaginationListener = (superClass) => class extends superClass{
 
     _handlePaginationChange(e){
         // To be implemented by the consuming class
-        console.log(e);
     }
 }

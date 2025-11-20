@@ -37,6 +37,36 @@ export const BaseClass = (superClass) => class extends superClass {
                 transform-box: fill-box;
                 transform-origin: center bottom;
             }
+            .loading{
+                position: relative;
+            }
+            .loading::after{
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                backdrop-filter: blur(4px);
+                z-index: 10;
+            }
+            .loading::before{
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 40px;
+                height: 40px;
+                margin: -20px 0 0 -20px;
+                border: 4px solid var(--blue);
+                border-top-color: var(--yellow);
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                z-index: 11;
+            }
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
         `
     ];
 

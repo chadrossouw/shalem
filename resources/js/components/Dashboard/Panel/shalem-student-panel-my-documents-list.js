@@ -15,11 +15,12 @@ export class ShalemStudentPanelMyDocumentsList extends BaseDashboardConsumer(Bas
     }
 
     render(){
-        if(this.documents && this.documents.data?.length > 0){
-            console.log(this.documents.data);
+        let page = this.documentsPagination?.current_page ?? 1;
+        if(this.documents[page] && this.documents[page].length > 0){
+
             return html`
                 <ul class="documents_list">
-                    ${this.documents.data.map(document => {
+                    ${this.documents[page].map(document => {
                         console.log(document);
                         let date = dateToString(document.created_at);
                         let buttons = this._renderActions(document);

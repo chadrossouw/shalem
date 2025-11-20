@@ -8,6 +8,7 @@
                 dashboard="{{ $dashboard }}" 
                 panel="{{ $panel }}"
                 view="{{ $view }}"
+                action="{{ $action }}"
                 pillars="{{ $pillars->toJson() }}"
                 @if(isset($token))
                     token="{{ $token }}"

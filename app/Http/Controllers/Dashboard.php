@@ -10,7 +10,7 @@ use App\Models\Pillar;
 class Dashboard extends Controller
 {
     //
-    public function show(Request $request, $dashboard = 'home', $panel = '', $view = ''){
+    public function show(Request $request, $dashboard = 'home', $panel = '', $view = '', $action = ''){
         $user  = Auth::user();
         
         $type = $user->type;
@@ -32,25 +32,25 @@ class Dashboard extends Controller
                 }]);
                 $user->load('mentor')->load('mentor.mentorUser');
                 $pillars = Pillar::all(['id','name','description']);
-                return view('dashboard.student', ['user' => $user, 'fields' => $fields, 'pillars' => $pillars, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'token' => $token]);
+                return view('dashboard.student', ['user' => $user, 'fields' => $fields, 'pillars' => $pillars, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, , 'action'=>$action, 'token' => $token]);
             case 'staff':
                 $role = $user->staffRole->role ?? 'staff';
                 $pillars = Pillar::all(['id','name','description']);
                 $fields = Field::where('location','staff_dashboard')->get();
                 if($role=='admin'||$role=='superadmin'){
-                    return view('dashboard.staff', ['user' => $user, 'fields' => $fields, 'pillars'=>$pillars,'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'token' => $token]);
+                    return view('dashboard.staff', ['user' => $user, 'fields' => $fields, 'pillars'=>$pillars,'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, , 'action'=>$action, 'token' => $token]);
                 }
                 elseif($role=='grade_head'){
                     $fields = Field::where('location','staff_dashboard')->get();
-                    return view('dashboard.grade_head', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'token' => $token]);
+                    return view('dashboard.grade_head', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, , 'action'=>$action, 'token' => $token]);
                 }
-                return view('dashboard.staff', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'token' => $token]);
+                return view('dashboard.staff', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, , 'action'=>$action, 'token' => $token]);
             case 'parent':
                 $fields = Field::where('location','parent_dashboard')->get();
-                return view('dashboard.parent', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view]);
+                return view('dashboard.parent', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action ]);
             default:
                 $fields = Field::where('location','dashboard')->get();
-                return view('dashboard', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view]);
+                return view('dashboard', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action ]);
         }
     }
 

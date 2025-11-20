@@ -6,7 +6,6 @@ import archiveIcon from "../../../icons/archive-icon.svg";
 import archiveHappyIcon from "../../../icons/archive-happy-icon.svg";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { safeFetch } from "../../../common/xsrf.js";
-import { Task } from "@lit/task";
 
 export class ShalemStudentPanelMyDocuments extends PaginationListener(BaseDashboardConsumer(BaseClass(LitElement))){
     connectedCallback(){
@@ -61,7 +60,7 @@ export class ShalemStudentPanelMyDocuments extends PaginationListener(BaseDashbo
             return html`${header}`;
         }
         let render = '';
-        if(!this.documents||!this.documents.data){
+        if(!this.documentsPagination || !this.documents || !this.documents.hasOwnProperty(this.documentsPagination.current_page) || !this.documents[this.documentsPagination.current_page]){
             render = html`
                 <shalem-loader>Opening the file cabinet...</shalem-loader>
             `;
@@ -72,10 +71,9 @@ export class ShalemStudentPanelMyDocuments extends PaginationListener(BaseDashbo
                     <shalem-student-panel-my-documents-list identifier="${this.identifier}">
                     </shalem-student-panel-my-documents-list>
                     <shalem-paginator 
-                        pages=${JSON.stringify(this.documents.links)} 
-                        currentPage=${this.documents.current_page}
+                        currentPage=${this.documentsPagination.current_page}
                         paginationID=${this.paginationID}
-                        lastPage=${this.documents.last_page}
+                        lastPage=${this.documentsPagination.last_page}
                     ></shalem-paginator>
                 </div> 
             `;
@@ -91,11 +89,19 @@ export class ShalemStudentPanelMyDocuments extends PaginationListener(BaseDashbo
         `;
     }
 
-    async _fetchDocuments(page=1){
+    async _fetchDocuments(page=1,refresh=false){
+        if(this.documents[page] && !refresh){
+            this.documentsPagination.current_page = page;
+            
+            this._updateContext({documentsPagination: this.documentsPagination});
+            return;
+        }
         const response = await safeFetch(`${this.restUrl}documents?page=${page}`);
         const data = await response.json();
-        this.documents = data.documents;
-        this._updateContext({documents: this.documents});
+        this.documents[page] = data.documents.data;
+        delete data.documents.data;
+        this.documentsPagination = data.documents;
+        this._updateContext({documents: this.documents, documentsPagination: this.documentsPagination});
     }
 
     async _handlePaginationChange(e){

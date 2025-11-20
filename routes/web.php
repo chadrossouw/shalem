@@ -46,6 +46,7 @@ Route::get('/reset-password/{token}', function (string $token) {
 })->middleware('guest')->name('password.reset');
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
+Route::get('/dashboard/{dashboard}/{panel}/{view}/{action}',[Dashboard::class,'show'])->middleware('auth');
 Route::get('/dashboard/{dashboard}/{panel}/{view?}',[Dashboard::class,'show'])->middleware('auth');
 Route::get('/dashboard/{dashboard}/{panel?}',[Dashboard::class,'show'])->middleware('auth');
 Route::get('/dashboard/{dashboard?}',[Dashboard::class,'show'])->middleware('auth')->name('dashboard');

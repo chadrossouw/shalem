@@ -10,12 +10,14 @@ export class ShalemBaseProvider extends LitElement {
         user: { type: Object },
         notifications: { type: Array },
         documents: { type: Object },
+        documentsPagination: { type: Object },
         updates: { type: Array },
         fields: { type: Array },
         dashboard: { type: String },
         pillars: { type: Array },
         panel: {type: String},
         view: {type: String},
+        action: {type: String},
         token: {type: String, reflect: true},
     };
 
@@ -49,10 +51,12 @@ export class ShalemBaseProvider extends LitElement {
             history: this.history,
             notifications: this.notifications,
             documents: this.documents,
+            documentsPagination: this.documentsPagination,
             pillars: this.pillars,
             updates: this.updates,
             panel: this.panel,
             view: this.view,
+            action: this.action,
             breadcrumb: this._setBreadcrumb(),
             title: this._setTitle(),
             nav: this._setNav(),
@@ -61,7 +65,7 @@ export class ShalemBaseProvider extends LitElement {
         this.eventManager = new EventManager(this);
         this.eventManager.listen(`shalem-dashboard-${this.identifier}-update`,this._handleUpdate);
         this.dashboardProvider = new ContextProvider(this, {context:dashboardContext, initialValue: this.dashboardContext});
-        this.eventManager.initHistory({dashboard: this.dashboard, panel: this.panel, view: this.view});
+        this.eventManager.initHistory({dashboard: this.dashboard, panel: this.panel, view: this.view, action: this.action });
     }
 
     disconnectedCallback() {
@@ -77,7 +81,7 @@ export class ShalemBaseProvider extends LitElement {
         const detail = e.detail;
         console.log('Received dashboard update:', detail);
         let newHistory = this.history;
-        if(this.dashboard !== detail.dashboard || this.panel !== detail.panel || this.view !== detail.view){
+        if(this.dashboard !== detail.dashboard || this.panel !== detail.panel || this.view !== detail.view || this.action !== detail.action){
             let url = `/dashboard/`;
             if(detail.dashboard){
                 url += `${detail.dashboard}/`;
@@ -85,17 +89,21 @@ export class ShalemBaseProvider extends LitElement {
                     url += `${detail.panel}/`;
                     if(detail.view){
                         url += `${detail.view}/`;
+                        if(detail.action){
+                            url += `${detail.action}/`;
+                        }
                     }
+
                 }
             }
-            this.eventManager.addHistory(`${url}`,{dashboard: detail.dashboard, panel: detail.panel, view: detail.view});
-            newHistory.push({ dashboard: detail.dashboard, panel: detail.panel, view: detail.view });
+            this.eventManager.addHistory(`${url}`,{dashboard: detail.dashboard, panel: detail.panel, view: detail.view, action: detail.action});
+            newHistory.push({ dashboard: detail.dashboard, panel: detail.panel, view: detail.view, action: detail.action });
         }
         this.dashboardContext = {
             ...this.dashboardContext,
             ...detail
         };
-        ({user: this.user, notifications: this.notifications, updates: this.updates, fields: this.fields, dashboard: this.dashboard, history: this.history, panel: this.panel, view: this.view} = this.dashboardContext);
+        ({user: this.user, notifications: this.notifications, updates: this.updates, fields: this.fields, dashboard: this.dashboard, history: this.history, panel: this.panel, view: this.view, action: this.action} = this.dashboardContext);
         this.history = [...this.history, ...newHistory];
         this.dashboardContext.history = this.history;
         this.dashboardProvider.setValue(this.dashboardContext);
