@@ -31,6 +31,14 @@ Route::get('/', function (Request $request) {
     return view('home',['user'=>$user, 'fields'=>Field::where('location','home')->get(), 'avatars'=>Avatar::all(), 'error'=>$error_message]);
 });
 
+Route::get('/help', function () {
+    return view('help');
+})->name('help');
+
+Route::get('/faqs', function () {
+    return view('faqs');
+})->name('faqs');
+
 Route::get('/fetch-edadmin', [EdAdminFetch::class, '__invoke'])->middleware('auth:sanctum');
 Route::get('/populate-avatars', AvatarController::class)->middleware('auth:sanctum');
 Route::get('/populate-pillars', PillarController::class)->middleware('auth:sanctum');

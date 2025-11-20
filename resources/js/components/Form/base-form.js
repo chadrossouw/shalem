@@ -1,4 +1,5 @@
 import { safeFetch } from "../../common/xsrf.js";
+import { formStyles } from '../../utilities/formStyles.js';
 export const BaseForm = (superClass) => class extends superClass{
     get _form(){
         return this.shadowRoot.querySelector('form');
@@ -20,13 +21,16 @@ export const BaseForm = (superClass) => class extends superClass{
         return this._form?.action || '';
     }
 
-    firstUpdated(){
+    updated(){
         if(!this._formResponse){
             const responseDiv = document.createElement('div');
             responseDiv.classList.add('form-response');
-            this._form.append(responseDiv);
+            if(this._form){
+                this._form?.append(responseDiv);
+            }
         }
     }
+
 
     _handleSubmit(e){
         e?.preventDefault();
@@ -300,4 +304,9 @@ export const BaseForm = (superClass) => class extends superClass{
         this._formResponse.classList.add('error');
         console.error('Form submission error:', error);
     }
+
+    static styles = [
+        super.styles,
+        formStyles,
+    ]
 };

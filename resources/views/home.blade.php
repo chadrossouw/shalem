@@ -5,13 +5,14 @@
                 {{ $error }}
             </div>
         @endif
-        <main id="primary" class="margins">
-            <div class="block bg_blue inner-padding radius " id="welcome">
-                {!! count($avatars)?file_get_contents(storage_path('app/'.$avatars[rand(0, count($avatars) - 1)]->path)):'' !!}
+
+        <main id="primary">
+            <div id="welcome">
+                <div class="avatar-container">{!! count($avatars)?file_get_contents(storage_path('app/'.$avatars[rand(0, count($avatars) - 1)]->path)):'' !!}</div>
                 <shalem-login-form studentroute="{{ route('login.student') }}" staffroute="{{ route('login.staff') }}" loginroute="{{ route('api.login') }}">
                     <div slot="general">
                         <h1 class="white">
-                            <shalem-editable-field name="home_welcome_heading" location="home" admin="true">
+                            <shalem-editable-field name="home_welcome_heading" location="home" admin="{{ $user&&($user->staffRole=='admin'||$user->staffRole=='superadmin') ? 'true' : 'false' }}">
                             {{ $field->home_welcome_heading ?? 'Welcome' }}
                             </shalem-editable-field>
                         </h1>

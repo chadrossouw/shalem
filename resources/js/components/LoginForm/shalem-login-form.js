@@ -1,9 +1,11 @@
 import {LitElement, html, css } from 'lit';
 import { BaseClass } from '../BaseClass';
+import { BaseForm } from '../Form/base-form';
 import { safeFetch } from '../../common/xsrf';
 import { eyeSvg } from '../../icons/icons';
 import { validateForm,gRecaptcha,hideRevealPassword} from '../../utilities/formUtilities';
-export class ShalemLoginForm extends BaseClass(LitElement ) {
+
+export class ShalemLoginForm extends BaseForm(BaseClass(LitElement )) {
     static properties = {
         studentroute: { type: String },
         staffroute: { type: String },
@@ -54,9 +56,10 @@ export class ShalemLoginForm extends BaseClass(LitElement ) {
     }
 
     render(){
+
         if(this.showlogin){
             return html`
-                <div class="login-form">
+                <div class="login-form radius-big margin white bg_blue margins inner_padding">
                     <slot name="parents"></slot>
                     <form @submit=${this._handleLogin}>
                         <div class="form-group">
@@ -84,7 +87,7 @@ export class ShalemLoginForm extends BaseClass(LitElement ) {
         }
         if(this.showreset){
             return html`
-                <div class="login-form">
+                <div class="login-form radius-big margin white bg_blue margins inner_padding">
                     ${this.firstLogin ? html`<h2>First time login?</h2>` : html`<h2>Reset Password</h2>`}
                     <form @submit=${this._handleReset} data-first-login=${this.firstLogin}>
                         <div class="form-group">
@@ -99,7 +102,7 @@ export class ShalemLoginForm extends BaseClass(LitElement ) {
                 `;
         }
         return html`
-            <div class="login-form">
+            <div class="login-form radius-big margin white bg_blue margins inner_padding">
                 <slot name="general"></slot>
                 <div class="login-buttons">
                     <a href="${this.studentroute}" @click=${this._clearCookiesBeforeFollow} class="button bg_pink white">Pupil login</a>
@@ -220,5 +223,12 @@ export class ShalemLoginForm extends BaseClass(LitElement ) {
 
     static styles = [
         super.styles,
+        css`
+            .login-form{
+                padding-bottom:calc(var(--inner-padding) * 3);
+                border-bottom-left-radius:0;
+                border-bottom-right-radius:0;
+            }
+        `
     ]
 }

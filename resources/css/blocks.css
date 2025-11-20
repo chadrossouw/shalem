@@ -1,0 +1,65 @@
+@layer blocks {
+    #welcome{
+        display:grid;
+        grid-template-rows: 1fr auto;
+        height:calc(100vh - var(--header-height) - var(--footer-height) );
+        position:relative;
+        .avatar-container{
+            position:relative;
+        }
+        svg{
+            width:350px;
+            height:auto;
+            position:absolute;
+            right:var(--margins);
+            bottom:-6rem;
+            transform:translateX(35%)
+        }
+    }
+    #welcome::after{
+        content:"";
+        position:absolute;
+        top:100%;
+        left:var(--margins);
+        width:calc(100vw - 2 * var(--margins));
+        height:var(--footer-height);
+        background:var(--blue);
+        z-index:-1;
+ 
+    }
+
+    #colophon{
+        display:flex;
+        justify-content:space-between;
+        align-items: flex-end;
+        overflow:clip;
+        .blob{
+            position:relative;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+    }
+
+    #colophon .blob::after{
+        content:"";
+        position:absolute;
+        top:50%;
+        left:50%;
+        width:140px;
+        height:100px;
+        background:var(--purple-shade-2);
+        transform:translate(-50%,-50%);
+        z-index:-1;
+        transition:background 0.3s ease;
+        /* <div class="shape"> OR <img class="shape"> */
+        clip-path: shape(from 81.98% 16.2%,curve to 99.73% 52.66% with 93.4% 26.45%/101.61% 40.42%,curve to 74.6% 84.2% with 97.92% 64.84%/86.02% 75.29%,curve to 41.88% 99.97% with 63.18% 93.12%/52.25% 100.51%,curve to 14.59% 82.01% with 31.58% 99.37%/21.76% 90.92%,curve to 0.81% 52.66% with 7.35% 73.09%/2.62% 63.71%,curve to 7.21% 18.53% with -1.07% 41.55%/0.04% 28.71%,curve to 41.95% 0.03% with 14.45% 8.28%/27.89% 0.63%,curve to 81.98% 16.2% with 55.94% -0.5%/70.56% 5.95%,close);
+    }
+    #colophon .blob:first-child::after{
+        background:var(--green);
+	    clip-path: shape(from 75.87% 26.96%,curve to 99.59% 60.56% with 85.61% 38.21%/97.36% 47.94%,curve to 84.71% 95.23% with 101.83% 73.1%/94.51% 88.46%,curve to 52.08% 98.19% with 74.96% 101.99%/62.74% 100.17%,curve to 22.31% 87.4% with 41.37% 96.21%/32.29% 94.16%,curve to 0.16% 56% with 12.38% 80.63%/1.55% 69.23%,curve to 16.74% 16.63% with -1.23% 42.77%/6.81% 27.88%,curve to 48.45% 0.51% with 26.73% 5.45%/38.59% -2.07%,curve to 75.87% 26.96% with 58.32% 3.09%/66.07% 15.79%,close);
+    }
+    #colophon .blob:hover::after{
+        background:var(--light-blue);
+    }
+}

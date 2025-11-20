@@ -16,7 +16,7 @@ export class ShalemEditableField extends LitElement {
     }
 
     render(){
-        if(this.admin){
+        if(this.admin&&this.admin==='true'){
             return html`
                 <a href="/edit/${this.location}/${this.name}" class="editable-field" target="_blank" rel="noopener">
                     Edit Field

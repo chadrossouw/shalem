@@ -1,4 +1,4 @@
-import { baseStyles } from '../utilities/baseStyles';
+import { baseStyles} from '../utilities/baseStyles';
 import { LitElement, css } from 'lit';
 import {blink,throb} from '../common/blink.js';
 export const BaseClass = (superClass) => class extends superClass {
@@ -80,7 +80,11 @@ export const BaseClass = (superClass) => class extends superClass {
         this.baseUrl = import.meta.env.VITE_BASE_URL;
     }
 
-    get eyes(){
+    async connectedCallback() {
+        super.connectedCallback();
+    }
+
+    get eyes(){ 
         return this.shadowRoot.querySelectorAll('.eyes,[data-eyes]');
     }
 
