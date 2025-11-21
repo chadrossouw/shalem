@@ -1,4 +1,5 @@
 import { html, LitElement } from "lit";
+import { SearchListener } from "../../Search/search-listener.js";
 import { PaginationListener } from "../../Pagination/pagination-listener.js";
 import { BaseDashboardConsumer } from "../base-dashboard-consumer.js";
 import { BaseClass } from "../../BaseClass.js";
@@ -7,9 +8,17 @@ import archiveHappyIcon from "../../../icons/archive-happy-icon.svg";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { safeFetch } from "../../../common/xsrf.js";
 
-export class ShalemStudentPanelMyDocuments extends PaginationListener(BaseDashboardConsumer(BaseClass(LitElement))){
+export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationListener(BaseDashboardConsumer(BaseClass(LitElement)))){
     connectedCallback(){
+        super.connectedCallback();
         this.paginationID = `my-documents-${this.identifier}`;
+        this.searchID = `my-documents-${this.identifier}`;
+        this.query = '';
+        this.document = null;
+        if(this.view && this.view != 'success'){
+            //find document by id
+            this._setDocumentFromView();
+        }
         super.connectedCallback();
         if(!this.documents||!this.documents.data){
             this._fetchDocuments();
@@ -24,10 +33,19 @@ export class ShalemStudentPanelMyDocuments extends PaginationListener(BaseDashbo
         this._setDocumentTitle('My Documents');
     }
 
+    updated(changedProperties){
+        if(changedProperties.has('view')){
+            if(this.view && this.view != 'success'){
+                //find document by id
+                this._setDocumentFromView();
+            }
+        }
+    }
+
     render(){
         if(this.view == 'success'){
             let header = html`
-                <div class="header_with_icon">
+                <div class="header_with_icon margins">
                     ${unsafeSVG(archiveHappyIcon)}
                     <shalem-editable-field name="student_dashboard_documents_my_documents_archive_success_header" location="student-dashboard" ?admin=${this.isAdmin}>
                         <h1>${this.fields?.student_dashboard_documents_my_documents_archive_success_header ?? 'Document Archived!'}</h1>
@@ -38,7 +56,7 @@ export class ShalemStudentPanelMyDocuments extends PaginationListener(BaseDashbo
         }
         else if(this.view){
             let header = html`
-            <div class="header_with_document_status">
+            <div class="header_with_document_status margins">
                 <div class="left">
                     ${unsafeSVG(archiveIcon)}
                     <p class="${this.document.status}>${this.document.status}</p>
@@ -56,7 +74,7 @@ export class ShalemStudentPanelMyDocuments extends PaginationListener(BaseDashbo
                     </dl>
                 </div>
             </div>
-            `;
+            `; 
             return html`${header}`;
         }
         let render = '';
@@ -68,6 +86,10 @@ export class ShalemStudentPanelMyDocuments extends PaginationListener(BaseDashbo
         else{
             render = html`
                 <div class="documents_container">
+                    <shalem-search-bar
+                        searchID="${this.searchID}"
+                        query="${this.query}"
+                    ></shalem-search-bar>
                     <shalem-student-panel-my-documents-list identifier="${this.identifier}">
                     </shalem-student-panel-my-documents-list>
                     <shalem-paginator 
@@ -79,24 +101,38 @@ export class ShalemStudentPanelMyDocuments extends PaginationListener(BaseDashbo
             `;
         }
         return html`
-        <div class="header_with_icon">
+        <div class="header_with_icon margins">
             ${unsafeSVG(archiveIcon)}
             <shalem-editable-field name="student_dashboard_documents_my_documents_header" location="student-dashboard" ?admin=${this.isAdmin}>
                 <h1>${this.fields?.student_dashboard_documents_my_documents_header ?? 'My Documents'}</h1>
             </shalem-editable-field>
         </div>
-        ${render}
+        <div class="margins">
+            ${render}
+        </div>
         `;
     }
 
-    async _fetchDocuments(page=1,refresh=false){
-        if(this.documents[page] && !refresh){
+    async _handleSearch(e){
+        const query = e.detail?.query;
+        this.query = query;
+        this.documentContainer?.classList.add('loading');
+        await this._fetchDocuments(1,query,true);
+        this.documentContainer?.classList.remove('loading');
+    }
+
+    async _fetchDocuments(page=1,query=false,refresh=false){
+        if(this.documents[page] && !refresh && !query){
             this.documentsPagination.current_page = page;
             
             this._updateContext({documentsPagination: this.documentsPagination});
             return;
         }
-        const response = await safeFetch(`${this.restUrl}documents?page=${page}`);
+        let fetchUrl =`${this.restUrl}documents?page=${page}`;
+        if(query){
+            fetchUrl += `&query=${encodeURIComponent(query)}`;
+        }
+        const response = await safeFetch(fetchUrl);
         const data = await response.json();
         this.documents[page] = data.documents.data;
         delete data.documents.data;
@@ -108,5 +144,19 @@ export class ShalemStudentPanelMyDocuments extends PaginationListener(BaseDashbo
         this.documentContainer?.classList.add('loading');
         await this._fetchDocuments(e.detail.page);
         this.documentContainer?.classList.remove('loading');
+    }
+
+    async _setDocumentFromView(){
+        let foundDocument = null;
+        for(let page in this.documents){
+            foundDocument = this.documents[page].find(doc => doc.id == this.view);
+            if(foundDocument) break;
+        }
+        if(!foundDocument){
+            //fetch document from server
+            const response = await safeFetch(`${this.restUrl}document/${this.view}`);
+            foundDocument = await response.json();
+        }
+        this.document = foundDocument;
     }
 }

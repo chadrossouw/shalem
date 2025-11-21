@@ -15,6 +15,7 @@ import { ShalemResetPasswordForm } from "./components/ResetPasswordForm/shalem-r
 import { ShalemEditableField } from "./components/EditableField/shalem-editable-field";
 import { ShalemAvatar } from "./components/Avatar/shalem-avatar.js";
 import { ShalemPaginator } from "./components/Pagination/shalem-paginator.js";
+import { ShalemSearchBar } from "./components/Search/shalem-search-bar.js";
 
 //Student Dashboard elements
 import { ShalemStudentDashboard } from "./components/Dashboard/shalem-student-dashboard.js";
@@ -44,6 +45,8 @@ window.customElements.define("shalem-reset-password-form", ShalemResetPasswordFo
 window.customElements.define("shalem-editable-field", ShalemEditableField);
 window.customElements.define("shalem-avatar", ShalemAvatar);
 window.customElements.define("shalem-paginator", ShalemPaginator);
+window.customElements.define("shalem-search-bar", ShalemSearchBar);
+
 //Student Dashboard elements
 window.customElements.define("shalem-student-dashboard", ShalemStudentDashboard);
 window.customElements.define("shalem-student-dashboard-home", ShalemStudentDashboardHome);

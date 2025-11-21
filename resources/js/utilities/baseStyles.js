@@ -16,11 +16,13 @@ export const baseStyles = css`
     h1,.h1{
         font-size:var(--header);
         line-height:var(--header-line-height);
+        font-weight: 800;
     }
 
     h2,.h2{
         font-size:var(--subheader);
         line-height:var(--subheader-line-height);
+        font-weight: 800;
     }
 
     h3,.h3{
@@ -58,6 +60,13 @@ export const baseStyles = css`
     ul,
     ol {
         margin: 0 0 1.5em 0;
+        &.cards{
+            list-style: none;
+            margin:0;
+            padding:0;
+            display:grid;
+            gap:1rem;
+        }
     }
 
     ul {
@@ -137,6 +146,20 @@ export const baseStyles = css`
     .flex{
         display:flex;
         justify-content:space-between;
+    }
+    .button,button{
+        padding:0.75rem 1.5rem;
+        border:none;
+        border-radius:var(--border-radius);
+        background-color:var(--purple);
+        color:var(--white);
+        font-size:var(--big-body);
+        cursor:pointer;
+        transition: background-color var(--transition) ease, color var(--transition) ease;
+        &:hover, &:focus{
+            background-color:var(--blue);
+            color:var(--white);
+        }
     }
     .blue{
         color:var(--blue);
@@ -243,5 +266,20 @@ export const baseStyles = css`
     .radius-big{
         border-radius:var(--border-radius-big);
     }
+    .header_with_icon{
+        display:grid;
+        grid-template-columns:6rem 1fr;
+        margin-bottom:2rem;
+        h1{
+            width:min-content;
+        }
+        h1,h2{
+            margin:0;
+        }
+    }
+    .shadow{
+        box-shadow: var(--box-shadow);
+    }
+    
 `;
 

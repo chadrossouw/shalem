@@ -92,6 +92,7 @@ html{
         --body-line-height:1.25;
         --big-body:1.25rem;
         --big-body-line-height:1.4;
+        --box-shadow:2px 4px 7px rgba(0,0,0,0.2);
     }
     @media screen and (min-width: 700px) {
         html{
@@ -111,7 +112,7 @@ html{
     }
     @media screen and (min-width: 1200px) {
         html{
-            --margins:calc((100vw - 1024px) / 2);
+            --margins:calc((100vw - 780px) / 2);
         }
     }
      *,
@@ -166,10 +167,12 @@ html{
     h1,.h1{
         font-size:var(--header);
         line-height:var(--header-line-height);
+        font-weight: 800;
     }
     h2,.h2{
         font-size:var(--subheader);
         line-height:var(--subheader-line-height);
+        font-weight: 800;
     }
     h3,.h3{
         font-size:var(--small-header);

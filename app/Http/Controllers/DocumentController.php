@@ -40,6 +40,9 @@ class DocumentController extends Controller
 
     public function list(Request $request){
         $user = $request->user();
+        if($request->has('query')){
+            return $this->search($request);
+        }
         $documents = Document::where('user_id',$user->id)->orderBy('created_at','desc')->paginate(2);
         $documents->load('document_status');
         $documents->map(function($document) {
@@ -54,12 +57,22 @@ class DocumentController extends Controller
         $query = $request->input('query','');
         $documents = Document::search($query)
             ->where('user_id', $user->id)
-            ->get();
+            ->paginate(2);
         $documents->load('document_status');
         $documents->map(function($document) {
             $document->document_status->load('user');
             return $document;
         });
         return response()->json(['documents' => $documents], 200);
+    }
+
+    public function get(Request $request, $id){
+        $user = $request->user();
+        $document = Document::where('id', $id)->where('user_id', $user->id)->first();
+        if(!$document){
+            return response()->json(['error' => 'Document not found'], 404);
+        }
+        $document->document_status->load('user');
+        return response()->json($document, 200);
     }
 }

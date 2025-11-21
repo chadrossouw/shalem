@@ -19,13 +19,12 @@ export class ShalemStudentPanelMyDocumentsList extends BaseDashboardConsumer(Bas
         if(this.documents[page] && this.documents[page].length > 0){
 
             return html`
-                <ul class="documents_list">
+                <ul class="documents_list cards">
                     ${this.documents[page].map(document => {
-                        console.log(document);
                         let date = dateToString(document.created_at);
                         let buttons = this._renderActions(document);
                         return html`
-                        <li class="${document.document_status.status} grid grid_50">
+                        <li class="${document.document_status.status} grid grid_50 shadow radius inner_padding_big">
                             <div class='header'>
                                 <h4>${document.title}</h4>
                                 <p class="description">${document.description}</p>
@@ -87,5 +86,9 @@ export class ShalemStudentPanelMyDocumentsList extends BaseDashboardConsumer(Bas
     _goToUpload(e){
         e.preventDefault();
         this._updateContext({panel: 'upload', view: null});
+    }
+
+    _viewDocument(document){
+        this._updateContext({panel: 'my-documents', view: document.id});
     }
 }
