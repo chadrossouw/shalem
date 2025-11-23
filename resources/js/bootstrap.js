@@ -16,6 +16,8 @@ import { ShalemEditableField } from "./components/EditableField/shalem-editable-
 import { ShalemAvatar } from "./components/Avatar/shalem-avatar.js";
 import { ShalemPaginator } from "./components/Pagination/shalem-paginator.js";
 import { ShalemSearchBar } from "./components/Search/shalem-search-bar.js";
+import { ShalemLoader } from "./components/Loader/shalem-loader.js";
+import { ShalemPdfViewer } from "./components/Pdf/shalem-pdf-viewer.js";
 
 //Student Dashboard elements
 import { ShalemStudentDashboard } from "./components/Dashboard/shalem-student-dashboard.js";
@@ -29,10 +31,15 @@ import { ShalemStudentDashboardDocuments } from "./components/Dashboard/shalem-s
 import { ShalemStudentPanelDocumentUpload } from "./components/Dashboard/Panel/shalem-student-panel-document-upload.js";
 import { ShalemStudentPanelMyDocuments } from "./components/Dashboard/Panel/shalem-student-panel-my-documents.js";
 import { ShalemStudentPanelMyDocumentsList } from "./components/Dashboard/Panel/shalem-student-panel-my-documents-list.js";
+import { ShalemDocument } from "./components/Dashboard/View/shalem-document.js";
+
+//Help Dashboard
+import { ShalemDashboardHelp } from "./components/Dashboard/shalem-dashboard-help.js";
 
 //Nav elements
 import { ShalemNavNotifications } from "./components/Notifications/shalem-nav-notifications.js";
 import { ShalemNavbar } from "./components/Nav/shalem-navbar.js";
+import { ShalemNavigation } from "./components/Nav/shalem-navigation.js";
 
 //Base provider
 window.customElements.define("shalem-base-provider", ShalemBaseProvider);
@@ -46,6 +53,8 @@ window.customElements.define("shalem-editable-field", ShalemEditableField);
 window.customElements.define("shalem-avatar", ShalemAvatar);
 window.customElements.define("shalem-paginator", ShalemPaginator);
 window.customElements.define("shalem-search-bar", ShalemSearchBar);
+window.customElements.define("shalem-loader", ShalemLoader);
+window.customElements.define("shalem-pdf-viewer", ShalemPdfViewer);
 
 //Student Dashboard elements
 window.customElements.define("shalem-student-dashboard", ShalemStudentDashboard);
@@ -59,7 +68,12 @@ window.customElements.define("shalem-student-dashboard-documents", ShalemStudent
 window.customElements.define("shalem-student-panel-document-upload", ShalemStudentPanelDocumentUpload);
 window.customElements.define("shalem-student-panel-my-documents", ShalemStudentPanelMyDocuments);
 window.customElements.define("shalem-student-panel-my-documents-list", ShalemStudentPanelMyDocumentsList);
+window.customElements.define("shalem-document", ShalemDocument);
+
+//Help Dashboard
+window.customElements.define("shalem-dashboard-help", ShalemDashboardHelp);
 
 //Nav elements
 window.customElements.define("shalem-nav-notifications", ShalemNavNotifications);
 window.customElements.define("shalem-navbar", ShalemNavbar);
+window.customElements.define("shalem-navigation", ShalemNavigation);

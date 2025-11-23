@@ -1,6 +1,4 @@
-import { ContextConsumer } from "@lit/context";
-import { dashboardContext } from "../../utilities/context.js";
-import { EventManager } from "../../utilities/events.js";
+import { safeFetch } from "../../common/xsrf.js";
 
 export const BaseNavConsumer = (superClass) => class extends superClass{
     async _markAsRead(id) {

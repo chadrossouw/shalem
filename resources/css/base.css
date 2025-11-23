@@ -56,7 +56,7 @@ html{
 
 @layer base {
     html{
-        --header-height: 4rem;
+        --header-height: 5.4rem;
         --footer-height: 6rem;
         --margins:5vw;
         --blue:#00316A;
@@ -82,7 +82,7 @@ html{
         --border-radius-big:1.875rem;
         --inner-padding:2rem;
         --inner-padding-big:3rem;
-        --header:clamp(2rem, 12vw, 4rem);
+        --header:clamp(2rem, 10vw, 4rem);
         --header-line-height:1.05;
         --subheader:clamp(1.8rem,8vw,2.5rem);
         --subheader-line-height:1.2;
@@ -136,7 +136,7 @@ html{
     }
     header{
         height: var(--header-height);
-        padding:1rem var(--margins);
+        padding:0 var(--margins);
         display:block;
     }
     footer{

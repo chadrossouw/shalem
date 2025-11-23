@@ -9,7 +9,7 @@ export const baseStyles = css`
     *,
     *::before,
     *::after {
-        box-sizing: inherit;
+        box-sizing: border-box;
     }
    
     /*Typography*/
@@ -94,6 +94,9 @@ export const baseStyles = css`
     address {
         font-style: normal;
     }
+    p{
+        margin-top:0;
+    }
     /*Links*/
     a {
         color: var(--purple);
@@ -160,50 +163,68 @@ export const baseStyles = css`
             background-color:var(--blue);
             color:var(--white);
         }
+        &.back{
+            display:flex;
+            align-items:center;
+            gap:0.5rem;
+            svg{
+                transition: transform var(--transition) ease;
+                width:1.5rem;
+                height:auto;
+                path{
+                    fill:var(--white);
+                }
+            }
+            &:hover{
+                svg{
+                    transform:translateX(-0.25rem);
+                }
+            }
+        }
     }
     .blue{
         color:var(--blue);
         &.shade_1{
-            color:var(--blue-shade_1);
+            color:var(--blue-shade-1);
         }
         &.shade_2{
-            color:var(--blue-shade_2);
+            color:var(--blue-shade-2);
         }
     }
     .light_blue{
         color:var(--light-blue);
         &.shade_1{
-            color:var(--light-blue-shade_1);
+            color:var(--light-blue-shade-1);
         }
         &.shade_2{
-            color:var(--light-blue-shade_2);
+            color:var(--light-blue-shade-2);
         }
     }
     .yellow{
         color:var(--yellow);
         &.shade_1{
-            color:var(--yellow-shade_1);
+            color:var(--yellow-shade-1);
         }
         &.shade_2{
-            color:var(--yellow-shade_2);
+            color:var(--yellow-shade-2);
         }
     }
     .green{
         color:var(--green);
         &.shade_1{
-            color:var(--green-shade_1);
+            color:var(--green-shade-1);
         }
         &.shade_2{
-            color:var(--green-shade_2);
+            color:var(--green-shade-2);
         }
     }
     .purple{
         color:var(--purple);
         &.shade_1{
-            color:var(--purple-shade_1);
+            color:var(--purple-shade-1);
         }
         &.shade_2{
-            color:var(--purple-shade_2);
+            color:var(--purple-shade-2);
         }
     }
     .aqua{
@@ -218,37 +239,46 @@ export const baseStyles = css`
     .bg_blue{
         background-color:var(--blue);
         &.bg_shade_1{
-            background-color:var(--blue-shade_1);
+            background-color:var(--blue-shade-1);
         }
         &.bg_shade_2{
-            background-color:var(--blue-shade_2);
+            background-color:var(--blue-shade-2);
+        }
+    }
+    .bg_light_blue{
+        background-color:var(--light-blue);
+        &.bg_shade_1{
+            background-color:var(--light-blue-shade-1);
+        }
+        &.bg_shade_2{
+            background-color:var(--light-blue-shade-2);
         }
     }
     .bg_yellow{
         background-color:var(--yellow);
         &.bg_shade_1{
-            background-color:var(--yellow-shade_1);
+            background-color:var(--yellow-shade-1);
         }
         &.bg_shade_2{
-            background-color:var(--yellow-shade_2);
+            background-color:var(--yellow-shade-2);
         }
     }
     .bg_green{
         background-color:var(--green);
         &.bg_shade_1{   
-            background-color:var(--green-shade_1);
+            background-color:var(--green-shade-1);
         }
         &.bg_shade_2{
-            background-color:var(--green-shade_2);
+            background-color:var(--green-shade-2);
         }
     }
     .bg_purple{
         background-color:var(--purple);
         &.bg_shade_1{
-            background-color:var(--purple-shade_1);
+            background-color:var(--purple-shade-1);
         }
         &.bg_shade_2{
-            background-color:var(--purple-shade_2);
+            background-color:var(--purple-shade-2);
         }
     }
     .bg_aqua{
@@ -269,13 +299,40 @@ export const baseStyles = css`
     .header_with_icon{
         display:grid;
         grid-template-columns:6rem 1fr;
+        gap:1rem;
         margin-bottom:2rem;
-        h1{
+        margin-top:2rem;
+        h1:not(.h3){
             width:min-content;
         }
         h1,h2{
             margin:0;
         }
+        svg{
+            width:6rem;
+            height:auto;
+        }
+    }
+    @media (min-width:700px){
+        .header_with_icon{
+            grid-template-columns:8rem 1fr;
+            gap:2rem;
+            svg{
+                width:8rem;
+            }
+        }
+    }
+    @media (min-width:1200px){
+        .header_with_icon{
+            grid-template-columns:10rem 1fr;
+            svg{
+                width:9rem;
+            }
+        }
+    }
+    .header{
+        margin-bottom:2rem;
+        margin-top:2rem;
     }
     .shadow{
         box-shadow: var(--box-shadow);
@@ -283,3 +340,74 @@ export const baseStyles = css`
     
 `;
 
+export const cards = css`
+    .card:has(>.icon){
+        display:grid;
+        grid-template-rows:auto 250px auto;
+        gap:1rem;
+        button{
+            width:100%;
+            font-size:var(--big-body);
+            font-weight:700;
+            text-align:center;
+            box-sizing:border-box;
+        }
+        .icon{
+            width:250px;
+            height:250px;
+            padding:1rem;
+            position:relative;
+            align-self:center;
+            justify-self:center;
+            &::before{
+                content:'';
+                position:absolute;
+                top:0;
+                left:0;
+                width:100%;
+                height:100%;
+                background-color:var(--white);
+                border-radius:var(--border-radius-big);
+                transition: transform calc(var(--transition) * 6) linear;
+                clip-path: shape(from 81.98% 16.2%,curve to 99.73% 52.66% with 93.4% 26.45%/101.61% 40.42%,curve to 74.6% 84.2% with 97.92% 64.84%/86.02% 75.29%,curve to 41.88% 99.97% with 63.18% 93.12%/52.25% 100.51%,curve to 14.59% 82.01% with 31.58% 99.37%/21.76% 90.92%,curve to 0.81% 52.66% with 7.35% 73.09%/2.62% 63.71%,curve to 7.21% 18.53% with -1.07% 41.55%/0.04% 28.71%,curve to 41.95% 0.03% with 14.45% 8.28%/27.89% 0.63%,curve to 81.98% 16.2% with 55.94% -0.5%/70.56% 5.95%,close);
+                z-index:0;
+            }
+            svg{
+                position:relative;
+                z-indec:1;
+                height:calc(250px - 2rem);
+                width:calc(250px - 2rem);
+            }
+        }
+        &:hover .icon::before{
+            transform: scale(0.6) rotate(360deg);
+        }
+
+    }
+
+    .card:has(>.icon):nth-child(2n){
+        .icon::before{
+            clip-path: shape(from 75.87% 26.96%,curve to 99.59% 60.56% with 85.61% 38.21%/97.36% 47.94%,curve to 84.71% 95.23% with 101.83% 73.1%/94.51% 88.46%,curve to 52.08% 98.19% with 74.96% 101.99%/62.74% 100.17%,curve to 22.31% 87.4% with 41.37% 96.21%/32.29% 94.16%,curve to 0.16% 56% with 12.38% 80.63%/1.55% 69.23%,curve to 16.74% 16.63% with -1.23% 42.77%/6.81% 27.88%,curve to 48.45% 0.51% with 26.73% 5.45%/38.59% -2.07%,curve to 75.87% 26.96% with 58.32% 3.09%/66.07% 15.79%,close);
+        }
+    }
+
+    .card:has(>.icon):nth-child(3n){
+        .icon::before{
+            clip-path: shape(from 81.98% 16.2%,curve to 99.73% 52.66% with 93.4% 26.45%/101.61% 40.42%,curve to 74.6% 84.2% with 97.92% 64.84%/86.02% 75.29%,curve to 41.88% 99.97% with 63.18% 93.12%/52.25% 100.51%,curve to 14.59% 82.01% with 31.58% 99.37%/21.76% 90.92%,curve to 0.81% 52.66% with 7.35% 73.09%/2.62% 63.71%,curve to 7.21% 18.53% with -1.07% 41.55%/0.04% 28.71%,curve to 41.95% 0.03% with 14.45% 8.28%/27.89% 0.63%,curve to 81.98% 16.2% with 55.94% -0.5%/70.56% 5.95%,close);
+        }
+    }
+    
+    @media (min-width:1000px){
+        .card:has(>.icon){
+            grid-template-rows:1fr auto;
+            grid-template-columns:1fr 1fr;
+            .icon{
+                grid-row:1/2;
+                grid-column:1 / 2;
+            }
+            button{
+                grid-column:1/-1;
+            }
+        }
+    }
+`

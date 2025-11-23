@@ -26,7 +26,7 @@ class Dashboard extends Controller
         switch($type){
             case 'student':
                 $fields = Field::where('location','student_dashboard')->get();
-                $user->load('student')->load('student.avatar');
+                $user->load('student')->load('student.avatarModel');
                 $user->load(['notifications' => function ($query) {
                     $query->where('read_at', null);
                 }]);

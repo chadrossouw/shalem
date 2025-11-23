@@ -1,15 +1,12 @@
-import { html, LitElement } from "lit";
+import { html, LitElement, css } from "lit";
+import { DocumentHelper } from "../../Helpers/document-helper.js";
 import { BaseDashboardConsumer } from "../base-dashboard-consumer.js";
 import { BaseClass } from "../../BaseClass.js";
 import { dateToString } from "../../../common/date.js";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { documentStatusMap } from "../../../common/document-status-map.js";
-import  edit from "../../../icons/edit.svg";
-import  view from "../../../icons/view.svg";
-import  help from "../../../icons/help.svg";
-import  deleteicon from "../../../icons/deleteicon.svg";
 
-export class ShalemStudentPanelMyDocumentsList extends BaseDashboardConsumer(BaseClass(LitElement)){
+export class ShalemStudentPanelMyDocumentsList extends DocumentHelper(BaseDashboardConsumer(BaseClass(LitElement))){
     connectedCallback(){
         super.connectedCallback();
     }
@@ -24,7 +21,7 @@ export class ShalemStudentPanelMyDocumentsList extends BaseDashboardConsumer(Bas
                         let date = dateToString(document.created_at);
                         let buttons = this._renderActions(document);
                         return html`
-                        <li class="${document.document_status.status} grid grid_50 shadow radius inner_padding_big">
+                        <li class="${document.document_status.status} grid grid_50 shadow radius">
                             <div class='header'>
                                 <h4>${document.title}</h4>
                                 <p class="description">${document.description}</p>
@@ -43,52 +40,46 @@ export class ShalemStudentPanelMyDocumentsList extends BaseDashboardConsumer(Bas
         return html`<p>You don't have any documents yet. <a href="/upload" @click=${this._goToUpload}>Add one?</a></p>`;
     }
 
-    _renderActions(document) {
-        // Implement the logic to render action buttons based on the document
-        if (document.document_status.status === 'pending') {
-            //compare document created time to current time, if more than 3 days have passed, allow help button
-            let createdDate = new Date(document.created_at);
-            let createdDatePlusAppTime =  new Date(createdDate);
-            createdDatePlusAppTime.setDate(createdDate.getDate() + this.documentApprovalTime);
-            let currentDate = new Date();
-            let helpButton = '';
-            if (currentDate > createdDatePlusAppTime) {
-                helpButton = html`<button @click=${() => this._helpWithDocument(document)}>${unsafeSVG(help)}Help</button>`;
-            }
-            return html`
-                <button @click=${() => this._viewDocument(document)}>${unsafeSVG(view)}View</button>
-                ${helpButton}
-            `;
-        }
-        if(document.document_status.status === 'changes_requested'){
-            return html`
-                <button @click=${() => this._editDocument(document)}>${unsafeSVG(edit)}Edit</button>
-                <button @click=${() => this._seeMessage(document)}>${unsafeSVG(help)}What do I need to do?</button>
-            `;
-        }
-        if(document.document_status.status === 'approved'){
-            return html`
-                <button @click=${() => this._viewDocument(document)}>${unsafeSVG(view)}View</button>
-            `;
-        }
-        if(document.document_status.status === 'rejected'){
-            return html`
-                <button @click=${() => this._deleteDocument(document)}>${unsafeSVG(deleteicon)}Delete</button>
-                <button @click=${() => this._helpWithDocument(document)}>${unsafeSVG(help)}Help</button>
-            `;
-        }
-        return html`
-            <button @click=${() => this._viewDocument(document)}>${unsafeSVG(view)}View</button>
-        `;
-    }
-
-
     _goToUpload(e){
         e.preventDefault();
         this._updateContext({panel: 'upload', view: null});
     }
 
-    _viewDocument(document){
-        this._updateContext({panel: 'my-documents', view: document.id});
-    }
+    static styles = [
+        super.styles,
+        css`
+        .documents_list.cards{
+            display:grid;
+            gap:2rem;
+            margin-bottom:2rem;
+            li{
+                padding:1rem;
+                h4{
+                    margin-top:0;
+                }
+                .header{
+                    margin:0;
+                }
+            }
+        }
+        @media (min-width:1000px){
+            .documents_list{
+                grid-template-columns:1fr 1fr;
+            }
+        }
+        .pending .status{
+            color:var(--blue);
+        }
+        .approved .status{
+            color:var(--green);
+        }
+        .rejected .status{
+            color:var(--purple);
+        }
+        .changes_requested .status{
+            color:var(--yellow);
+        }
+        `
+    ];
+    
 }

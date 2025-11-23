@@ -19,6 +19,8 @@
         "@lit/task": "^1.0.3",
         "js-confetti": "^0.13.1",
         "lit": "^3.3.1",
+        "pdf-viewer-element": "^0.1.0-pre.4",
+        "pdfjs-dist": "^5.4.394",
         "vite-awesome-svg-loader": "^3.0.1"
     }
 }

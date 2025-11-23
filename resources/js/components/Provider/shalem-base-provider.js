@@ -10,6 +10,7 @@ export class ShalemBaseProvider extends LitElement {
         user: { type: Object },
         notifications: { type: Array },
         documents: { type: Object },
+        document: { type: Object },
         documentsPagination: { type: Object },
         updates: { type: Array },
         fields: { type: Array },
@@ -51,6 +52,7 @@ export class ShalemBaseProvider extends LitElement {
             history: this.history,
             notifications: this.notifications,
             documents: this.documents,
+            document: this.document,
             documentsPagination: this.documentsPagination,
             pillars: this.pillars,
             updates: this.updates,
@@ -79,34 +81,59 @@ export class ShalemBaseProvider extends LitElement {
 
     _handleUpdate = (e) => {
         const detail = e.detail;
-        console.log('Received dashboard update:', detail);
         let newHistory = this.history;
-        if(this.dashboard !== detail.dashboard || this.panel !== detail.panel || this.view !== detail.view || this.action !== detail.action){
-            let url = `/dashboard/`;
-            if(detail.dashboard){
-                url += `${detail.dashboard}/`;
-                if(detail.panel){
-                    url += `${detail.panel}/`;
-                    if(detail.view){
-                        url += `${detail.view}/`;
-                        if(detail.action){
-                            url += `${detail.action}/`;
+        if(detail){
+            if(this.dashboard !== detail.dashboard || this.panel !== detail.panel || this.view !== detail.view || this.action !== detail.action){
+                let url = `/dashboard/`;
+                if(detail.dashboard){
+                    url += `${detail.dashboard}/`;
+                    if(detail.panel){
+                        url += `${detail.panel}/`;
+                        if(detail.view){
+                            url += `${detail.view}/`;
+                            if(detail.action){
+                                url += `${detail.action}/`;
+                            }
                         }
-                    }
 
+                    }
                 }
+                this.eventManager.addHistory(`${url}`,{dashboard: detail.dashboard, panel: detail.panel, view: detail.view, action: detail.action});
+                newHistory.push({ dashboard: detail.dashboard, panel: detail.panel, view: detail.view, action: detail.action });
             }
-            this.eventManager.addHistory(`${url}`,{dashboard: detail.dashboard, panel: detail.panel, view: detail.view, action: detail.action});
-            newHistory.push({ dashboard: detail.dashboard, panel: detail.panel, view: detail.view, action: detail.action });
+            this.dashboardContext = {
+                ...this.dashboardContext,
+                ...detail
+            };
         }
-        this.dashboardContext = {
-            ...this.dashboardContext,
-            ...detail
-        };
+        else{
+            let state = Object.entries(e.state);
+            if(state.length==0){
+                return;
+            }
+            let newContext = {};
+            state.forEach((item)=>{
+                let _key = item[0];
+                let _value = item[1];
+                console.log(_key,_value);
+                this[_key] = _value;
+                newContext[_key] = _value;
+            });
+            this.eventManager.addHistory(`${window.location.href}`,{dashboard: this.dashboard, panel: this.panel, view: this.view, action: this.action});
+            newHistory.push({ dashboard: this.dashboard, panel: this.panel, view: this.view, action: this.action });
+            console.log(newHistory);
+            console.log(newContext);
+            this.dashboardContext = {
+                ...this.dashboardContext,
+                ...newContext
+            };
+            console.log(this.dashboardContext);
+        }
         ({user: this.user, notifications: this.notifications, updates: this.updates, fields: this.fields, dashboard: this.dashboard, history: this.history, panel: this.panel, view: this.view, action: this.action} = this.dashboardContext);
         this.history = [...this.history, ...newHistory];
         this.dashboardContext.history = this.history;
         this.dashboardProvider.setValue(this.dashboardContext);
+        this.eventManager.emit(`shalem-dashboard-updated`,this.dashboardContext);
     }
 
     _setBreadcrumb(){

@@ -28,6 +28,7 @@ export class ShalemStudentPanelDocumentUpload extends BaseForm(BaseDashboardCons
     render(){
         return html`
         <form @submit=${this._handleSubmit} action="${this.restUrl}document/upload" enctype="multipart/form-data">
+            <div class="form-response"></div>
             <div class="input_group">
                 <label for="document_title">Document Title 
                     <shalem-tooltip>
@@ -69,7 +70,7 @@ export class ShalemStudentPanelDocumentUpload extends BaseForm(BaseDashboardCons
                         </shalem-editable-field>
                     </shalem-tooltip>
                 </label>
-                <input type="file" id="document_file" name="document_file" accept=".pdf,.doc,.docx,.jpg,.png" required />
+                <input type="file" id="document_file" name="document_file" accept=".pdf,.jpg,.png" required />
             </div>
             <button type="submit">Ok. Let's go!</button>
         </form>

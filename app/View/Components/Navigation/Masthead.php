@@ -12,7 +12,7 @@ class Masthead extends Component
      * Create a new component instance.
      */
     public function __construct(
-        public mixed $user = null
+        public mixed $user = null,
     )
     {
         //

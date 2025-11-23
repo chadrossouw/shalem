@@ -36,16 +36,16 @@ export class ShalemNavbar extends BaseNavConsumer(BaseDashboardConsumer(BaseClas
                 let button;
                 if(!this._openNotifications){
                     button = html`
-                        <button @click=${this._openCloseNotifications} aria-controls="updates" aria-expanded="${this._openNotifications}"><span class="button_text">You have new updates</span><span class="notification_count">${!this._openNotifications ? count : unsafeSVG(close)}</span></button>
+                        <button class="notification_button bg_blue" @click=${this._openCloseNotifications} aria-controls="updates" aria-expanded="${this._openNotifications}"><span class="button_text">You have new notifications</span><span class="notification_count">${!this._openNotifications ? count : unsafeSVG(close)}</span></button>
                     `;
                 }   
                 else{
                     button = html`
-                        <button @click=${this._dismissNotifications}><span class="button_text">Dismiss</span><span class="notification_count">${unsafeSVG(close)}</span></button>
+                        <button class="notification_button bg_blue" @click=${this._dismissNotifications}><span class="button_text">Dismiss</span><span class="notification_count">${unsafeSVG(close)}</span></button>
                     `;
                 }
                 return html`
-                <div class="navbar">   
+                <div class="navbar margins bg_blue radius-big">   
                     <shalem-swipable @swiped=${this._dismissNotifications}>
                         ${button}
                     </shalem-swipable>
@@ -57,7 +57,7 @@ export class ShalemNavbar extends BaseNavConsumer(BaseDashboardConsumer(BaseClas
                 `;
             }
             return html`  
-                <div class="navbar">      
+                <div class="navbar margins bg_blue radius-big">      
                     <nav>
                         <ul>
                             <li><a href="/dashboard" @click=${(e) => this._handleNavigation(e, null, null)} aria-current="${currentPage === '' ? 'page' : 'false'}"><span aria-hidden="true">${unsafeSVG(dashboardNav)}</span><span class="screen-reader-text">Dashboard</span></a></li>
@@ -121,7 +121,54 @@ export class ShalemNavbar extends BaseNavConsumer(BaseDashboardConsumer(BaseClas
             transition:max-height var(--transition) ease;
             &.open{
                 max-height:100dvh;
+                padding:2rem;
             }
+        }
+        ul{
+            list-style:none;
+            margin:0;
+            padding:0.2rem 1.5rem;
+            display:flex;   
+            gap:1rem;
+            justify-content:space-between
+        }
+        .notification_button{
+            width:100%;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+        .notification_count{
+            background-color: var(--white);
+            color: var(--blue);
+            border-radius: 50%;
+            width: 1.5rem;
+            height: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            svg{
+                width: 1rem;
+                height: 1rem;
+            }
+        }
+        .navbar{
+            position:relative;
+
+        }
+        .navbar:has(>.updates_panel.open){
+            border-bottom-left-radius:0;
+            border-bottom-right-radius:0;
+        }
+        .updates_panel{
+            position:absolute;
+            top:100%;
+            left:0;
+            right:0;
+            background-color: var(--light-blue-shade-2);
+            border-bottom-left-radius:var(--border-radius-big);
+            border-bottom-right-radius:var(--border-radius-big);
+            
         }
         `
     ];

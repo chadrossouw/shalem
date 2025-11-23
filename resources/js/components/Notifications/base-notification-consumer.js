@@ -144,6 +144,7 @@ export const BaseNotificationsConsumer = (superClass) => class extends superClas
     }
 
     static styles = [
+        super.styles,
         css`
         .loading {
             position: relative;

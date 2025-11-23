@@ -96,7 +96,7 @@ export class ShalemStudentDashboardDocuments extends BaseDashboardConsumer(BaseC
             }
             
         }
-        else if (this.panel == 'my-documents'){
+        else if (this.panel == 'my-documents'||!this.panel){
             panel = html`
                 <shalem-student-panel-my-documents
                     identifier="${this.identifier}"

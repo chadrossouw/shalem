@@ -5,6 +5,7 @@ import uploadIcon from "../../icons/upload-icon.svg";
 import goalsIcon from "../../icons/goals-icon.svg";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { cardLinks } from "../../common/accessibility.js";
+import { cards } from '../../utilities/baseStyles.js';
 
 export class ShalemStudentDashboardHome extends BaseDashboardConsumer(BaseClass(LitElement)){
 
@@ -33,15 +34,17 @@ export class ShalemStudentDashboardHome extends BaseDashboardConsumer(BaseClass(
     render(){
         return html`
         <slot></slot>
-        <shalem-editable-field name="student_dashboard_welcome_message" location="student-dashboard" ?admin=${this.isAdmin}>
-            <h1>${this.fields?.student_dashboard_welcome_message ?? 'Hey there'},<br> ${this.user.first_name}</h1>
-        </shalem-editable-field>
-        <shalem-editable-field name="student_dashboard_instructions" location="student-dashboard" ?admin=${this.isAdmin}>
-            <p>${this.fields?.student_dashboard_instructions ?? 'Welcome to your dashboard! Here you can track your progress, view assignments, and manage your profile.'}</p>
-        </shalem-editable-field>
-        <div class="grid">
-            <div class="card bg_light_blue points">
-                <h2>
+        <div class="header margins">
+            <shalem-editable-field name="student_dashboard_welcome_message" location="student-dashboard" ?admin=${this.isAdmin}>
+                <h1>${this.fields?.student_dashboard_welcome_message ?? 'Hey there'},<br> ${this.user.first_name}</h1>
+            </shalem-editable-field>
+            <shalem-editable-field name="student_dashboard_instructions" location="student-dashboard" ?admin=${this.isAdmin}>
+                <p>${this.fields?.student_dashboard_instructions ?? 'Welcome to your dashboard! Here you can track your progress, view assignments, and manage your profile.'}</p>
+            </shalem-editable-field>
+        </div>
+        <div class="grid margins">
+            <div class="card blob bg_light_blue points radius-big inner_padding">
+                <h2 class="white">
                     <shalem-editable-field name="student_dashboard_view_points" location="student-dashboard" ?admin=${this.isAdmin}>
                         ${this.fields?.student_dashboard_view_points ?? 'See my points'}
                     </shalem-editable-field>
@@ -51,19 +54,19 @@ export class ShalemStudentDashboardHome extends BaseDashboardConsumer(BaseClass(
                     Let's go
                 </button>
             </div>
-            <div class="card bg_purple upload">
-                <h2>
+            <div class="card blob bg_purple upload radius-big inner_padding">
+                <h2 class="white">
                     <shalem-editable-field name="student_dashboard_upload" location="student-dashboard" ?admin=${this.isAdmin}>
                         ${this.fields?.student_dashboard_upload ?? 'Upload something'}
                     </shalem-editable-field>
                 </h2>
                 ${uploadIcon ? html`<div class="icon" aria-hidden="true">${unsafeSVG(uploadIcon)}</div>` : ''}
-                <button class="card_target" @click=${() => this._handleAction({dashboard: 'documents', panel: 'upload', view: null})}>
+                <button class="card_target bg_yellow" @click=${() => this._handleAction({dashboard: 'documents', panel: 'upload', view: null})}>
                     Let's go
                 </button>
             </div>
-            <div class="card bg_aqua goals">
-                <h2>
+            <div class="card blob bg_aqua goals radius-big inner_padding">
+                <h2 class="white">
                     <shalem-editable-field name="student_dashboard_set_goals" location="student-dashboard" ?admin=${this.isAdmin}>
                         ${this.fields?.student_dashboard_set_goals ?? 'Set my goals'}
                     </shalem-editable-field>
@@ -76,4 +79,9 @@ export class ShalemStudentDashboardHome extends BaseDashboardConsumer(BaseClass(
         </div> 
         `;
     }
+
+    static styles = [
+        ...super.styles,
+        cards,
+    ];
 }

@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Document;
+use App\Models\DocumentStatus;
 use App\Events\DocumentUploaded;
 class DocumentController extends Controller
 {
     public function upload(Request $request){
         $user = $request->user();
         $document =$request->validate([
-            'document_file' => 'required|file|max:10240',
+            'document_file' => 'required|file|max:10240|mimes:pdf,jpg,png',
             'document_title' => 'required|string',
             'document_pillar' => 'required|string',
             'document_description' => 'required|string',
@@ -28,7 +29,7 @@ class DocumentController extends Controller
         $document->file_path = $path;
         $document->type = '';
         $document->save();
-        $document->document_status->create([
+        DocumentStatus::create([
             'document_id' => $document->id,
             'status' => 'pending',
             'status_message' => 'Your document has been uploaded and is waiting for approval.',

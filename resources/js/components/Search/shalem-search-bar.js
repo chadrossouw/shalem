@@ -54,8 +54,26 @@ export class ShalemSearchBar extends BaseDashboardConsumer(BaseClass(LitElement)
         super.styles,
         css`
         .search-bar {
-            display: flex;
+            display: grid;
             margin-bottom: 1rem;
+            width: 100%;
+            grid-template-columns: 1fr 4rem;
+        }
+        button{
+            padding:0;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border-top-left-radius:0;
+            border-bottom-left-radius:0;
+        }
+        input{
+            padding:0.5rem 1rem;
+            font-size:var(--big-body);
+            border-top-left-radius:var(--border-radius);
+            border-bottom-left-radius:var(--border-radius);
+            border:2px solid var(--purple-shade-1);
+            border-right:0;
         }
         button [data-eyebrow-up],button [data-eyebrow-down]{
             transition: transform var(--transition) ease;

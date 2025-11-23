@@ -1,4 +1,50 @@
 @layer blocks {
+    #masthead{
+        position:relative;
+        z-index:10;
+        &>.grid{
+            grid-template-columns:1fr 4rem;
+            align-items: center;
+        }
+        .logo{
+            position:relative;
+            z-index:101;
+            .icon{
+                height:100%;
+
+            }
+            .icon{
+                padding-top:1rem;
+                transition:filter var(--transition) ease var(--transition);
+            }
+            .icon svg{
+                width:auto;
+                height:100%;
+            }
+            .icon.has_avatar{
+                position:relative;
+                height:var(--header-height);
+                width:100%;
+                display:block;
+                svg{
+                    position:absolute;
+                    top:1rem;
+                    height:calc(var(--header-height) - 2rem);
+                    bottom:0;
+                    &:first-child{
+                        left:0;
+                    }
+                    &:last-child{
+                        left:calc(var(--header-height) - 2rem);
+                    }
+                }
+            }
+        }
+
+    }
+    .menu-open #masthead span.icon {
+        filter: invert(1) brightness(1.5) hue-rotate(-100deg);
+    }
     #welcome{
         display:grid;
         grid-template-rows: 1fr auto;

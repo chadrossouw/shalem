@@ -1,4 +1,4 @@
-import { html, LitElement } from "lit";
+import { css, html, LitElement } from "lit";
 import { SearchListener } from "../../Search/search-listener.js";
 import { PaginationListener } from "../../Pagination/pagination-listener.js";
 import { BaseDashboardConsumer } from "../base-dashboard-consumer.js";
@@ -9,16 +9,27 @@ import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { safeFetch } from "../../../common/xsrf.js";
 
 export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationListener(BaseDashboardConsumer(BaseClass(LitElement)))){
+    static properties = {
+        ...super.properties,
+        
+    }
+
     connectedCallback(){
         super.connectedCallback();
         this.paginationID = `my-documents-${this.identifier}`;
         this.searchID = `my-documents-${this.identifier}`;
         this.query = '';
         this.document = null;
+        console.log(this.view,this.action);
         if(this.view && this.view != 'success'){
             //find document by id
             this._setDocumentFromView();
+             if (this.view && !this.action){
+                this.action = 'view';
+                this._updateContext({action: this.action} );
+            }
         }
+       
         super.connectedCallback();
         if(!this.documents||!this.documents.data){
             this._fetchDocuments();
@@ -55,27 +66,16 @@ export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationList
             return header;
         }
         else if(this.view){
-            let header = html`
-            <div class="header_with_document_status margins">
-                <div class="left">
-                    ${unsafeSVG(archiveIcon)}
-                    <p class="${this.document.status}>${this.document.status}</p>
-                </div>
-                <div class="right">
-                    <h1>${this.document.title}</h1>
-                    <p class="description">${this.document.description}</p>
-                    <dl>
-                        <dt>Pillar:</dt>
-                        <dd>${this.document.pillar_name}</dd>
-                        <dt>Type:</dt>
-                        <dd>${this.document.type??`Type not assigned yet`}</dd>
-                        <dt>Uploaded on:</dt>
-                        <dd>${new Date(this.document.uploaded_at).toLocaleDateString()}</dd>
-                    </dl>
-                </div>
-            </div>
-            `; 
-            return html`${header}`;
+            if(!this.document){
+                return html`
+                    <div class="margins">
+                        <shalem-loader>Fetching the spades and pick axes...</shalem-loader>
+                    </div>
+                `;
+            }
+            return html`
+            <shalem-document identifier="${this.identifier}"></shalem-document>
+            `;
         }
         let render = '';
         if(!this.documentsPagination || !this.documents || !this.documents.hasOwnProperty(this.documentsPagination.current_page) || !this.documents[this.documentsPagination.current_page]){
@@ -158,5 +158,6 @@ export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationList
             foundDocument = await response.json();
         }
         this.document = foundDocument;
+        this._updateContext({document: this.document});
     }
 }

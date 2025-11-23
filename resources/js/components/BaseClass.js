@@ -49,7 +49,7 @@ export const BaseClass = (superClass) => class extends superClass {
                 left: 0;
                 width: 100%;
                 height: 100%;
-                backdrop-filter: blur(4px);
+                backdrop-filter: blur(1px);
                 z-index: 10;
             }
             .loading::before{

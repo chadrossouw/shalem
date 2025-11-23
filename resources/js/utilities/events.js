@@ -43,16 +43,8 @@ export class EventManager{
     }
 
     _onPopState(e){
-        if(e.state){
-            let state = Object.entries(e.state);
-            if(state.length==0){
-                return;
-            }
-            state.forEach((item)=>{
-                let _key = item[0];
-                let _value = item[1];
-                this.el.setAttribute(_key,_value);
-            });
+        if(this.el.hasOwnProperty('_handleUpdate')){
+            this.el._handleUpdate(e);
         }
     }
 }

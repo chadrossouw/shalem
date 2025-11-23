@@ -22,7 +22,7 @@ class Student extends Model
         ];
     }
 
-    public function avatar(): hasOne
+    public function avatarModel(): hasOne
     {
         return $this->hasOne(Avatar::class, 'id', 'avatar');
     }

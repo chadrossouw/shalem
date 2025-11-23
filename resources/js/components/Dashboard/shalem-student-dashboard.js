@@ -29,9 +29,11 @@ export class ShalemStudentDashboard extends BaseDashboardConsumer(BaseClass(LitE
                     ${this.fields?.student_dashboard_select_avatar_instruction ?? 'Before we get started, pick an avatar' }
                 </shalem-editable-field>
             </h2>
-            <shalem-avatar-selector
-                identifier="${this.identifier}"
-            ></shalem-avatar-selector>`;
+            <div class="margins">
+                <shalem-avatar-selector
+                    identifier="${this.identifier}"
+                ></shalem-avatar-selector>
+            </div>`;
         }
         else if(this.updates && this.updates.length > 0){
             return html`
@@ -59,8 +61,15 @@ export class ShalemStudentDashboard extends BaseDashboardConsumer(BaseClass(LitE
                         identifier="${this.identifier}"
                     >
                         ${nav}
-                    </shalem-student-dashboard-upload>`;
-                default:
+                    </shalem-student-dashboard-documents>`;
+                case 'help':
+                    return html`
+                    <shalem-dashboard-help
+                        identifier="${this.identifier}"
+                    >
+                        ${nav}
+                    </shalem-dashboard-help>`;
+                default:``
                     return html`
                     <shalem-student-dashboard-home
                         identifier="${this.identifier}"

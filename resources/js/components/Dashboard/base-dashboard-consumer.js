@@ -13,6 +13,7 @@ export const BaseDashboardConsumer = (superClass) => class extends superClass{
         user: { type: Object , state:true},
         notifications: { type: Array , state:true},
         documents: { type: Object , state:true},
+        document: { type: Object, state: true },
         documentsPagination: { type: Object , state:true},
         updates: { type: Array , state:true},
         fields: { type: Array, state:true },
@@ -20,6 +21,7 @@ export const BaseDashboardConsumer = (superClass) => class extends superClass{
         panel: {type: String, state:true},
         pillars: { type: Array, state:true },
         view: {type: String, state:true},
+        action: {type: String, state:true},
     }
     
     connectedCallback(){
@@ -46,7 +48,7 @@ export const BaseDashboardConsumer = (superClass) => class extends superClass{
     }
 
     _populateStateFromContext(){
-        ({user: this.user, notifications: this.notifications, updates: this.updates, documents: this.documents, documentsPagination: this.documentsPagination, pillars:this.pillars, fields: this.fields, dashboard: this.dashboard, history: this.history, panel: this.panel, view: this.view, documentApprovalTime: this.documentApprovalTime} = this._dashboard);
+        ({user: this.user, notifications: this.notifications, updates: this.updates, documents: this.documents, document: this.document, documentsPagination: this.documentsPagination, pillars:this.pillars, fields: this.fields, dashboard: this.dashboard, history: this.history, panel: this.panel, view: this.view, action: this.action, documentApprovalTime: this.documentApprovalTime} = this._dashboard);
     }
 
     _updateContext(newValues){
