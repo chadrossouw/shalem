@@ -60,6 +60,12 @@ export class ShalemStudentPanelMyDocumentsList extends DocumentHelper(BaseDashbo
                 .header{
                     margin:0;
                 }
+                shalem-dialog{
+                    grid-column: span 2;
+                }
+                &>button{
+                    height:fit-content;
+                }
             }
         }
         @media (min-width:1000px){

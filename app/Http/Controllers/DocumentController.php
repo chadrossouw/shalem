@@ -11,11 +11,34 @@ class DocumentController extends Controller
     public function upload(Request $request){
         $user = $request->user();
         $document =$request->validate([
-            'document_file' => 'required|file|max:10240|mimes:pdf,jpg,png',
+            'document_file' => 'required_without:document_id|file|max:10240|mimes:pdf,jpg,png',
             'document_title' => 'required|string',
             'document_pillar' => 'required|string',
             'document_description' => 'required|string',
         ]);
+        if($request->has('document_id')){
+            $document = Document::where('id', $request->input('document_id'))->where('user_id', $user->id)->first();
+            if(!$document){
+                return response()->json(['error' => 'Document not found'], 404);
+            }
+            if($request->hasFile('document_file')){
+                $file = $request->file('document_file');
+                $path = $file->store('documents/'.$user->id);
+                $document->file_path = $path;
+            }
+            $document->title = $request->input('document_title');
+            $document->pillar_id = $request->input('document_pillar');
+            $document->description = $request->input('document_description');
+            $document->save();
+            DocumentStatus::create([
+                'document_id' => $document->id,
+                'status' => 'pending',
+                'status_message' => 'Your document has been updated and is waiting for approval.',
+                'user_id' => '',
+            ]);
+            DocumentUploaded::dispatch($document);
+            return response()->json(['view' => 'success'], 200);
+        }
         $file = $request->file('document_file');
         $title = $request->input('document_title');
         $pillar = $request->input('document_pillar');

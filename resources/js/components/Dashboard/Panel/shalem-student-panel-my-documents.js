@@ -5,6 +5,7 @@ import { BaseDashboardConsumer } from "../base-dashboard-consumer.js";
 import { BaseClass } from "../../BaseClass.js";
 import archiveIcon from "../../../icons/archive-icon.svg";
 import archiveHappyIcon from "../../../icons/archive-happy-icon.svg";
+import fredParty from "../../../icons/fred-party.svg";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { safeFetch } from "../../../common/xsrf.js";
 
@@ -59,8 +60,14 @@ export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationList
                 <div class="header_with_icon margins">
                     ${unsafeSVG(archiveHappyIcon)}
                     <shalem-editable-field name="student_dashboard_documents_my_documents_archive_success_header" location="student-dashboard" ?admin=${this.isAdmin}>
-                        <h1>${this.fields?.student_dashboard_documents_my_documents_archive_success_header ?? 'Document Archived!'}</h1>
+                        <h1>${this.fields?.student_dashboard_documents_my_documents_archive_success_header ?? 'Your document has been updated!'}</h1>
                     </shalem-editable-field>
+                    ${unsafeSVG(fredParty)}
+                </div>
+                <div class="margins">
+                    <button class="shalem-button" @click="${()=>{this._updateContext({view: null, action: null});}}">
+                        ${this.fields?.student_dashboard_documents_my_documents_back_to_documents_button_text ?? 'Back to My Documents'}
+                    </button>
                 </div>
             `;
             return header;

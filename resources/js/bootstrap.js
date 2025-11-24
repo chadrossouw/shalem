@@ -18,6 +18,7 @@ import { ShalemPaginator } from "./components/Pagination/shalem-paginator.js";
 import { ShalemSearchBar } from "./components/Search/shalem-search-bar.js";
 import { ShalemLoader } from "./components/Loader/shalem-loader.js";
 import { ShalemPdfViewer } from "./components/Pdf/shalem-pdf-viewer.js";
+import { ShalemDialog } from "./components/Modal/shalem-dialog.js";
 
 //Student Dashboard elements
 import { ShalemStudentDashboard } from "./components/Dashboard/shalem-student-dashboard.js";
@@ -55,6 +56,7 @@ window.customElements.define("shalem-paginator", ShalemPaginator);
 window.customElements.define("shalem-search-bar", ShalemSearchBar);
 window.customElements.define("shalem-loader", ShalemLoader);
 window.customElements.define("shalem-pdf-viewer", ShalemPdfViewer);
+window.customElements.define("shalem-dialog", ShalemDialog);
 
 //Student Dashboard elements
 window.customElements.define("shalem-student-dashboard", ShalemStudentDashboard);

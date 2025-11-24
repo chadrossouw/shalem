@@ -58,15 +58,20 @@ export class ShalemSearchBar extends BaseDashboardConsumer(BaseClass(LitElement)
             margin-bottom: 1rem;
             width: 100%;
             grid-template-columns: 1fr 4rem;
+            button{
+                padding:0;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                border-top-left-radius:0;
+                border-bottom-left-radius:0;
+                svg{
+                    width:2.5rem;
+                    height:2.5rem;
+                }
+            }
         }
-        button{
-            padding:0;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            border-top-left-radius:0;
-            border-bottom-left-radius:0;
-        }
+        
         input{
             padding:0.5rem 1rem;
             font-size:var(--big-body);

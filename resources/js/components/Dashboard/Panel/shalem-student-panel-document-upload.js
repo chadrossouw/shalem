@@ -10,6 +10,7 @@ export class ShalemStudentPanelDocumentUpload extends BaseForm(BaseDashboardCons
 
     static properties = {
         ...super.properties,
+        document: { type: Object }
     }
 
     constructor(){
@@ -37,7 +38,7 @@ export class ShalemStudentPanelDocumentUpload extends BaseForm(BaseDashboardCons
                         </shalem-editable-field>
                     </shalem-tooltip>
                 </label>
-                <input type="text" id="document_title" name="document_title" required />
+                <input type="text" id="document_title" name="document_title" required .value=${this.document?.title ?? ''} />
             </div>
             <div class="input_group">
                 <label for="document_pillar">Pillar 
@@ -49,7 +50,7 @@ export class ShalemStudentPanelDocumentUpload extends BaseForm(BaseDashboardCons
                 </label>
                 <select id="document_pillar" name="document_pillar" required>
                     <option value="" disabled selected>Select a pillar</option>
-                    ${this.pillars?.map(pillar => html`<option value="${pillar.id}">${pillar.name}</option>`)}
+                    ${this.pillars?.map(pillar => html`<option value="${pillar.id}" ?selected=${this.document?.pillar_id == pillar.id}>${pillar.name}</option>`)}
                 </select>
             </div>
             <div class="input_group">
@@ -60,7 +61,7 @@ export class ShalemStudentPanelDocumentUpload extends BaseForm(BaseDashboardCons
                         </shalem-editable-field>
                     </shalem-tooltip>
                 </label>
-                <textarea id="document_description" name="document_description" required></textarea>
+                <textarea id="document_description" name="document_description" required>${this.document?.description ?? ''}</textarea>
             </div>
             <div class="input_group">
                 <label for="document_file">Upload Document 
@@ -70,8 +71,10 @@ export class ShalemStudentPanelDocumentUpload extends BaseForm(BaseDashboardCons
                         </shalem-editable-field>
                     </shalem-tooltip>
                 </label>
-                <input type="file" id="document_file" name="document_file" accept=".pdf,.jpg,.png" required />
+                ${this.document ? html`<p class="description">Uploading a new file will replace the existing one.</p>` : ''}
+                <input type="file" id="document_file" name="document_file" accept=".pdf,.jpg,.png" ?required=${!this.document} />
             </div>
+            ${this.document ? html`<input type="hidden" name="document_id" .value=${this.document.id} />` : ''}
             <button type="submit">Ok. Let's go!</button>
         </form>
         `;

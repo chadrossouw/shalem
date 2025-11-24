@@ -29,8 +29,22 @@ export const DocumentHelper = (superClass) => class extends superClass{
             buttons.push({name:'edit',html: html`
                 <button @click=${() => this._clickHandler('edit', document)}>${unsafeSVG(edit)}Edit</button>
             `});
+            console.log(document.document_status);
             buttons.push({name:'seeMessage',html: html`
-                <button @click=${() => this._clickHandler('seeMessage', document)}>${unsafeSVG(help)}What do I need to do?</button>
+                <shalem-dialog>
+                    <button slot="trigger">${unsafeSVG(help)}What do I need to do?</button>
+                    <h2 slot="title" class="white">Changes Requested</h2>
+                    <div slot="body">
+                        ${document.document_status.user ? html`
+                            <p class="big white">${document.document_status.user.honorific} ${document.document_status.user.last_name} requested the following changes</p>
+                        ` : ''}
+                        <p class="white">${document.document_status.status_message}</p>
+                        <div class="flex button-group">
+                            <button class="bg_blue" @click=${() => this._clickHandler('edit', document)}>${unsafeSVG(edit)}Edit</button>
+                            <button class="bg_blue" @click=${() => this._clickHandler('help', document)}>${unsafeSVG(help)}Help</button>
+                        </div>
+                    </div>
+                </shalem-dialog>
             `});
         }
         if(document.document_status.status === 'approved'){
@@ -58,7 +72,7 @@ export const DocumentHelper = (superClass) => class extends superClass{
     _clickHandler(action, document){
         switch(action){
             case 'edit':
-                this._updateContext({panel: 'upload', view: null, action: 'edit', documentId: document.id});
+                this._editDocument(document);
                 break;
             case 'help':
                 this._getHelp(document);
@@ -74,6 +88,10 @@ export const DocumentHelper = (superClass) => class extends superClass{
 
     _viewDocument(document){
         this._updateContext({panel: 'my-documents', view: document.id, action:'view'});
+    }
+    
+    _editDocument(document){
+        this._updateContext({panel: 'my-documents', view: document.id, action:'edit'});
     }
 
     _getHelp(document){

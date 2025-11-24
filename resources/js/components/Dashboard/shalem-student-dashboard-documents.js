@@ -97,6 +97,11 @@ export class ShalemStudentDashboardDocuments extends BaseDashboardConsumer(BaseC
             
         }
         else if (this.panel == 'my-documents'||!this.panel){
+            if(this.view == 'success'){
+                this.jsConfetti.addConfetti(
+                    this.confettiOptions
+                );
+            }
             panel = html`
                 <shalem-student-panel-my-documents
                     identifier="${this.identifier}"

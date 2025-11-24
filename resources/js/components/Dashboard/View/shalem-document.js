@@ -75,6 +75,32 @@ export class ShalemDocument extends DocumentHelper(BaseDashboardConsumer(BaseCla
                 }
             }
         }
+        else if(this.action == 'edit'){
+            let preview = '';
+            if(this.fileType == 'pdf'){
+                preview = html`
+                <div class="document_viewer margins">
+                    <shalem-pdf-viewer file="${this.fileUrl}"></shalem-pdf-viewer>
+                </div>
+                `;
+            }
+            else{
+                preview = html`
+                <div class="document_viewer margins">
+                    <div class="bg_green bg_shade_2 inner_padding radius">
+                        <img src="${this.fileUrl}" alt="Document Image" />
+                    </div>
+                </div>
+                `;
+            }
+            body = html`
+            <div class="margins">
+                <shalem-student-panel-document-upload document="${JSON.stringify(this.document)}"></shalem-student-panel-document-upload>
+                
+            </div>  
+            ${preview}
+            `;
+        }
         let actions = this._renderActions(this.document);
         let footer = html`
         <div class="document_footer margins">

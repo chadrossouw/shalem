@@ -17,22 +17,26 @@ export const baseStyles = css`
         font-size:var(--header);
         line-height:var(--header-line-height);
         font-weight: 800;
+        margin-top:0;
     }
 
     h2,.h2{
         font-size:var(--subheader);
         line-height:var(--subheader-line-height);
         font-weight: 800;
+        margin-top:0;
     }
 
     h3,.h3{
         font-size:var(--small-header);
         line-height:var(--small-header-line-height);
+        margin-top:0;
     }
 
     h4,h5,h6,.h4{
          font-size:var(--big-body);
         line-height:var(--big-body-line-height);
+        margin-top:0;
     }
 
     table {
@@ -96,6 +100,10 @@ export const baseStyles = css`
     }
     p{
         margin-top:0;
+        &.big{
+            font-size:var(--big-body);
+            line-height:var(--big-body-line-height);
+        }
     }
     /*Links*/
     a {
@@ -163,10 +171,16 @@ export const baseStyles = css`
             background-color:var(--blue);
             color:var(--white);
         }
-        &.back{
+        &:has(>svg){
             display:flex;
             align-items:center;
-            gap:0.5rem;
+            gap:1rem;
+            svg{
+                height:1.5rem;
+                width:3rem;
+            }  
+        }
+        &.back {
             svg{
                 transition: transform var(--transition) ease;
                 width:1.5rem;
@@ -336,6 +350,13 @@ export const baseStyles = css`
     }
     .shadow{
         box-shadow: var(--box-shadow);
+    }
+    .button-group,.button_group{
+        display:flex;
+        gap:1rem;
+        flex-wrap:wrap;
+        justify-content:flex-start;
+        margin-top:2rem;
     }
     
 `;
