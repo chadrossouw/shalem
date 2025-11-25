@@ -104,6 +104,17 @@ export class ShalemNavigation extends BaseClass(LitElement) {
             </nav>
         `;
     }
+    _renderDefaultNavigation(){
+        return html`
+            <nav>
+                <ul>
+                    <li><a href="/">Login</a></li>
+                    <li><a href="/help">Help</a></li>
+                    <li><a href="/faqs">FAQs</a></li>
+                </ul>
+            </nav>
+        `;
+    }
 
     _handleDashboardUpdate(dashboardContext){
         console.log('Navigation received dashboard update', dashboardContext);

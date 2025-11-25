@@ -147,11 +147,15 @@ export const baseStyles = css`
     .grid{
         display:grid;
         gap:1rem;
-        &.grid_50{
+    }
+    @media (min-width:700px){
+        .grid{
+            &.grid_50{
             grid-template-columns:repeat(2,1fr);
-        }
-        &.grid_33{
-            grid-template-columns:repeat(3,1fr);
+            }
+            &.grid_33{
+                grid-template-columns:repeat(3,1fr);
+            }
         }
     }
     .flex{
@@ -393,14 +397,15 @@ export const cards = css`
                 clip-path: shape(from 81.98% 16.2%,curve to 99.73% 52.66% with 93.4% 26.45%/101.61% 40.42%,curve to 74.6% 84.2% with 97.92% 64.84%/86.02% 75.29%,curve to 41.88% 99.97% with 63.18% 93.12%/52.25% 100.51%,curve to 14.59% 82.01% with 31.58% 99.37%/21.76% 90.92%,curve to 0.81% 52.66% with 7.35% 73.09%/2.62% 63.71%,curve to 7.21% 18.53% with -1.07% 41.55%/0.04% 28.71%,curve to 41.95% 0.03% with 14.45% 8.28%/27.89% 0.63%,curve to 81.98% 16.2% with 55.94% -0.5%/70.56% 5.95%,close);
                 z-index:0;
             }
-            svg{
+            svg,shalem-points-icon{
                 position:relative;
-                z-indec:1;
+                display:block;
+                z-index:1;
                 height:calc(250px - 2rem);
                 width:calc(250px - 2rem);
             }
         }
-        &:hover .icon::before{
+        &:hover .icon:has(>svg)::before{
             transform: scale(0.6) rotate(360deg);
         }
 

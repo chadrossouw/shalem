@@ -21,7 +21,8 @@ export class ShalemStudentDashboardHome extends BaseDashboardConsumer(BaseClass(
         super.connectedCallback();
         
         ({fields: this.fields, user: this.user} = this._dashboard);
-    }
+        console.log(this.user);
+    } 
 
     updated(changedProperties){
         cardLinks(this.shadowRoot);
@@ -49,8 +50,8 @@ export class ShalemStudentDashboardHome extends BaseDashboardConsumer(BaseClass(
                         ${this.fields?.student_dashboard_view_points ?? 'See my points'}
                     </shalem-editable-field>
                 </h2>
-                <shalem-points-icon></shalem-points-icon>
-                <button class="card_target" @click=${() => this._handleAction({panel: 'points', view: null})}>
+                <div class="icon" aria-hidden="true"><shalem-points-icon></shalem-points-icon></div>
+                <button class="card_target" @click=${() => this._handleAction({dashboard: 'points', panel:null,view: null})}>
                     Let's go
                 </button>
             </div>

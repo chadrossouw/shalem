@@ -76,4 +76,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Mentor::class, 'user_id', 'id');
     }
+
+    public function userPoints(): HasMany
+    {
+        return $this->hasMany(UserPoints::class, 'user_id', 'id');
+    }
 }

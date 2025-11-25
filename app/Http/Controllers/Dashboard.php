@@ -31,11 +31,12 @@ class Dashboard extends Controller
                     $query->where('read_at', null);
                 }]);
                 $user->load('mentor')->load('mentor.mentorUser');
-                $pillars = Pillar::all(['id','name','description']);
+                $user->load('userPoints')->load('userPoints.points');
+                $pillars = Pillar::all(['id','name','description','colour']);
                 return view('dashboard.student', ['user' => $user, 'fields' => $fields, 'pillars' => $pillars, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token]);
             case 'staff':
                 $role = $user->staffRole->role ?? 'staff';
-                $pillars = Pillar::all(['id','name','description']);
+                $pillars = Pillar::all(['id','name','description','colour']);
                 $fields = Field::where('location','staff_dashboard')->get();
                 if($role=='admin'||$role=='superadmin'){
                     return view('dashboard.staff', ['user' => $user, 'fields' => $fields, 'pillars'=>$pillars,'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token]);

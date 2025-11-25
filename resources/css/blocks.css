@@ -48,19 +48,21 @@
     #welcome{
         display:grid;
         grid-template-rows: 1fr auto;
-        height:calc(100vh - var(--header-height) - var(--footer-height) );
+        min-height:calc(100vh - var(--header-height) - var(--footer-height) );
         position:relative;
         .avatar-container{
             position:relative;
+            height:25dvh;
         }
         svg{
-            width:350px;
+            width:clamp(120px,45vw,270px);
             height:auto;
             position:absolute;
             right:var(--margins);
             bottom:-6rem;
-            transform:translateX(35%)
+            transform:translateX(15%)
         }
+        
     }
     #welcome::after{
         content:"";

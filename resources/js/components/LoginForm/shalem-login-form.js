@@ -104,9 +104,9 @@ export class ShalemLoginForm extends BaseForm(BaseClass(LitElement )) {
         return html`
             <div class="login-form radius-big margin white bg_blue margins inner_padding">
                 <slot name="general"></slot>
-                <div class="login-buttons">
-                    <a href="${this.studentroute}" @click=${this._clearCookiesBeforeFollow} class="button bg_pink white">Pupil login</a>
-                    <button @click=${this._showHideForm} class="button bg_White blue">Parent login</button>
+                <div class="login-buttons grid grid_30">
+                    <a href="${this.studentroute}" @click=${this._clearCookiesBeforeFollow} class="button bg_purple bg_shade_1 white">Pupil login</a>
+                    <button @click=${this._showHideForm} class="button bg_white blue">Parent login</button>
                     <a href="${this.staffroute}" @click=${this._clearCookiesBeforeFollow} class="button bg_white blue">Staff login</a>
                 </div>
             </div>
@@ -228,6 +228,25 @@ export class ShalemLoginForm extends BaseForm(BaseClass(LitElement )) {
                 padding-bottom:calc(var(--inner-padding) * 3);
                 border-bottom-left-radius:0;
                 border-bottom-right-radius:0;
+            }
+            .login-buttons{
+                .button{
+                    justify-content:center;
+                    text-align:center;
+                    text-decoration:none;
+                    font-weight:600;
+                    &:hover{
+                        color:var(--white);
+                        text-decoration:none;
+                        background-color:var(--green);
+                    }
+                    &:visited{
+                        color:var(--white);
+                    }
+                    &.blue:visited{
+                        color:var(--blue);
+                    }
+                }
             }
         `
     ]
