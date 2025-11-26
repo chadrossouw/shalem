@@ -52,7 +52,7 @@ export class ShalemStudentDashboardDocuments extends BaseDashboardConsumer(BaseC
                     this.confettiOptions
                 );
                 header = html`
-                <div class="header_with_icon">
+                <div class="header_with_icon margins">
                     ${unsafeSVG(uploadHappyIcon)}
                     <shalem-editable-field name="student_dashboard_documents_upload_success_header" location="student-dashboard" ?admin=${this.isAdmin}>
                         <h1>${this.fields?.student_dashboard_documents_upload_success_header ?? 'Success!'}</h1>
@@ -61,7 +61,7 @@ export class ShalemStudentDashboardDocuments extends BaseDashboardConsumer(BaseC
                 </div>`;
                 panel = html`
                 ${header}
-                <div class="upload_success_message">
+                <div class="upload_success_message margins">
                     ${this.user.mentor.mentor_user.honorific} ${this.user.mentor.mentor_user.last_name} will approve within ${this.documentApprovalTime} days. You will be notified when your points are awarded.
                 </div>
                 <div class="button_group">
@@ -74,7 +74,7 @@ export class ShalemStudentDashboardDocuments extends BaseDashboardConsumer(BaseC
             else{
                 this._setDocumentTitle('Upload a document');
                 header = html`
-                <div class="header_with_icon">
+                <div class="header_with_icon margins">
                     ${unsafeSVG(uploadIcon)}
                     <shalem-editable-field name="student_dashboard_documents_upload_header" location="student-dashboard" ?admin=${this.isAdmin}>
                         <h1>${this.fields?.student_dashboard_documents_upload_header ?? 'Upload a document'}</h1>
@@ -86,12 +86,16 @@ export class ShalemStudentDashboardDocuments extends BaseDashboardConsumer(BaseC
                 `;
                 panel = html`
                     ${header}
-                    <shalem-student-panel-document-upload
-                        identifier="${this.identifier}"
-                    ></shalem-student-panel-document-upload>
-                    <button class="back" @click=${() => this._handleAction({dashboard:'documents',panel: 'my-documents', view: null})}>
-                        <span>${unsafeSVG(backArrow)}</span> Back to my documents
-                    </button>
+                    <div class="margins">
+                        <shalem-student-panel-document-upload
+                            identifier="${this.identifier}"
+                        ></shalem-student-panel-document-upload>
+                        <div class="button-group">  
+                            <button class="back" @click=${() => this._handleAction({dashboard:'documents',panel: 'my-documents', view: null})}>
+                                <span>${unsafeSVG(backArrow)}</span> Back to my documents
+                            </button>
+                        </div>
+                    </div>
                 `
             }
             

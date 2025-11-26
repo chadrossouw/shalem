@@ -15,4 +15,20 @@ export const formStyles = css`
     input::placeholder,textarea::placeholder{
         color:var(--purple-shade-2);
     }
+    button[type="submit"]{
+        background-color:var(--green);
+        color:var(--black);
+        margin-top:2rem;
+    }
+    label{
+        padding-left:0.25rem;
+        margin-bottom:1rem;
+        display:block;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .input_group{
+        margin-bottom:1.5rem;
+    }
 `;

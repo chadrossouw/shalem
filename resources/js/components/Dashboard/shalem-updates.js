@@ -28,11 +28,15 @@ export class ShalemUpdates extends BaseDashboardConsumer(BaseClass(LitElement)) 
             avatar = html`${unsafeSVG(FredGeek)}`;
         }
         return html`
+        <div class="padding bg_green">
         ${avatar}
-        <h1>${this._update.subject}</h1>
+        <h1 class="white">${this._update.subject}</h1>
         <p>${this._update.message}</p>
-        ${this._update.actions.map(action => html`<button @click=${(e) => {e.preventDefault(); this._handleActionClick(action.action)}}>${action.title}</button>`)}
-        <button @click=${this._handleDismissClick}>Dismiss</button>
+        <div class="grid">
+            ${this._update.actions.map(action => html`<button class="bg_green bg_shade_1 black" @click=${(e) => {e.preventDefault(); this._handleActionClick(action.action)}}>${action.title}</button>`)}
+            <button class="bg_light_blue" @click=${this._handleDismissClick}>Dismiss</button>
+            </div>
+        </div>
         `
     }
 
@@ -64,4 +68,22 @@ export class ShalemUpdates extends BaseDashboardConsumer(BaseClass(LitElement)) 
         this.notifications = response.notifications;
         this._updateContext({ updates: this.updates, notifications: this.notifications });
     }
+    static styles = [
+        super.styles,
+        css`
+        :host{
+            position:fixed;
+            top:0;
+            left:0;
+            width:100vw;
+            height:100dvh;
+            &>div{
+                height:100dvh;
+                display:grid;
+                grid-template-rows: auto auto 1fr auto;
+                padding-top:var(--header-height);
+                padding-bottom:var(--header-height);
+            }
+        }
+    `];
 }

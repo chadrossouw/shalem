@@ -32,6 +32,7 @@ class Dashboard extends Controller
                 }]);
                 $user->load('mentor')->load('mentor.mentorUser');
                 $user->load('userPoints')->load('userPoints.points');
+                $user->load('userGoals')->load('userGoals.goals');
                 $pillars = Pillar::all(['id','name','description','colour']);
                 return view('dashboard.student', ['user' => $user, 'fields' => $fields, 'pillars' => $pillars, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token]);
             case 'staff':

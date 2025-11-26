@@ -81,4 +81,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserPoints::class, 'user_id', 'id');
     }
+
+    public function userGoals(): HasMany
+    {
+        return $this->hasMany(UserGoal::class, 'user_id', 'id');
+    }
 }

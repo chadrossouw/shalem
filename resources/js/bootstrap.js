@@ -20,6 +20,7 @@ import { ShalemLoader } from "./components/Loader/shalem-loader.js";
 import { ShalemPdfViewer } from "./components/Pdf/shalem-pdf-viewer.js";
 import { ShalemDialog } from "./components/Modal/shalem-dialog.js";
 import { ShalemPointsIcon } from "./components/Points/shalem-points-icon.js";
+import { ShalemTooltip } from "./components/Tooltip/shalem-tooltip.js";
 
 //Student Dashboard elements
 import { ShalemStudentDashboard } from "./components/Dashboard/shalem-student-dashboard.js";
@@ -29,7 +30,7 @@ import { ShalemLoginRedirector } from "./components/LoginForm/shalem-login-redir
 import { ShalemUpdates } from "./components/Dashboard/shalem-updates.js";
 import { ShalemStudentDashboardDocuments } from "./components/Dashboard/shalem-student-dashboard-documents.js";
 import { ShalemStudentDashboardPoints } from "./components/Dashboard/shalem-student-dashboard-points.js";
-
+import { ShalemStudentDashboardGoals } from "./components/Dashboard/shalem-student-dashboard-goals.js";
 //Documents
 import { ShalemStudentPanelDocumentUpload } from "./components/Dashboard/Panel/shalem-student-panel-document-upload.js";
 import { ShalemStudentPanelMyDocuments } from "./components/Dashboard/Panel/shalem-student-panel-my-documents.js";
@@ -63,6 +64,7 @@ window.customElements.define("shalem-loader", ShalemLoader);
 window.customElements.define("shalem-pdf-viewer", ShalemPdfViewer);
 window.customElements.define("shalem-dialog", ShalemDialog);
 window.customElements.define("shalem-points-icon", ShalemPointsIcon);
+window.customElements.define("shalem-tooltip", ShalemTooltip);
 
 //Student Dashboard elements
 window.customElements.define("shalem-student-dashboard", ShalemStudentDashboard);
@@ -72,6 +74,7 @@ window.customElements.define("shalem-login-redirector", ShalemLoginRedirector);
 window.customElements.define("shalem-updates", ShalemUpdates);
 window.customElements.define("shalem-student-dashboard-documents", ShalemStudentDashboardDocuments);
 window.customElements.define("shalem-student-dashboard-points", ShalemStudentDashboardPoints);
+window.customElements.define("shalem-student-dashboard-goals", ShalemStudentDashboardGoals);
 
 //Documents
 window.customElements.define("shalem-student-panel-document-upload", ShalemStudentPanelDocumentUpload);
@@ -81,6 +84,8 @@ window.customElements.define("shalem-document", ShalemDocument);
 
 //Points
 window.customElements.define("shalem-student-dashboard-points-panel", ShalemStudentDashboardPointsPanel);
+
+//Goals
 
 //Help Dashboard
 window.customElements.define("shalem-dashboard-help", ShalemDashboardHelp);

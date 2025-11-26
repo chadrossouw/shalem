@@ -136,7 +136,7 @@ export const baseStyles = css`
         margin: 0 var(--margins);
     }
     .padding{
-        padding: 2rem var(--paddings); 
+        padding: 2rem var(--margins); 
     }
     .inner_padding{
         padding: var(--inner-padding);
@@ -308,6 +308,9 @@ export const baseStyles = css`
     .bg_white{
         background-color:var(--white);
     } 
+    .bg_pale_grey{
+        background-color:var(--pale-grey);
+    }
     .radius{
         border-radius:var(--border-radius);
     }
