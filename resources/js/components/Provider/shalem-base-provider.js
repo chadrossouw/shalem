@@ -8,7 +8,11 @@ export class ShalemBaseProvider extends LitElement {
     static properties = {
         identifier: { type: String },
         user: { type: Object },
-        notifications: { type: Array },
+        notifications: { type: Object },
+        unreadNotifications: { type: Array },
+        archivedNotifications: { type: Array },
+        notificationsPagination: { type: Object },
+        notificationsArchivedPagination: { type: Object },
         documents: { type: Object },
         document: { type: Object },
         documentsPagination: { type: Object },
@@ -37,10 +41,7 @@ export class ShalemBaseProvider extends LitElement {
             this.token = null;
             window.location.href='/?error=auth';
         }
-        if(this.user.notifications){
-            this.notifications = this.user.notifications??[];
-            this.updates = this.notifications.filter(notification => notification.type === 'update');
-        }
+        
         if(!this.documents){
             this.documents = [];
         }
@@ -51,9 +52,13 @@ export class ShalemBaseProvider extends LitElement {
             dashboard: this.dashboard,
             history: this.history,
             notifications: this.notifications,
+            unreadNotifications: this.unreadNotifications,
+            archivedNotifications: this.archivedNotifications,
             documents: this.documents,
             document: this.document,
             documentsPagination: this.documentsPagination,
+            notificationsPagination: this.notificationsPagination,
+            notificationsArchivedPagination: this.notificationsArchivedPagination,
             pillars: this.pillars,
             updates: this.updates,
             panel: this.panel,
@@ -129,7 +134,24 @@ export class ShalemBaseProvider extends LitElement {
             };
             console.log(this.dashboardContext);
         }
-        ({user: this.user, notifications: this.notifications, updates: this.updates, fields: this.fields, dashboard: this.dashboard, history: this.history, panel: this.panel, view: this.view, action: this.action} = this.dashboardContext);
+        ({
+            user: this.user, 
+            notifications: this.notifications, 
+            unreadNotifications: this.unreadNotifications, 
+            archivedNotifications: this.archivedNotifications, 
+            notificationsPagination: this.notificationsPagination,
+            notificationsArchivedPagination: this.notificationsArchivedPagination,
+            documents: this.documents,
+            document: this.document,
+            documentsPagination: this.documentsPagination, 
+            updates: this.updates, 
+            fields: this.fields, 
+            dashboard: this.dashboard, 
+            history: this.history, 
+            panel: this.panel, 
+            view: this.view, 
+            action: this.action
+        } = this.dashboardContext);
         this.history = [...this.history, ...newHistory];
         this.dashboardContext.history = this.history;
         this.dashboardProvider.setValue(this.dashboardContext);

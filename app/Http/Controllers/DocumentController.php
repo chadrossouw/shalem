@@ -67,7 +67,7 @@ class DocumentController extends Controller
         if($request->has('query')){
             return $this->search($request);
         }
-        $documents = Document::where('user_id',$user->id)->orderBy('created_at','desc')->paginate(2);
+        $documents = Document::where('user_id',$user->id)->orderBy('created_at','desc')->paginate(6);
         $documents->load('document_status');
         $documents->map(function($document) {
             $document->document_status->load('user');

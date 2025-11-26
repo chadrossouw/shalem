@@ -12,6 +12,10 @@ export const BaseDashboardConsumer = (superClass) => class extends superClass{
         _dashboard: { type: Object, state: true },
         user: { type: Object , state:true},
         notifications: { type: Array , state:true},
+        unreadNotifications: { type: Array , state:true},
+        archivedNotifications: { type: Array , state:true},
+        notificationsPagination: { type: Object , state:true},
+        notificationsArchivedPagination: { type: Object , state:true},
         documents: { type: Object , state:true},
         document: { type: Object, state: true },
         documentsPagination: { type: Object , state:true},
@@ -48,7 +52,26 @@ export const BaseDashboardConsumer = (superClass) => class extends superClass{
     }
 
     _populateStateFromContext(){
-        ({user: this.user, notifications: this.notifications, updates: this.updates, documents: this.documents, document: this.document, documentsPagination: this.documentsPagination, pillars:this.pillars, fields: this.fields, dashboard: this.dashboard, history: this.history, panel: this.panel, view: this.view, action: this.action, documentApprovalTime: this.documentApprovalTime} = this._dashboard);
+        ({
+            user: this.user, 
+            notifications: this.notifications, 
+            unreadNotifications: this.unreadNotifications, 
+            archivedNotifications: this.archivedNotifications, 
+            notificationsPagination: this.notificationsPagination, 
+            notificationsArchivedPagination: this.notificationsArchivedPagination,
+            updates: this.updates, 
+            documents: this.documents, 
+            document: this.document, 
+            documentsPagination: this.documentsPagination, 
+            pillars:this.pillars, 
+            fields: this.fields, 
+            dashboard: this.dashboard, 
+            history: this.history, 
+            panel: this.panel, 
+            view: this.view, 
+            action: this.action, 
+            documentApprovalTime: this.documentApprovalTime
+        } = this._dashboard);
     }
 
     _updateContext(newValues){

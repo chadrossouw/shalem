@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Field;
 use App\Models\Pillar;
+use App\Models\Notification;
 
 class Dashboard extends Controller
 {
@@ -27,14 +28,14 @@ class Dashboard extends Controller
             case 'student':
                 $fields = Field::where('location','student_dashboard')->get();
                 $user->load('student')->load('student.avatarModel');
-                $user->load(['notifications' => function ($query) {
-                    $query->where('read_at', null);
-                }]);
+                $notifications = Notification::where('user_id', $user->id)->where('archived', false)->paginate(12);
+                $unreadNotifications = Notification::where('user_id', $user->id)->whereNull('read_at')->where('archived', false)->limit(2)->get();
+                $updates = Notification::where('user_id', $user->id)->where('type', 'update')->where('archived', false)->whereNull('read_at')->limit(1)->get();
                 $user->load('mentor')->load('mentor.mentorUser');
                 $user->load('userPoints')->load('userPoints.points');
                 $user->load('userGoals')->load('userGoals.goals');
                 $pillars = Pillar::all(['id','name','description','colour']);
-                return view('dashboard.student', ['user' => $user, 'fields' => $fields, 'pillars' => $pillars, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token]);
+                return view('dashboard.student', ['user' => $user, 'fields' => $fields, 'pillars' => $pillars, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token, 'notifications' => $notifications, 'unreadNotifications' => $unreadNotifications, 'updates' => $updates ]);
             case 'staff':
                 $role = $user->staffRole->role ?? 'staff';
                 $pillars = Pillar::all(['id','name','description','colour']);

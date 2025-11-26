@@ -7,7 +7,18 @@ use App\Models\Notification;
 
 class NotificationController extends Controller
 {
-    //
+    public function getNotifications(Request $request){
+        $user = $request->user();
+        $notifications = Notification::where('user_id', $user->id)->where('archived', false)->paginate(12);
+        return response()->json(['notifications' => $notifications], 200);
+    }
+
+    public function getArchivedNotifications(Request $request){
+        $user = $request->user();
+        $notifications = Notification::where('user_id', $user->id)->where('archived', true)->paginate(12);
+        return response()->json(['notifications' => $notifications], 200);
+    }
+    
     public function handleStatusUpdate(Request $request, $id, $status){
         $user = $request->user();
         $notification = Notification::where('id', $id)->where('user_id', $user->id)->first();

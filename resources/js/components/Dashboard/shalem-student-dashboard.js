@@ -76,6 +76,13 @@ export class ShalemStudentDashboard extends BaseDashboardConsumer(BaseClass(LitE
                     >
                         ${nav}
                     </shalem-student-dashboard-goals>`;
+                case 'notifications':
+                    return html`
+                    <shalem-dashboard-notifications
+                        identifier="${this.identifier}"
+                    >
+                        ${nav}
+                    </shalem-dashboard-notifications>`;
                 case 'help':
                     return html`
                     <shalem-dashboard-help
