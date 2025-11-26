@@ -85,6 +85,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 // Notifications routes
 Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'getNotifications'])->name('api.notifications');
+    Route::get('/notifications/archived', [NotificationController::class, 'getArchivedNotifications'])->name('api.notifications.archived');
     Route::post('/notifications/{id}/{status}', [NotificationController::class, 'handleStatusUpdate'])->name('api.notifications.status');
 });
 

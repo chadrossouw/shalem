@@ -10,9 +10,9 @@ export class ShalemNavNotifications extends BaseNotificationsConsumer(BaseDashbo
     }
 
     render(){
-        let notifications = this.notifications.slice(0,3);
+        let notifications = this.unreadNotifications.slice(0,3);
         let moreButton = '';
-        if(notifications.length > 2){
+        if(this.unreadNotifications.length > 2){
             moreButton = html`<button class="more-button" @click=${(e) => {e.preventDefault(); this._goToNotifications()}}>See all notifications</button>`;
         }
         return html`
