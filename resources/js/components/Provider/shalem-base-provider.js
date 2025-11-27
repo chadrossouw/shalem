@@ -27,8 +27,7 @@ export class ShalemBaseProvider extends LitElement {
     };
 
     constructor(){
-        super();
-
+        super(); 
     }
 
     connectedCallback(){

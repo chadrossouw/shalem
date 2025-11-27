@@ -31,6 +31,8 @@ import { ShalemUpdates } from "./components/Dashboard/shalem-updates.js";
 import { ShalemStudentDashboardDocuments } from "./components/Dashboard/shalem-student-dashboard-documents.js";
 import { ShalemStudentDashboardPoints } from "./components/Dashboard/shalem-student-dashboard-points.js";
 import { ShalemStudentDashboardGoals } from "./components/Dashboard/shalem-student-dashboard-goals.js";
+import { ShalemDashboardNotifications } from "./components/Dashboard/shalem-dashboard-notifications.js";
+
 //Documents
 import { ShalemStudentPanelDocumentUpload } from "./components/Dashboard/Panel/shalem-student-panel-document-upload.js";
 import { ShalemStudentPanelMyDocuments } from "./components/Dashboard/Panel/shalem-student-panel-my-documents.js";
@@ -75,6 +77,7 @@ window.customElements.define("shalem-updates", ShalemUpdates);
 window.customElements.define("shalem-student-dashboard-documents", ShalemStudentDashboardDocuments);
 window.customElements.define("shalem-student-dashboard-points", ShalemStudentDashboardPoints);
 window.customElements.define("shalem-student-dashboard-goals", ShalemStudentDashboardGoals);
+window.customElements.define("shalem-dashboard-notifications", ShalemDashboardNotifications);
 
 //Documents
 window.customElements.define("shalem-student-panel-document-upload", ShalemStudentPanelDocumentUpload);
