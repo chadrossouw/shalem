@@ -32,14 +32,22 @@ class Dashboard extends Controller
             case 'student':
                 $fields = Field::where('location','student_dashboard')->get();
                 $user->load('student')->load('student.avatarModel');
-                $notifications = Notification::where('user_id', $user->id)->where('archived', false)->paginate(12);
+                $_notifications = Notification::where('user_id', $user->id)->where('archived', false)->paginate(12);
+                $notifications = [$_notifications->currentPage()=>$_notifications->toArray()['data']];
+                $notificationsPagination = [
+                    'current_page' => $_notifications->currentPage(),
+                    'last_page' => $_notifications->lastPage(),
+                    'per_page' => $_notifications->perPage(),
+                    'total' => $_notifications->total(),
+                ];
+
                 $unreadNotifications = Notification::where('user_id', $user->id)->whereNull('read_at')->where('archived', false)->limit(2)->get();
                 $updates = Notification::where('user_id', $user->id)->where('type', 'update')->where('archived', false)->whereNull('read_at')->limit(1)->get();
                 $user->load('mentor')->load('mentor.mentorUser');
                 $user->load('userPoints')->load('userPoints.points');
                 $user->load('userGoals')->load('userGoals.goals');
                 $pillars = Pillar::all(['id','name','description','colour']);
-                return view('dashboard.student', ['user' => $user, 'fields' => $fields, 'pillars' => $pillars, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token, 'notifications' => $notifications, 'unreadNotifications' => $unreadNotifications, 'updates' => $updates ]);
+                return view('dashboard.student', ['user' => $user, 'fields' => $fields, 'pillars' => $pillars, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token, 'notifications' => $notifications, 'notificationsPagination' => $notificationsPagination, 'unreadNotifications' => $unreadNotifications, 'updates' => $updates ]);
             case 'staff':
                 $role = $user->staffRole->role ?? 'staff';
                 $pillars = Pillar::all(['id','name','description','colour']);

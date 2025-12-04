@@ -21,7 +21,6 @@ export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationList
         this.searchID = `my-documents-${this.identifier}`;
         this.query = '';
         this.document = null;
-        console.log(this.view,this.action);
         if(this.view && this.view != 'success'){
             //find document by id
             this._setDocumentFromView();

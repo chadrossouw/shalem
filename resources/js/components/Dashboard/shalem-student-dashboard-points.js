@@ -5,7 +5,7 @@ import pointsIcon from "../../icons/points-icon.svg";
 import backArrow from "../../icons/arrow-left.svg";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { cardLinks } from "../../common/accessibility.js";
-import { cards } from '../../utilities/baseStyles.js';
+import { cards, toggle } from '../../utilities/baseStyles.js';
 import view from "../../icons/view.svg";
 import { pointsByPillar } from "../Points/points-aggregators.js";
 
@@ -107,67 +107,8 @@ export class ShalemStudentDashboardPoints extends BaseDashboardConsumer(BaseClas
     static styles = [
         super.styles,
         cards,
+        toggle,
         css`
-            .toggle{
-                width:8rem;
-                height:2rem;
-                box-sizing:border-box;
-                margin:1rem 0 2rem auto;
-                position:relative;
-                border-radius:var(--border-radius-big);
-                overflow:clip;
-                input{
-                    position:absolute;
-                    width:100%;
-                    height:100%;
-                    top:0;
-                    left:0;
-                    opacity:0;
-                    cursor:pointer;
-                    z-index:5;
-                }
-                .toggle_text{
-                    position:absolute;
-                    top:0;
-                    left:0;
-                    width:100%;
-                    height:100%;
-                    display:flex;
-                    align-items:center;
-                    transition: opacity var(--transition) ease;
-                    &.unchecked{
-                        background:var(--blue-shade-2);
-                        justify-content:flex-end;
-                        padding-right:1rem;
-                    }
-                    &.checked{
-                        background:var(--purple-shade-2);
-                        justify-content:flex-start;
-                        padding-left:1rem;
-                    }
-                }
-                &::after{
-                    content:'';
-                    position:absolute;
-                    top:0;
-                    left:0;
-                    width:2rem;
-                    height:2rem;
-                    background:var(--blue);
-                    border-radius:var(--border-radius-big);
-                    transition: left var(--transition) ease, background-color var(--transition) ease;
-                }
-            }
-            .toggle .checked{
-                opacity:0;
-            }
-            .toggle:has(input:checked)::after{
-                left:calc(100% - 2rem);
-                background:var(--purple);
-            }
-            .toggle:has(input:checked) .checked{
-                opacity:1;
-            }
             .icon_holder{
                 display:flex;
                 justify-content:center;

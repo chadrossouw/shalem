@@ -31,8 +31,8 @@ export class ShalemNavbar extends BaseNavConsumer(BaseDashboardConsumer(BaseClas
         if(this.identifier == 'student'){
             let currentPage = this._dashboard.panel;
             let navIcon = this._getNotificationIcon();
-            if(this.notifications && this.notifications.length > 0 && !this._dismissedNotifications){
-                let count = this.notifications.length<10 ? this.notifications.length : '+';
+            if(this.unreadNotifications && this.unreadNotifications.length > 0 && !this._dismissedNotifications){
+                let count = this.unreadNotifications.length<10 ? this.unreadNotifications.length : '+';
                 let button;
                 if(!this._openNotifications){
                     button = html`
@@ -84,11 +84,11 @@ export class ShalemNavbar extends BaseNavConsumer(BaseDashboardConsumer(BaseClas
     _dismissNotifications(){
         this._dismissedNotifications = true;
         this._openNotifications = false;
-        this.notifications.forEach((notification,i) => {
-            if(i<3){
-                this._markAsRead(notification.id);
-            }
+        this.unreadNotifications.forEach((notification) => {
+            this._markAsRead(notification.id);
         });
+        this.unreadNotifications = [];
+        this._updateContext({unreadNotifications: this.unreadNotifications});
     }
 
     _handleNavigation(e, dashboard, panel){
@@ -97,7 +97,7 @@ export class ShalemNavbar extends BaseNavConsumer(BaseDashboardConsumer(BaseClas
     }
 
     _getNotificationIcon(){
-        let notifications = this._dashboard.notifications || [];
+        let notifications = this.unreadNotifications || [];
         if(notifications.length > 0){
             let count = notifications.length<10 ? notifications.length : '+';
             let notificationsNavOpenNumbered = notificationsNavOpen.replace('<tspan x="0" y="0">1</tspan>', `<tspan x="0" y="0">${count}</tspan>`);
