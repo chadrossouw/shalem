@@ -34,6 +34,7 @@ Route::post('/grecaptcha', function (Request $request) {
 Route::post('/login', [LoginController::class, 'authenticate'])->name('api.login');
 Route::post('/login-redirect', [LoginController::class, 'authenticateRedirect'])->name('api.login.redirect');
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth:sanctum')->name('api.logout');
+Route::post('/cleanlogout', [LoginController::class, 'cleanLogout'])->name('api.cleanlogout');
 Route::post('/reset-password', function (Request $request) {
     $request->validate(['email' => 'required|email']);
     $firstLogin = $request->firstlogin??false;

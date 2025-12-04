@@ -2,6 +2,7 @@ import {ContextProvider} from '@lit/context';
 import { dashboardContext } from '../../utilities/context.js';
 import { LitElement, html } from 'lit';
 import { EventManager } from '../../utilities/events.js';
+import { safeFetch } from '../../common/xsrf.js';
 
 export class ShalemBaseProvider extends LitElement {
 
@@ -31,7 +32,7 @@ export class ShalemBaseProvider extends LitElement {
 
     }
 
-    connectedCallback(){
+    async connectedCallback(){
         super.connectedCallback();
         if(this.token){
             this._setAuthToken();
