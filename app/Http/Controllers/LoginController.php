@@ -77,4 +77,13 @@ class LoginController extends Controller
     
         return redirect('/?logged_out=true');
     }
+
+    public function cleanLogout(Request $request)
+    {
+        $request->session()->invalidate();
+    
+        $request->session()->regenerateToken();
+
+        return response()->json(['success' => true], 200);
+    }
 }

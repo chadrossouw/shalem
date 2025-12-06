@@ -24,6 +24,10 @@ class Dashboard extends Controller
             session_start();
         }
         $token = isset($_SESSION['auth_token']) ? $_SESSION['auth_token'] : '';
+        if(!$token){
+            Auth::logout();
+            return redirect('/?error=auth');
+        }
         switch($type){
             case 'student':
                 $fields = Field::where('location','student_dashboard')->get();
