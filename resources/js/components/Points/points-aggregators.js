@@ -9,7 +9,6 @@ export const pointsByPillar = (points, pillars) => {
         if(userPoint.value){
             totalPoints += parseInt(userPoint.value);
             let points = userPoint.points;
-            console.log(points);
             if(points && points.pillar_id){
                 pillarPoints[points.pillar_id].points += parseInt(userPoint.value);
                 if(!pillarPoints[points.pillar_id].types.hasOwnProperty(points.name)){

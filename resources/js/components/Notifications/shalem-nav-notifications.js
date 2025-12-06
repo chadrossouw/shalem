@@ -1,4 +1,4 @@
-import { BaseNotificationsConsumer } from "./base-notification-consumer";
+import { BaseNotificationsConsumer } from "./base-notifications-consumer";
 import { BaseDashboardConsumer } from "../Dashboard/base-dashboard-consumer";
 import { BaseClass } from "../BaseClass";
 import { html, LitElement,css } from "lit";
@@ -10,9 +10,9 @@ export class ShalemNavNotifications extends BaseNotificationsConsumer(BaseDashbo
     }
 
     render(){
-        let notifications = this.unreadNotifications.slice(0,3);
+        let notifications = this.unreadNotifications[1].slice(0,3);
         let moreButton = '';
-        if(this.unreadNotifications.length > 2){
+        if(this.unreadNotifications[1].length > 2){
             moreButton = html`<button class="more-button" @click=${(e) => {e.preventDefault(); this._goToNotifications()}}>See all notifications</button>`;
         }
         return html`
@@ -24,8 +24,8 @@ export class ShalemNavNotifications extends BaseNotificationsConsumer(BaseDashbo
                     avatar = html`<shalem-avatar avatarid="${notification.avatar_id}"></shalem-avatar>`; 
                 }
                 if(notification.actions){
-                    let actions = JSON.parse(notification.actions);
-                    action = actions.map(action => html`<button @click=${() => this._handleAction(action.action)}>${action.title}</button>`);
+                    let actions = notification.actions;
+                    action = actions.map(action => html`<button @click=${() => this._handleAction({dashboard: action.dashboard, panel: action.panel, view: action.view})} ?disabled=${action.status!='pending'}>${action.title}</button>`);
                 }
                 return html`
                 <div class="notification bg_white radius">

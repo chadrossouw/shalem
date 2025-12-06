@@ -9,9 +9,10 @@ export class ShalemBaseProvider extends LitElement {
         identifier: { type: String },
         user: { type: Object },
         notifications: { type: Object },
-        unreadNotifications: { type: Array },
-        archivedNotifications: { type: Array },
+        unreadNotifications: { type: Object },
+        archivedNotifications: { type: Object },
         notificationsPagination: { type: Object },
+        unreadNotificationsPagination: { type: Object },
         notificationsArchivedPagination: { type: Object },
         documents: { type: Object },
         document: { type: Object },
@@ -57,6 +58,7 @@ export class ShalemBaseProvider extends LitElement {
             document: this.document,
             documentsPagination: this.documentsPagination,
             notificationsPagination: this.notificationsPagination,
+            unreadNotificationsPagination: this.unreadNotificationsPagination,
             notificationsArchivedPagination: this.notificationsArchivedPagination,
             pillars: this.pillars,
             updates: this.updates,
@@ -119,19 +121,15 @@ export class ShalemBaseProvider extends LitElement {
             state.forEach((item)=>{
                 let _key = item[0];
                 let _value = item[1];
-                console.log(_key,_value);
                 this[_key] = _value;
                 newContext[_key] = _value;
             });
             this.eventManager.addHistory(`${window.location.href}`,{dashboard: this.dashboard, panel: this.panel, view: this.view, action: this.action});
             newHistory.push({ dashboard: this.dashboard, panel: this.panel, view: this.view, action: this.action });
-            console.log(newHistory);
-            console.log(newContext);
             this.dashboardContext = {
                 ...this.dashboardContext,
                 ...newContext
             };
-            console.log(this.dashboardContext);
         }
         ({
             user: this.user, 
@@ -139,6 +137,7 @@ export class ShalemBaseProvider extends LitElement {
             unreadNotifications: this.unreadNotifications, 
             archivedNotifications: this.archivedNotifications, 
             notificationsPagination: this.notificationsPagination,
+            unreadNotificationsPagination: this.unreadNotificationsPagination,
             notificationsArchivedPagination: this.notificationsArchivedPagination,
             documents: this.documents,
             document: this.document,

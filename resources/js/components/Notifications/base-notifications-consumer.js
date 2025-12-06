@@ -3,6 +3,34 @@ import { css } from "lit";
 
 export const BaseNotificationsConsumer = (superClass) => class extends superClass{
 
+    static properties = {
+        ...super.properties,
+        _activeNotifications: { type: Object , state:true},
+        _activeNotificationsPagination: { type: Object , state:true},
+    }
+
+    connectedCallback(){
+        super.connectedCallback();
+        if(!this.panel){
+            if(this.unreadNotifications && this.unreadNotifications[1].length > 0){
+                this.panel = 'unread';
+            }
+            else{
+                this.panel = 'all';
+            }
+
+        }
+        this.setActiveNotifications();
+    }
+
+    updated(changedProperties){
+        super.updated(changedProperties);
+        if(changedProperties.has('panel') || changedProperties.has('notifications') || changedProperties.has('unreadNotifications') || changedProperties.has('archivedNotifications')){
+            this.setActiveNotifications();
+        }
+        console.log('Active Notifications:', this._activeNotifications);
+    }
+
     _goBack(e){
         e?.preventDefault();
         let history = this._dashboard.history;
@@ -141,6 +169,78 @@ export const BaseNotificationsConsumer = (superClass) => class extends superClas
             target.classList.remove('loading');
             target.disabled=false;
         }
+    }
+
+    setActiveNotifications(){
+        if(this.panel == 'unread'){
+            this._activeNotifications = this.unreadNotifications;
+        }
+        else if(this.panel == 'archived'){
+            this._activeNotifications = this.archivedNotifications;
+        }
+        else{
+            this._activeNotifications = this.notifications ;
+        }
+        if(!this._activeNotifications){
+           this._fetchNotifications();
+        }
+        this.requestUpdate();
+    }
+
+    async _fetchNotifications(page=1,query=false,refresh=false){
+        this.notificationsContainer?.classList.add('loading');      
+        if(this._activeNotifications && this._activeNotifications[page] && !refresh && !query){
+            this._activeNotificationsPagination.current_page = page;
+            switch (this.panel) {
+                case 'unread':
+                    this._updateContext({unreadNotificationsPagination: this._activeNotificationsPagination});
+                    break;
+                case 'archived':
+                    this._updateContext({archivedNotificationsPagination: this._activeNotificationsPagination});
+                    break;
+                default:
+                    this._updateContext({notificationsPagination: this._activeNotificationsPagination});
+                    break;
+            }
+            return;
+        }
+        let fetchUrl =`${this.restUrl}notifications?page=${page}&type=${this.panel}`;
+        if(query){
+            fetchUrl += `&query=${encodeURIComponent(query)}`;
+        }
+        const response = await safeFetch(fetchUrl);
+        const data = await response.json();
+        switch (this.panel) {
+            case 'unread':
+                this.unreadNotifications[page] = data.notifications.data;
+                delete data.notifications.data;
+                this.unreadNotificationsPagination = data.notifications;
+                this._activeNotifications = this.unreadNotifications;
+                this._activeNotificationsPagination = this.unreadNotificationsPagination;
+                this._updateContext({unreadNotifications: this.unreadNotifications, unreadNotificationsPagination: this.unreadNotificationsPagination});
+            break;
+            case 'archived':
+                this.archivedNotifications[page] = data.notifications.data;
+                delete data.notifications.data;
+                this.archivedNotificationsPagination = data.notifications;
+                this._activeNotifications = this.archivedNotifications;
+                this._activeNotificationsPagination = this.archivedNotificationsPagination;
+                this._updateContext({archivedNotifications: this.archivedNotifications, archivedNotificationsPagination: this.archivedNotificationsPagination});
+            break;
+            default:
+                this.notifications[page] = data.notifications.data;
+                delete data.notifications.data;
+                this.notificationsPagination = data.notifications;
+                this._activeNotifications = this.notifications;
+                this._activeNotificationsPagination = this.notificationsPagination;
+                this._updateContext({notifications: this.notifications, notificationsPagination: this.notificationsPagination});
+            break;
+        }
+        this.notificationsContainer?.classList.remove('loading');
+    }
+    
+    _getUnreadCount(){
+        return Object.entries(this.notifications).reduce((a,notifications) => a + notifications[1].filter(notification => notification.read_at==null).length, 0 );
     }
 
     static styles = [

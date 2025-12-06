@@ -6,7 +6,8 @@ use App\Events\DocumentUploaded;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Models\Notification;
-use App\Models\User;
+use App\Models\NotificationAction;
+
 
 class ProcessDocumentNotifications
 {
@@ -32,23 +33,24 @@ class ProcessDocumentNotifications
         $mentor = $user->mentor;
 
         if ($mentor) {
-            $actions = [
-                ["title"=>"Approve Document",
-                    "action"=>[
-                        "view"=> null,
-                        "panel"=> $document->id,
-                        "dashboard"=> "documents",
-                    ]
-                ]
-            ];
             $notification = new Notification();
             $notification->user_id = $mentor->user_id;
             $notification->type = 'document_uploaded';
             $notification->sender_id = $user->id;
             $notification->subject = 'New Document Uploaded';
             $notification->message = "A new document '{$document->title}' has been uploaded by {$user->first_name} {$user->last_name}.";
-            $notification->actions = json_encode($actions);
             $notification->save();
+            $notification_action = new NotificationAction();
+            $notification_action->notification_id = $notification->id;
+            $notification_action->title = 'Approve Document';
+            $notification_action->type = 'document';
+            $notification_action->type_id = $document->id;
+            $notification_action->action = 'approve';
+            $notification_action->dashboard = 'documents';
+            $notification_action->panel = $document->id;
+            $notification_action->view = null;
+            $notification_action->status = 'pending';
+            $notification_action->save();
         }
     }
 }

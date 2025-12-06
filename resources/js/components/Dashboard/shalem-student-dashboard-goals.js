@@ -140,7 +140,6 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
         });
     }
     _goalsByPillar(){
-        console.log(this.user);
         let goals = this.user.user_goals;
         this.goals = {};
         for(let pillar of this.pillars){
@@ -158,6 +157,7 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
             }
         });
     }
+    
     _handleYearToggle(e){
         if(e.target.checked){
             this._year = 'all_time';
