@@ -1,7 +1,6 @@
 import { LitElement,html, css } from "lit";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { Task } from "@lit/task";
-import { BaseClass } from "../BaseClass.js";
 import { safeFetch } from "../../common/xsrf.js";
 
 export class ShalemAvatar extends LitElement{
@@ -14,14 +13,24 @@ export class ShalemAvatar extends LitElement{
     }
     connectedCallback(){
         super.connectedCallback();
+        this.avatars = window.localStorage.getItem('shalem_avatars') ? JSON.parse(window.localStorage.getItem('shalem_avatars')) : {};
         this._getAvatar = new Task(this,{
             task: async () => {
+                if(this.avatars && this.avatars[this.avatarId]){
+                    return this.avatars[this.avatarId];
+                }
                 const response = await safeFetch(`${this.restUrl}avatar/${this.avatarId}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch avatars');
                 }
 
-                return await response.json();
+                const avatar = await response.json();
+                this.avatars = {
+                    ...this.avatars,
+                    [this.avatarId]: avatar
+                };
+                window.localStorage.setItem('shalem_avatars',JSON.stringify(this.avatars));
+                return avatar;
             },
             args: () => [],
         });

@@ -57,6 +57,15 @@ class Dashboard extends Controller
                 $user->load('userPoints')->load('userPoints.points');
                 $user->load('userGoals')->load('userGoals.goals');
                 $pillars = Pillar::all(['id','name','description','colour']);
+                $pillars = $pillars->map(function($pillar){
+                    return [
+                        'id' => $pillar->id,
+                        'name' => $pillar->name,
+                        'description' => $pillar->description,
+                        'colour' => $pillar->colour,
+                        'slug' => strtolower(str_replace(' ', '-', $pillar->name)),
+                    ];
+                });
                 return view('dashboard.student', ['user' => $user, 'fields' => $fields, 'pillars' => $pillars, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token, 'notifications' => $notifications, 'notificationsPagination' => $notificationsPagination, 'unreadNotifications' => $unreadNotifications, 'unreadNotificationsPagination' => $unreadNotificationsPagination, 'updates' => $updates ]);
             case 'staff':
                 $role = $user->staffRole->role ?? 'staff';

@@ -62,14 +62,13 @@ export class ShalemStudentDashboardPoints extends BaseDashboardConsumer(BaseClas
             </div>
             <div class="margins grid grid_50 cards">
                 ${this.pillars.map( pillar => {
-                    let slug = pillar.name.toLowerCase().replace(/\s+/g,'-');
                     let pointsData = this.points[pillar.id];
                     return html`
                     <div class="card radius-big shadow ${pillar.colour}">
                         <h3 class="h4">
                             ${pillar.name}
                         </h3>
-                        <button class="card_target bg_${pillar.colour}"  @click=${() => this._handleAction({panel: slug})}>
+                        <button class="card_target bg_${pillar.colour}"  @click=${() => this._handleAction({panel: pillar.slug})}>
                             ${unsafeSVG(view)}View
                         </button>
                         <div class="points_total star bg_${pillar.colour} bg_shade_2">
@@ -92,6 +91,10 @@ export class ShalemStudentDashboardPoints extends BaseDashboardConsumer(BaseClas
         </div>
         
         ${body}
+        <shalem-student-panel-badges
+            identifier="${this.identifier}"
+            year=${this._year}
+        ></shalem-student-panel-badges>
         `;
     }
 

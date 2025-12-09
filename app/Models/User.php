@@ -86,4 +86,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserGoal::class, 'user_id', 'id');
     }
+
+    public function userBadges(): HasMany
+    {
+        return $this->hasMany(UserBadge::class, 'user_id', 'id');
+    }
 }

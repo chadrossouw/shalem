@@ -55,7 +55,9 @@ class NotificationController extends Controller
             return response()->json(['error' => 'Invalid status.'], 400);
         }
         $notification->save();
-        //$notifications = Notification::where('user_id', $user->id)->whereNull('read_at')->where('archived', false)->get();
-        return response()->json(['message' => 'Notification status updated successfully.'], 200);
+        $notifications = Notification::where('user_id', $user->id)->where('archived', false)->paginate(12);
+        $unread_notifications = Notification::where('user_id', $user->id)->whereNull('read_at')->where('archived', false)->paginate(12);
+        $archived_notifications = Notification::where('user_id', $user->id)->where('archived', true)->paginate(12);
+        return response()->json(['message' => 'Notification status updated successfully.', 'notifications' => $notifications, 'unread_notifications' => $unread_notifications, 'archived_notifications' => $archived_notifications], 200);
     }
 }

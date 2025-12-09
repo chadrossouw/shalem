@@ -83,12 +83,12 @@ export class ShalemPanelNotificationsList extends PaginationListener(BaseNotific
             `;
         }
         if(this.panel==='unread'){
-            return html`<p>You don't have any unread notifications. <button @click=${this._seeAll}>Go to all notifications?</button></p>`;
+            return html`<p>You don't have any unread notifications.</p>`;
         }
         if(this.panel==='archived'){
-            return html`<p>You don't have any archived notifications. <button @click=${this._seeAll}>Go to current notifications?</button></p>`;
+            return html`<p>You don't have any archived notifications.</p>`;
         }
-        return html`<p>You don't have any notifications. <a href="/upload" @click=${this._goHome}>Go home?</a></p>`;
+        return html`<p>You don't have any notifications. <a href="/" @click=${this._goHome}>Go home?</a></p>`;
     }
 
     _goHome(e){

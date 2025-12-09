@@ -69,8 +69,9 @@ export const BaseNotificationsConsumer = (superClass) => class extends superClas
             console.error('Failed to mark update as read');
             return;
         }
-        this.notifications = response.notifications;
-        this._updateContext({ notifications: this.notifications });
+        let data = await response.json();
+        this._processResponseToContext(data);
+        
         if(target){
             target.classList.remove('loading');
             target.disabled=false;
@@ -92,8 +93,8 @@ export const BaseNotificationsConsumer = (superClass) => class extends superClas
             console.error('Failed to mark all updates as read');
             return;
         }
-        this.notifications = response.notifications;
-        this._updateContext({ notifications: this.notifications });
+        let data = await response.json();
+       this._processResponseToContext(data);
         if(target){
             target.classList.remove('loading');
             target.disabled=false;
@@ -116,8 +117,8 @@ export const BaseNotificationsConsumer = (superClass) => class extends superClas
             console.error('Failed to archive notification');
             return;
         }
-        this.notifications = response.notifications;
-        this._updateContext({ notifications: this.notifications });
+        let data = await response.json();
+        this._processResponseToContext(data);
         if(target){
             target.classList.remove('loading');
             target.disabled=false;
@@ -140,15 +141,16 @@ export const BaseNotificationsConsumer = (superClass) => class extends superClas
             console.error('Failed to unarchive notification');
             return;
         }
-        this.notifications = response.notifications;
-        this._updateContext({ notifications: this.notifications });
+
+        let data = await response.json();
+        this._processResponseToContext(data);
         if(target){
             target.classList.remove('loading');
             target.disabled=false;
         }
     }
 
-    _archiveAll(target=null) {
+    async _archiveAll(target=null) {
         if(target){
             target.classList.add('loading');
             target.disabled=true;
@@ -163,8 +165,8 @@ export const BaseNotificationsConsumer = (superClass) => class extends superClas
             console.error('Failed to archive all notifications');
             return;
         }
-        this.notifications = response.notifications;
-        this._updateContext({ notifications: this.notifications });
+        let data = await response.json();
+        this._processResponseToContext(data);
         if(target){
             target.classList.remove('loading');
             target.disabled=false;
@@ -237,6 +239,16 @@ export const BaseNotificationsConsumer = (superClass) => class extends superClas
             break;
         }
         this.notificationsContainer?.classList.remove('loading');
+    }
+
+    _processResponseToContext(data){
+        this.notifications = {};
+        this.notifications[1] = data.notifications.data;
+        this.unreadNotifications = {};
+        this.unreadNotifications[1] = data.unread_notifications.data;
+        this.archivedNotifications = {};
+        this.archivedNotifications[1] = data.archived_notifications.data;
+        this._updateContext({ notifications: this.notifications, unreadNotifications: this.unreadNotifications, archivedNotifications: this.archivedNotifications });
     }
     
     _getUnreadCount(){

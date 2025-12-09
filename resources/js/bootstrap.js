@@ -21,6 +21,7 @@ import { ShalemPdfViewer } from "./components/Pdf/shalem-pdf-viewer.js";
 import { ShalemDialog } from "./components/Modal/shalem-dialog.js";
 import { ShalemPointsIcon } from "./components/Points/shalem-points-icon.js";
 import { ShalemTooltip } from "./components/Tooltip/shalem-tooltip.js";
+import { ShalemAnchorModal } from "./components/Modal/shalem-anchor-modal.js";
 
 //Student Dashboard elements
 import { ShalemStudentDashboard } from "./components/Dashboard/shalem-student-dashboard.js";
@@ -44,6 +45,12 @@ import { ShalemPanelNotificationsList } from "./components/Dashboard/Panel/shale
 
 //Points
 import { ShalemStudentDashboardPointsPanel } from "./components/Dashboard/Panel/shalem-student-dashboard-points-panel.js";
+
+//Badges
+import { ShalemStudentPanelBadges } from "./components/Dashboard/Panel/shalem-student-panel-badges.js";
+
+//Goals
+import { ShalemStudentPanelGoals } from "./components/Dashboard/Panel/shalem-student-panel-goals-panel.js";
 
 //Help Dashboard
 import { ShalemDashboardHelp } from "./components/Dashboard/shalem-dashboard-help.js";
@@ -70,6 +77,7 @@ window.customElements.define("shalem-pdf-viewer", ShalemPdfViewer);
 window.customElements.define("shalem-dialog", ShalemDialog);
 window.customElements.define("shalem-points-icon", ShalemPointsIcon);
 window.customElements.define("shalem-tooltip", ShalemTooltip);
+window.customElements.define("shalem-anchor-modal", ShalemAnchorModal);
 
 //Student Dashboard elements
 window.customElements.define("shalem-student-dashboard", ShalemStudentDashboard);
@@ -94,7 +102,11 @@ window.customElements.define("shalem-panel-notifications-list", ShalemPanelNotif
 //Points
 window.customElements.define("shalem-student-dashboard-points-panel", ShalemStudentDashboardPointsPanel);
 
+//Badges
+window.customElements.define("shalem-student-panel-badges", ShalemStudentPanelBadges);
+
 //Goals
+window.customElements.define("shalem-student-panel-goals-panel", ShalemStudentPanelGoals);
 
 //Help Dashboard
 window.customElements.define("shalem-dashboard-help", ShalemDashboardHelp);
