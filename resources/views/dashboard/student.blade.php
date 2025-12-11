@@ -21,6 +21,6 @@
 
                 <shalem-student-dashboard 
                 identifier="student" />
-            </shalem-context-provider>
+            </shalem-base-provider>
         </main>
 <x-general.footer />

@@ -5,14 +5,22 @@
                 identifier="staff" 
                 user="{{ $user->toJson() }}" 
                 fields="{{ $fields->toJson() }}" 
+                notifications="{{ json_encode($notifications) }}"
+                unreadnotifications="{{ $unreadNotifications->toJson() }}"
+                notificationspagination="{{ json_encode($notificationsPagination) }}"
+                updates="{{ $updates->toJson() }}"
                 dashboard="{{ $dashboard }}" 
                 panel="{{ $panel }}"
                 view="{{ $view }}"
+                action="{{ $action }}"
                 pillars="{{ $pillars->toJson() }}"
                 @if(isset($token))
                     token="{{ $token }}"
                 @endif
             >
-            </shalem-context-provider>
+
+                <shalem-staff-dashboard 
+                identifier="staff" />
+            </shalem-base-provider>
         </main>
 <x-general.footer />
