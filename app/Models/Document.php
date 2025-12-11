@@ -50,10 +50,10 @@ class Document extends Model
     public function toSearchableArray(): array
     {
         $array = [
-        'title' => '',
-        'description' => '',
-        'type' => '',
-    ];
+            'title' => '',
+            'description' => '',
+            'type' => '',
+        ];
  
         return $array;
     }

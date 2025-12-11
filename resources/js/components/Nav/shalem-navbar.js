@@ -31,8 +31,8 @@ export class ShalemNavbar extends BaseNavConsumer(BaseDashboardConsumer(BaseClas
         if(this.identifier == 'student'){
             let currentPage = this._dashboard.panel;
             let navIcon = this._getNotificationIcon();
-            if(this.unreadNotifications && this.unreadNotifications.length > 0 && !this._dismissedNotifications){
-                let count = this.unreadNotifications.length<10 ? this.unreadNotifications.length : '+';
+            if(this.unreadNotifications && this.unreadNotifications[1].length > 0 && !this._dismissedNotifications){
+                let count = this.unreadNotifications[1].length<10 ? this.unreadNotifications[1].length : '+';
                 let button;
                 if(!this._openNotifications){
                     button = html`
@@ -64,7 +64,7 @@ export class ShalemNavbar extends BaseNavConsumer(BaseDashboardConsumer(BaseClas
                             <li><a href="/dashboard/points" @click=${(e) => this._handleNavigation(e, 'points', null)} aria-current="${currentPage === 'points' ? 'page' : 'false'}"><span aria-hidden="true">${unsafeSVG(pointsNav)}</span><span class="screen-reader-text">Points</span></a></li>
                             <li><a href="/dashboard/upload" @click=${(e) => this._handleNavigation(e, 'documents','upload')} aria-current="${currentPage === 'upload' ? 'page' : 'false'}"><span aria-hidden="true">${unsafeSVG(uploadNav)}</span><span class="screen-reader-text">Upload</span></a></li>
                             <li><a href="/dashboard/goals" @click=${(e) => this._handleNavigation(e, 'goals',null)} aria-current="${currentPage === 'goals' ? 'page' : 'false'}"><span aria-hidden="true">${unsafeSVG(goalsNav)}</span><span class="screen-reader-text">Goals</span></a></li>
-                            <li><a href="/dashboard/notifications" @click=${(e) => this._handleNavigation(e, 'notifications', null)} aria-current="${currentPage === 'notifications' ? 'page' : 'false'}"><span aria-hidden="true">${unsafeSVG(navIcon)}</span><span class="screen-reader-text">Notifications</span></a></li>
+                            <li><a href="/dashboard/notifications" @click=${(e) => this._handleNavigation(e, 'notifications', this.unreadNotifications[1].length?'unread':'all')} aria-current="${currentPage === 'notifications' ? 'page' : 'false'}"><span aria-hidden="true">${unsafeSVG(navIcon)}</span><span class="screen-reader-text">Notifications</span></a></li>
                         </ul>
                     </nav>
                 </div>
@@ -91,15 +91,15 @@ export class ShalemNavbar extends BaseNavConsumer(BaseDashboardConsumer(BaseClas
         this._updateContext({unreadNotifications: this.unreadNotifications});
     }
 
-    _handleNavigation(e, dashboard, panel){
+    _handleNavigation(e, dashboard, panel, view=null){
         e.preventDefault();
-        this._handleAction({dashboard:dashboard, panel:panel,view: null});
+        this._handleAction({dashboard:dashboard, panel:panel,view: view});
     }
 
     _getNotificationIcon(){
         let notifications = this.unreadNotifications || [];
-        if(notifications.length > 0){
-            let count = notifications.length<10 ? notifications.length : '+';
+        if(notifications[1].length > 0){
+            let count = notifications[1].length<10 ? notifications[1].length : '+';
             let notificationsNavOpenNumbered = notificationsNavOpen.replace('<tspan x="0" y="0">1</tspan>', `<tspan x="0" y="0">${count}</tspan>`);
             return notificationsNavOpenNumbered;
         }

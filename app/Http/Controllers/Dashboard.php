@@ -33,6 +33,7 @@ class Dashboard extends Controller
                 $fields = Field::where('location','student_dashboard')->get();
                 $user->load('student')->load('student.avatarModel');
                 $_notifications = Notification::where('user_id', $user->id)->where('archived', false)->paginate(12);
+                $_notifications->load('actions');
                 $notifications = [$_notifications->currentPage()=>$_notifications->toArray()['data']];
                 $notificationsPagination = [
                     'current_page' => $_notifications->currentPage(),
@@ -41,13 +42,31 @@ class Dashboard extends Controller
                     'total' => $_notifications->total(),
                 ];
 
-                $unreadNotifications = Notification::where('user_id', $user->id)->whereNull('read_at')->where('archived', false)->limit(2)->get();
+                $_unreadNotifications = Notification::where('user_id', $user->id)->whereNull('read_at')->where('archived', false)->paginate(12);
+                $_unreadNotifications->load('actions');
+                $unreadNotifications = [$_unreadNotifications->currentPage()=>$_unreadNotifications->toArray()['data']];
+                $unreadNotificationsPagination = [
+                    'current_page' => $_unreadNotifications->currentPage(),
+                    'last_page' => $_unreadNotifications->lastPage(),
+                    'per_page' => $_unreadNotifications->perPage(),
+                    'total' => $_unreadNotifications->total(),
+                ];
                 $updates = Notification::where('user_id', $user->id)->where('type', 'update')->where('archived', false)->whereNull('read_at')->limit(1)->get();
+                $updates->load('actions');
                 $user->load('mentor')->load('mentor.mentorUser');
                 $user->load('userPoints')->load('userPoints.points');
                 $user->load('userGoals')->load('userGoals.goals');
                 $pillars = Pillar::all(['id','name','description','colour']);
-                return view('dashboard.student', ['user' => $user, 'fields' => $fields, 'pillars' => $pillars, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token, 'notifications' => $notifications, 'notificationsPagination' => $notificationsPagination, 'unreadNotifications' => $unreadNotifications, 'updates' => $updates ]);
+                $pillars = $pillars->map(function($pillar){
+                    return [
+                        'id' => $pillar->id,
+                        'name' => $pillar->name,
+                        'description' => $pillar->description,
+                        'colour' => $pillar->colour,
+                        'slug' => strtolower(str_replace(' ', '-', $pillar->name)),
+                    ];
+                });
+                return view('dashboard.student', ['user' => $user, 'fields' => $fields, 'pillars' => $pillars, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token, 'notifications' => $notifications, 'notificationsPagination' => $notificationsPagination, 'unreadNotifications' => $unreadNotifications, 'unreadNotificationsPagination' => $unreadNotificationsPagination, 'updates' => $updates ]);
             case 'staff':
                 $role = $user->staffRole->role ?? 'staff';
                 $pillars = Pillar::all(['id','name','description','colour']);

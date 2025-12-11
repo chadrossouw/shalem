@@ -98,7 +98,7 @@ export class ShalemNavigation extends BaseClass(LitElement) {
                     <li><a href="/dashboard/goals" aria-current="${this._dashboard=='goals'?'true':'false'}">${unsafeSVG(goalsIcon)}Set a goal</a></li> 
                     <li><a href="/dashboard/documents" aria-current="${this._dashboard=='documents'?'true':'false'}">${unsafeSVG(documentsIcon)}My documents</a></li>
                     <li><a href="/dashboard/cv-support" aria-current="${this._dashboard=='cv-support'?'true':'false'}">${unsafeSVG(cvSupportIcon)}Build a CV support</a></li>
-                    <li><a href="/dashboard/notifications" aria-current="${this._dashboard=='notifications'?'true':'false'}">${unsafeSVG(notificationsIcon)}Notifications</a></li>
+                    <li><a href="/dashboard/notifications${this._notifications && this._notifications.length ? '/unread' : '/all'}" aria-current="${this._dashboard=='notifications'?'true':'false'}">${unsafeSVG(notificationsIcon)}Notifications</a></li>
                     <li><a href="/logout">${unsafeSVG(fredExhaustedIcon)}Log out</a></li>
                 </ul>
             </nav>
@@ -117,7 +117,6 @@ export class ShalemNavigation extends BaseClass(LitElement) {
     }
 
     _handleDashboardUpdate(dashboardContext){
-        console.log('Navigation received dashboard update', dashboardContext);
         let dashboard = dashboardContext.detail;
         this._dashboard = dashboard.dashboard;
         this._panel = dashboard.panel;

@@ -9,6 +9,8 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserAvatarsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\BadgesController;
+use App\Http\Controllers\GoalsController;
 use App\Models\User;
 
 
@@ -97,3 +99,13 @@ Route::middleware(['auth:sanctum'])->group(function(){
     Route::get('/documents', [DocumentController::class, 'list'])->name('api.documents.list');
     Route::get('/document/{id}', [DocumentController::class, 'get'])->name('api.document.get');
 });
+
+//Badges Routes
+Route::middleware(['auth:sanctum'])->group(function(){
+    Route::get('/badges', [BadgesController::class, 'list'])->name('api.badges.list');
+});
+
+//Goals Routes
+Route::middleware(['auth:sanctum'])->group(function(){
+    Route::get('/goals/by-pillar', [GoalsController::class, 'listGoalsByPillar'])->name('api.goals.by-pillar');
+}); 

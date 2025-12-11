@@ -16,7 +16,6 @@ export class ShalemPaginator extends BaseDashboardConsumer(BaseClass(LitElement)
     }
 
     render() {
-        console.log(this.buttonColor);
         let prevButton = this.currentPage > 1 ? html`<button class="prev-page bg_${this.buttonColor??`purple`}" @click=${()=>this._goToPage(this.currentPage - 1)}>&laquo; ${this.previous || 'Previous'}</button>` : html`<div></div>`;
         let nextButton = this.currentPage < this.lastPage ? html`<button class="next-page bg_${this.buttonColor??`purple`}" @click=${()=>this._goToPage(this.currentPage + 1)}>${this.next || 'Next'} &raquo;</button>` : html`<div></div>`;
         return html`

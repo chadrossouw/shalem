@@ -5,7 +5,7 @@ import {blink,throb} from '../common/blink.js';
 export const BaseClass = (superClass) => class extends superClass {
     // Common functionality for all components
     static properties = {
-        ...super.properties,
+        ...super.properties
     };
     static styles = [
         accessibilityStyles,

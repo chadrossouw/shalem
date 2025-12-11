@@ -9,13 +9,27 @@ class NotificationController extends Controller
 {
     public function getNotifications(Request $request){
         $user = $request->user();
+        $type = $request->query('type', 'notification');
+        if($type === 'archivedNotification'){
+            return $this->getArchivedNotifications($request);
+        }
+        if($type === 'unreadNotification'){
+            return $this->getUnreadNotifications($request);
+        }
         $notifications = Notification::where('user_id', $user->id)->where('archived', false)->paginate(12);
+        $notifications->load('actions');
         return response()->json(['notifications' => $notifications], 200);
     }
 
     public function getArchivedNotifications(Request $request){
         $user = $request->user();
         $notifications = Notification::where('user_id', $user->id)->where('archived', true)->paginate(12);
+        return response()->json(['notifications' => $notifications], 200);
+    }
+
+    public function getUnreadNotifications(Request $request){
+        $user = $request->user();
+        $notifications = Notification::where('user_id', $user->id)->whereNull('read_at')->where('archived', false)->paginate(12);
         return response()->json(['notifications' => $notifications], 200);
     }
     
@@ -41,7 +55,9 @@ class NotificationController extends Controller
             return response()->json(['error' => 'Invalid status.'], 400);
         }
         $notification->save();
-        $notifications = Notification::where('user_id', $user->id)->whereNull('read_at')->where('archived', false)->get();
-        return response()->json(['message' => 'Notification status updated successfully.', 'notifications' => $notifications], 200);
+        $notifications = Notification::where('user_id', $user->id)->where('archived', false)->paginate(12);
+        $unread_notifications = Notification::where('user_id', $user->id)->whereNull('read_at')->where('archived', false)->paginate(12);
+        $archived_notifications = Notification::where('user_id', $user->id)->where('archived', true)->paginate(12);
+        return response()->json(['message' => 'Notification status updated successfully.', 'notifications' => $notifications, 'unread_notifications' => $unread_notifications, 'archived_notifications' => $archived_notifications], 200);
     }
 }

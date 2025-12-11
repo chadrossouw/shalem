@@ -2,14 +2,12 @@ export const pointsByPillar = (points, pillars) => {
     let totalPoints = 0;
     let pillarPoints = {};
     for(let pillar of pillars){
-        let slug = pillar.name.toLowerCase().replace(/\s+/g,'-');
-        pillarPoints[pillar.id] = {name:pillar.name,colour:pillar.colour,slug:slug,points:0,proportion:0,types:{}};
+        pillarPoints[pillar.id] = {name:pillar.name,colour:pillar.colour,slug:pillar.slug,points:0,proportion:0,types:{}};
     }
     points.forEach( userPoint => {
         if(userPoint.value){
             totalPoints += parseInt(userPoint.value);
             let points = userPoint.points;
-            console.log(points);
             if(points && points.pillar_id){
                 pillarPoints[points.pillar_id].points += parseInt(userPoint.value);
                 if(!pillarPoints[points.pillar_id].types.hasOwnProperty(points.name)){

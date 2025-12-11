@@ -9,7 +9,6 @@ export class ShalemStudentDashboard extends BaseDashboardConsumer(BaseClass(LitE
 
     connectedCallback(){
         super.connectedCallback();
-        console.log('Student Dashboard connected');
         this.isAdmin = this.user?.roles?.includes('admin') || false;
     }
 

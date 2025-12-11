@@ -25,9 +25,8 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
 
     connectedCallback(){
         super.connectedCallback();
-        ({fields: this.fields, user: this.user, pillars: this.pillars} = this._dashboard);
+        ({fields: this.fields, user: this.user, pillars: this.pillars, selectableGoals: this.selectableGoals} = this._dashboard);
         this._goalsByPillar();
-        console.log(this.goals);
     }
 
     updated(changedProperties){
@@ -38,10 +37,9 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
     render(){
         let body = '';
         if(this.panel){
-            body = html`<shalem-student-dashboard-points-panel
+            body = html`<shalem-student-panel-goals-panel
                 identifier="${this.identifier}"
-                year=${this._year}
-            ></shalem-student-dashboard-points-panel>`;
+            ></shalem-student-panel-goals-panel>`;
         }
         else{
             body = html`
@@ -65,40 +63,29 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
                         <h3 class="h4">
                             ${pillar.name}
                         </h3>
-                        <button class="add bg_${pillar.colour}">+</button>
+                        <button class="add bg_${pillar.colour}" @click=${() => this._handleAddGoal(pillar)}>+</button>
                         ${this.goals[pillar.id].goals.length > 0 ? html`
                             <div class="goals_list grid">
                                 ${this.goals[pillar.id].goals.map( goal => html`
                                 <div class="goal_item">
-                                    <button class="radius bg_pale_grey ${pillar.colour}" id="goal_${pillar.id}_${goal.id}" @click=${() => {
-                                        this._openModal(`modal_goal_${pillar.id}_${goal.id}`);
-                                    }}>
-                                        ${unsafeSVG(waves)}
-                                        
-                                    </button>
-                                    <div class="modal bg_yellow bg_shade_2 radius shadow" id="modal_goal_${pillar.id}_${goal.id}">
-                                        <button class="close_button bg_yellow bg_shade_2" aria-label="Close goal details for ${goal.name}">${unsafeSVG(closeIcon)}</button>
-                                        <h4>${goal.name}</h4>
-                                        <div>${goal.description}</div>
-                                    </div>
+                                    <shalem-anchor-modal>
+
+                                        <button slot="trigger" class="radius bg_pale_grey ${pillar.colour}" id="goal_${pillar.id}_${goal.id}" @click=${() => {
+                                            this._openModal(`modal_goal_${pillar.id}_${goal.id}`);
+                                        }}>
+                                            ${unsafeSVG(waves)}
+                                            
+                                        </button>
+                                        <div slot="modal" class="modal bg_yellow bg_shade_2 radius shadow" id="modal_goal_${pillar.id}_${goal.id}">
+                                            <button class="close_button bg_yellow bg_shade_2" aria-label="Close goal details for ${goal.name}">${unsafeSVG(closeIcon)}</button>
+                                            <h4>${goal.name}</h4>
+                                            <div>${goal.description}</div>
+                                        </div>
+                                    </shalem-anchor-modal>
                                 </div>
                             `)}</div>
                         ` : html`<div class="no_goals">No goals set yet.</div>`}
                     </div>`;
-                   /*  let slug = pillar.name.toLowerCase().replace(/\s+/g,'-');
-                    let pointsData = this.points[pillar.id];
-                    return html`
-                    <div class="card radius-big shadow ${pillar.colour}">
-                        <h3 class="h4">
-                            ${pillar.name}
-                        </h3>
-                        <button class="card_target bg_${pillar.colour}"  @click=${() => this._handleAction({panel: slug})}>
-                            ${unsafeSVG(view)}View
-                        </button>
-                        <div class="points_total star bg_${pillar.colour} bg_shade_2">
-                            ${pointsData.points}
-                        </div>
-                    </div>`; */
                 })}
             `;
         }
@@ -118,7 +105,6 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
         `;
     }
     _openModal(id){
-        console.log('open modal', id);
         let modal = this.shadowRoot.getElementById(id);
         if(modal){
             modal.style.scale = '1';
@@ -140,7 +126,6 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
         });
     }
     _goalsByPillar(){
-        console.log(this.user);
         let goals = this.user.user_goals;
         this.goals = {};
         for(let pillar of this.pillars){
@@ -158,6 +143,7 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
             }
         });
     }
+    
     _handleYearToggle(e){
         if(e.target.checked){
             this._year = 'all_time';
@@ -165,6 +151,10 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
         else{
             this._year = 'this_year';
         }
+    }
+
+    _handleAddGoal(pillar){
+        this._updateContext({panel: pillar.slug});
     }
     
     static styles = [
@@ -189,57 +179,7 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
                     padding:0;
                 }
             }
-            .modal{
-                scale:0;
-                opacity:0;
-                transition: scale var(--transition) ease, opacity var(--transition) ease;
-                position:absolute;
-                width:300px;
-                max-width:90vw;
-                bottom:110%;
-                left:100%;
-                transform:translateX(-50%);
-                padding:1rem;
-                z-index:10;
-                color:var(--black);
-                &::after{
-                    content:'';
-                    position:absolute;
-                    bottom:-0.5rem;
-                    left:25%;
-                    transform:translateX(-50%);
-                    border-left:0.5rem solid transparent;
-                    border-right:0.5rem solid transparent;
-                    border-top:0.5rem solid var(--yellow-shade-2);
-                }
-            }
-            .goal_item:nth-child(3n) .modal{
-                left:0;
-                &::after{
-                    left:75%;
-                }
-            }
-            .close_button{
-                position:absolute;
-                top:0.5rem;
-                right:0.5rem;
-                border:none;
-                background:transparent;
-                cursor:pointer;
-                padding:0;
-                display:block;
-                aspect-ratio:1 / 1;
-                width:1.5rem;
-                svg{
-                    width:1.5rem;
-                    height:1.5rem;
-                    fill:var(--black);
-                    rect{
-                        fill:var(--black);
-                    }
-                }
-            }
-
+            
             .goals_list{
                 grid-template-columns:1fr 1fr 1fr;
                 .goal_item{
