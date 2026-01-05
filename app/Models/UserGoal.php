@@ -11,4 +11,9 @@ class UserGoal extends Model
     {
         return $this->hasOne(Goal::class, 'id', 'goal_id');
     }
+    
+    public function progress()
+    {
+        return $this->hasMany(UserGoalProgress::class, 'user_goal_id', 'id');
+    }
 }

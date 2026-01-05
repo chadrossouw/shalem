@@ -1,11 +1,12 @@
-import {html, LitElement} from 'lit';
+import {html, LitElement,css} from 'lit';
+import {BaseForm} from '../../Form/base-form.js';
 import { BaseDashboardConsumer } from '../base-dashboard-consumer.js';
 import { BaseClass } from '../../BaseClass.js';
 import { unsafeSVG } from 'lit/directives/unsafe-svg.js';
 import { safeFetch } from '../../../common/xsrf.js';
 import goalsIcon from '../../../icons/goals-icon.svg';
 
-export class ShalemStudentPanelGoals extends BaseDashboardConsumer(BaseClass(LitElement)) {
+export class ShalemStudentPanelGoals extends BaseForm(BaseDashboardConsumer(BaseClass(LitElement))) {
     static properties = {
         ...super.properties,
         goalList: { type: Array, state: true }
@@ -30,15 +31,37 @@ export class ShalemStudentPanelGoals extends BaseDashboardConsumer(BaseClass(Lit
         if(!this.goalList || !this.goalList.length){
             return html`<div class="margins"><shalem-loader>Climbing that hill...</shalem-loader></div>`;
         }
-        console.log('Rendering Goals Panel', this.goalList);
         return html`
             <div class="header_with_icon margins">
                 <div class="icon" aria-hidden="true">${unsafeSVG(goalsIcon)}</div>
                 <h1>Set a${this.pillar.name.startsWith('A') || this.pillar.name.startsWith('E') || this.pillar.name.startsWith('I') || this.pillar.name.startsWith('O') || this.pillar.name.startsWith('U') ? 'n' : ''} ${this.pillar.name} goal</h1>
             </div>
             <div class="margins">
+                <form id="add_goal_form" @submit=${this._handleSubmit} action="${this.restUrl}goals/set">
+                    <fieldset>
+                        <legend class="sr-only">Choose a goal to set</legend>
+                        ${this.goalList.map( goal => html`
+                            <div class="goal_group">
+                                <input type="radio" id="goal_${goal.id}" name="goal" value="${goal.id}">
+                                <label for="goal_${goal.id}">${goal.name}</label>
+                                <p>${goal.description}</p>
+                            </div>
+                        `)} 
+                    </fieldset>
+                    <label for="goal_name">Optional: Give your goal a custom name</label>
+                    <input type="text" id="goal_name" name="goal_name" placeholder="My custom goal name">
+                    <button type="submit" class="button">Set Goal</button>
+                </form>
             </div>
         `;
+    }
+
+    _beforeHandleSuccess(response){
+        if(response && response.user_goal){
+            this.userGoals = [...this.userGoals, response.user_goal];
+            this.user.user_goals = this.userGoals;
+            this._updateContext({user: this.user});
+        }
     }
 
     async _getSelectableGoals(){
@@ -68,4 +91,35 @@ export class ShalemStudentPanelGoals extends BaseDashboardConsumer(BaseClass(Lit
             console.error('Error fetching selectable goals:', error);
         }
     }
+
+    static styles = [
+        super.styles,
+        css`
+            fieldset{
+                border: none;
+                margin: 0;
+                padding: 0;
+            }
+            legend{
+                font-size: 1.2rem;
+                font-weight: bold;
+                margin-bottom: 1rem;
+            }
+            .goal_group{
+                margin-bottom: 1.5rem;
+                padding: 1rem;
+                border: 2px solid var(--yellow-shade-1);
+                border-radius: var(--border-radius);
+                background-color: var(--yellow-shade-2);
+                label{
+                    font-weight: bold;
+                    font-size:1.2rem;
+                }
+                p{
+                    margin-bottom:0;
+                }
+            }
+        `
+    ];
+
 }

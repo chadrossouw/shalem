@@ -14,6 +14,7 @@ export class ShalemStudentDashboardPoints extends BaseDashboardConsumer(BaseClas
     static properties = {
         ...super.properties,
         _year: {type: String, state: true},
+        _points: {type: Object, state: true},
     }
 
     constructor(){
@@ -26,10 +27,21 @@ export class ShalemStudentDashboardPoints extends BaseDashboardConsumer(BaseClas
     connectedCallback(){
         super.connectedCallback();
         ({fields: this.fields, user: this.user, pillars: this.pillars} = this._dashboard);
-        this.points = pointsByPillar(this.user.user_points,this.pillars);
+        let points = this.user.user_points;
+        if(!this._year||this._year == 'this_year'){
+            points = this._filterPointsByYear(points);
+        }
+        this._points = pointsByPillar(points,this.pillars); 
     }
 
     updated(changedProperties){
+        if(changedProperties.has('_year')){
+            let points = this.user.user_points;
+            if(!this._year||this._year == 'this_year'){
+                points = this._filterPointsByYear(points);
+            }
+            this._points = pointsByPillar(points,this.pillars);
+        }
         cardLinks(this.shadowRoot);
     }
 
@@ -62,7 +74,7 @@ export class ShalemStudentDashboardPoints extends BaseDashboardConsumer(BaseClas
             </div>
             <div class="margins grid grid_50 cards">
                 ${this.pillars.map( pillar => {
-                    let pointsData = this.points[pillar.id];
+                    let pointsData = this._points[pillar.id];
                     return html`
                     <div class="card radius-big shadow ${pillar.colour}">
                         <h3 class="h4">
@@ -107,6 +119,14 @@ export class ShalemStudentDashboardPoints extends BaseDashboardConsumer(BaseClas
         }
     }
     
+    _filterPointsByYear(points){
+        let currentYear = new Date().getFullYear();
+        return points.filter( userPoint => {
+            let pointDate = new Date(userPoint.created_at);
+            return pointDate.getFullYear() === currentYear;
+        });
+    }
+
     static styles = [
         super.styles,
         cards,

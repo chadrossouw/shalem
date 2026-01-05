@@ -125,6 +125,7 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
             }
         });
     }
+    
     _goalsByPillar(){
         let goals = this.user.user_goals;
         this.goals = {};
@@ -134,7 +135,7 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
         }
         goals.forEach( userGoal => {
             let goalName = userGoal.name;
-            let descriptions = JSON.parse(userGoal.goals.criteria);
+            let descriptions = userGoal.goals.criteria;
             descriptions=descriptions.map( desc => html`<li>${desc.description}</li>`);
             let description = html`<ul>${descriptions}</ul>`;
             let pillarId = userGoal.goals.pillar_id;

@@ -55,7 +55,7 @@ class Dashboard extends Controller
                 $user->load('student')->load('student.avatarModel');
                 $user->load('mentor')->load('mentor.mentorUser');
                 $user->load('userPoints')->load('userPoints.points');
-                $user->load('userGoals')->load('userGoals.goals');
+                $user->load('userGoals')->load('userGoals.goals')->load('userGoals.goals.criteria');
                 $pillars = Pillar::all(['id','name','description','colour']);
                 $pillars = $pillars->map(function($pillar){
                     return [

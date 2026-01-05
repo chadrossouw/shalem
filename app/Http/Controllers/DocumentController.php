@@ -17,7 +17,7 @@ class DocumentController extends Controller
             'document_description' => 'required|string',
         ]);
         if($request->has('document_id')){
-            $document = Document::where('id', $request->input('document_id'))->where('user_id', $user->id)->first();
+            $document = Document::where('id', intval($request->input('document_id')))->where('user_id', $user->id)->first();
             if(!$document){
                 return response()->json(['error' => 'Document not found'], 404);
             }
@@ -26,9 +26,9 @@ class DocumentController extends Controller
                 $path = $file->store('documents/'.$user->id);
                 $document->file_path = $path;
             }
-            $document->title = $request->input('document_title');
-            $document->pillar_id = $request->input('document_pillar');
-            $document->description = $request->input('document_description');
+            $document->title = strip_tags($request->input('document_title'));
+            $document->pillar_id = strip_tags($request->input('document_pillar'));
+            $document->description = strip_tags($request->input('document_description'));
             $document->save();
             DocumentStatus::create([
                 'document_id' => $document->id,
@@ -40,9 +40,9 @@ class DocumentController extends Controller
             return response()->json(['view' => 'success'], 200);
         }
         $file = $request->file('document_file');
-        $title = $request->input('document_title');
-        $pillar = $request->input('document_pillar');
-        $description = $request->input('document_description');
+        $title = strip_tags($request->input('document_title'));
+        $pillar = strip_tags($request->input('document_pillar'));
+        $description = strip_tags($request->input('document_description'));
         $path = $file->store('documents/'.$user->id);
         $document = new Document();
         $document->user_id = $user->id;

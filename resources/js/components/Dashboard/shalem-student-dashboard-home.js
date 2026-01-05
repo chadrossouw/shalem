@@ -73,7 +73,7 @@ export class ShalemStudentDashboardHome extends BaseDashboardConsumer(BaseClass(
                     </shalem-editable-field>
                 </h2>
                 ${goalsIcon ? html`<div class="icon" aria-hidden="true">${unsafeSVG(goalsIcon)}</div>` : ''}
-                <button class="card_target" @click=${() => this._handleAction({panel: 'goals', view: null})}>
+                <button class="card_target" @click=${() => this._handleAction({dashboard: 'goals', panel: null, view: null})}>
                     Let's go
                 </button>
             </div>

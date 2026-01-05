@@ -20,6 +20,7 @@
             .icon svg{
                 width:auto;
                 height:100%;
+                max-height: var(--header-height);
             }
             .icon.has_avatar{
                 position:relative;
@@ -110,4 +111,12 @@
     #colophon .blob:hover::after{
         background:var(--light-blue);
     }
+}
+
+.notification.is-error {
+    margin: 2rem var(--margins);
+    padding: 2rem;
+    background: var(--yellow-shade-2);
+    border: 4px solid var(--purple);
+    border-radius: var(--border-radius);
 }
