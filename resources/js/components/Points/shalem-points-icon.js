@@ -17,9 +17,9 @@ export class ShalemPointsIcon extends BaseDashboardConsumer(BaseClass(LitElement
         ({user: this.user,pillars: this.pillars} = this._dashboard);
     }
 
-    firstUpdated(){
+    updated(){
         this.points = this.user.user_points;
-        if(!this._year||this._year == 'this_year'){
+        if(!this.year||this.year == 'this_year'){
             this._filterPointsByYear();
         }
         this._aggregatePoints();

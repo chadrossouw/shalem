@@ -24,9 +24,12 @@ export const pointsByPillar = (points, pillars) => {
             if (pillarPoints[pillarId].proportion > 1){
                 pillarPoints[pillarId].proportion = 1;
             }
-            if(isNaN(pillarPoints[pillarId].proportion)){
+            if(isNaN(pillarPoints[pillarId].proportion)||pillarPoints[pillarId].proportion < 0.2){
                 pillarPoints[pillarId].proportion = 0.2;
             }
+        }
+        else{
+            pillarPoints[pillarId].proportion = 0.2;
         }
     }
     return pillarPoints;

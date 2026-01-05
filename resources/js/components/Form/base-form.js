@@ -281,6 +281,11 @@ export const BaseForm = (superClass) => class extends superClass{
 
     _handleSuccess(response){
         if( !response ) return;
+        if( response.message ){
+            this._formResponse.innerHTML = `<p class="success-message">${response.message}</p>`;
+            this._formResponse.classList.add('success');
+        }
+        this._beforeHandleSuccess(response);
         if( response.redirectUrl ){
             window.location.href = response.redirectUrl;
             return;
@@ -293,16 +298,17 @@ export const BaseForm = (superClass) => class extends superClass{
             this._updateContext({view: response.view});
             return;
         }
-        if( response.message ){
-            this._formResponse.innerHTML = `<p class="success-message">${response.message}</p>`;
-            this._formResponse.classList.add('success');
-        }
+        
     }
 
     _handleError(error){
         this._formResponse.innerHTML = `<p class="error-message">An error occurred while submitting the form. Please try again.</p>`;
         this._formResponse.classList.add('error');
         console.error('Form submission error:', error);
+    }
+
+    _beforeHandleSuccess(response){
+        // Hook for subclasses to implement any pre-success handling
     }
 
     static styles = [
