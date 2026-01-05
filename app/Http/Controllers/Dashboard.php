@@ -28,31 +28,31 @@ class Dashboard extends Controller
             Auth::logout();
             return redirect('/?error=auth');
         }
+        $_notifications = Notification::where('user_id', $user->id)->where('archived', false)->paginate(12);
+        $_notifications->load('actions');
+        $notifications = [$_notifications->currentPage()=>$_notifications->toArray()['data']];
+        $notificationsPagination = [
+            'current_page' => $_notifications->currentPage(),
+            'last_page' => $_notifications->lastPage(),
+            'per_page' => $_notifications->perPage(),
+            'total' => $_notifications->total(),
+        ];
+
+        $_unreadNotifications = Notification::where('user_id', $user->id)->whereNull('read_at')->where('archived', false)->paginate(12);
+        $_unreadNotifications->load('actions');
+        $unreadNotifications = [$_unreadNotifications->currentPage()=>$_unreadNotifications->toArray()['data']];
+        $unreadNotificationsPagination = [
+            'current_page' => $_unreadNotifications->currentPage(),
+            'last_page' => $_unreadNotifications->lastPage(),
+            'per_page' => $_unreadNotifications->perPage(),
+            'total' => $_unreadNotifications->total(),
+        ];
+        $updates = Notification::where('user_id', $user->id)->where('type', 'update')->where('archived', false)->whereNull('read_at')->limit(1)->get();
+        $updates->load('actions');
         switch($type){
             case 'student':
                 $fields = Field::where('location','student_dashboard')->get();
                 $user->load('student')->load('student.avatarModel');
-                $_notifications = Notification::where('user_id', $user->id)->where('archived', false)->paginate(12);
-                $_notifications->load('actions');
-                $notifications = [$_notifications->currentPage()=>$_notifications->toArray()['data']];
-                $notificationsPagination = [
-                    'current_page' => $_notifications->currentPage(),
-                    'last_page' => $_notifications->lastPage(),
-                    'per_page' => $_notifications->perPage(),
-                    'total' => $_notifications->total(),
-                ];
-
-                $_unreadNotifications = Notification::where('user_id', $user->id)->whereNull('read_at')->where('archived', false)->paginate(12);
-                $_unreadNotifications->load('actions');
-                $unreadNotifications = [$_unreadNotifications->currentPage()=>$_unreadNotifications->toArray()['data']];
-                $unreadNotificationsPagination = [
-                    'current_page' => $_unreadNotifications->currentPage(),
-                    'last_page' => $_unreadNotifications->lastPage(),
-                    'per_page' => $_unreadNotifications->perPage(),
-                    'total' => $_unreadNotifications->total(),
-                ];
-                $updates = Notification::where('user_id', $user->id)->where('type', 'update')->where('archived', false)->whereNull('read_at')->limit(1)->get();
-                $updates->load('actions');
                 $user->load('mentor')->load('mentor.mentorUser');
                 $user->load('userPoints')->load('userPoints.points');
                 $user->load('userGoals')->load('userGoals.goals');
