@@ -15,6 +15,7 @@ export class ShalemAnchorModal extends BaseClass(LitElement) {
     }
 
     render(){
+        console.log(this.open);
         return html`
             <div @click=${this._handleModal}>
                 <slot name="trigger"></slot>
@@ -58,7 +59,6 @@ export class ShalemAnchorModal extends BaseClass(LitElement) {
         ...super.styles,
         css`
         .modal{
-            scale:0;
             opacity:0;
             transition: scale var(--transition) ease, opacity var(--transition) ease;
             position:absolute;

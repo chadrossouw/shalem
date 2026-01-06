@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Field;
 use App\Models\Pillar;
 use App\Models\Notification;
+use App\Models\UserGoal;
 
 class Dashboard extends Controller
 {
@@ -55,7 +56,30 @@ class Dashboard extends Controller
                 $user->load('student')->load('student.avatarModel');
                 $user->load('mentor')->load('mentor.mentorUser');
                 $user->load('userPoints')->load('userPoints.points');
-                $user->load('userGoals')->load('userGoals.goals')->load('userGoals.goals.criteria');
+                $user->load('userGoals')->load([
+                    'userGoals.goals'=>function($query){
+                        $query->with('criteria');
+                    },
+                    'userGoals.progress']);
+                /* $userGoals = UserGoal::where('user_id', $user->id)->with([
+                    'goals'=>function($query){
+                        $query->with('criteria');
+                    },
+                    'progress'=>function($query){
+                        $query->with('criteria');
+                    },
+                ])->get(); */
+                /* $user->load('userGoals')->load('userGoals.goals','userGoals.progress');
+                $Test = $user->userGoals;
+                $Test->map(function(UserGoal $userGoal){
+                    $userGoal->goals->map(function($goal){
+                        $goal->load('criteria');
+                    });
+                    $userGoal->progress->map(function($progress){
+                        $progress->load('criteria');
+                    });
+                }); */
+              /*   $user->load('userGoals')->load()->load('userGoals.progress.criteria'); */
                 $pillars = Pillar::all(['id','name','description','colour']);
                 $pillars = $pillars->map(function($pillar){
                     return [

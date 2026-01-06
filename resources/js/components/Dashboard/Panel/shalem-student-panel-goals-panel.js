@@ -9,7 +9,8 @@ import goalsIcon from '../../../icons/goals-icon.svg';
 export class ShalemStudentPanelGoals extends BaseForm(BaseDashboardConsumer(BaseClass(LitElement))) {
     static properties = {
         ...super.properties,
-        goalList: { type: Array, state: true }
+        goalList: { type: Array, state: true },
+        _awaitingFetch: { type: Boolean, state: true }
     }
 
     connectedCallback() {
@@ -20,16 +21,28 @@ export class ShalemStudentPanelGoals extends BaseForm(BaseDashboardConsumer(Base
             return pillar.slug === this.panel;
         });
         if(!this.selectableGoals||!this.selectableGoals[this.panel]){
+            this._awaitingFetch = true;
             this._getSelectableGoals();
         }
         else{
             this.goalList = this.selectableGoals[this.panel];
+            this.goalList = this.goalList.filter( goal => {
+                return !this.userGoals.some(userGoal => userGoal.goal_id === goal.id);
+            });
         }
     }
 
     render() {
         if(!this.goalList || !this.goalList.length){
-            return html`<div class="margins"><shalem-loader>Climbing that hill...</shalem-loader></div>`;
+            if(this._awaitingFetch){
+                return html`<div class="margins"><shalem-loader>Climbing that hill...</shalem-loader></div>`;
+            }
+            return html`
+                <div class="margins">
+                    <p>You have set all available goals for the ${this.pillar.name} pillar. Great work!</p>
+                    <button class="button button_secondary" @click=${()=>{this._updateContext({panel:null,view:null});}}>Back to Goals</button>
+                </div>
+            `;
         }
         return html`
             <div class="header_with_icon margins">
@@ -52,6 +65,7 @@ export class ShalemStudentPanelGoals extends BaseForm(BaseDashboardConsumer(Base
                     <input type="text" id="goal_name" name="goal_name" placeholder="My custom goal name">
                     <button type="submit" class="button">Set Goal</button>
                 </form>
+                <button class="button button_secondary" @click=${()=>{this._updateContext({panel:null,view:null});}}>Back to Goals</button>
             </div>
         `;
     }
@@ -85,7 +99,7 @@ export class ShalemStudentPanelGoals extends BaseForm(BaseDashboardConsumer(Base
                 [this.panel]: data.goals
             };
             this._updateContext({selectableGoals: this.selectableGoals});
-            
+            this._awaitingFetch = false;
         }
         catch(error){
             console.error('Error fetching selectable goals:', error);

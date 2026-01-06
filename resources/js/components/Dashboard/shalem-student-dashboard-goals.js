@@ -14,6 +14,7 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
     static properties = {
         ...super.properties,
         _year: {type: String, state: true},
+        _goals: {type: Object, state: true},
     }
 
     constructor(){
@@ -30,6 +31,13 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
     }
 
     updated(changedProperties){
+        super.updated(changedProperties);
+        if(changedProperties.has('_year')){
+            this._goalsByPillar();
+        }
+        if(changedProperties.has('_dashboard')){
+            this._goalsByPillar();
+        }
         cardLinks(this.shadowRoot);
     }
 
@@ -64,20 +72,18 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
                             ${pillar.name}
                         </h3>
                         <button class="add bg_${pillar.colour}" @click=${() => this._handleAddGoal(pillar)}>+</button>
-                        ${this.goals[pillar.id].goals.length > 0 ? html`
+                        ${this._goals[pillar.id].goals.length > 0 ? html`
                             <div class="goals_list grid">
-                                ${this.goals[pillar.id].goals.map( goal => html`
+                                ${this._goals[pillar.id].goals.map( goal => html`
                                 <div class="goal_item">
                                     <shalem-anchor-modal>
-
-                                        <button slot="trigger" class="radius bg_pale_grey ${pillar.colour}" id="goal_${pillar.id}_${goal.id}" @click=${() => {
-                                            this._openModal(`modal_goal_${pillar.id}_${goal.id}`);
-                                        }}>
-                                            ${unsafeSVG(waves)}
-                                            
+                                        <button slot="trigger" class="radius bg_pale_grey ${pillar.colour}">
+                                            <span class="screen-reader-text">View details for goal: ${goal.name}</span>
+                                            <span class="progress" aria-label="Progress: ${goal.progress} out of ${goal.total}" style="--progress-percent:${(goal.total > 0&&goal.progress>0) ? (goal.progress / goal.total) * 100 : 8}%;">
+                                                ${unsafeSVG(waves)}
+                                            </span>
                                         </button>
-                                        <div slot="modal" class="modal bg_yellow bg_shade_2 radius shadow" id="modal_goal_${pillar.id}_${goal.id}">
-                                            <button class="close_button bg_yellow bg_shade_2" aria-label="Close goal details for ${goal.name}">${unsafeSVG(closeIcon)}</button>
+                                        <div slot="body">
                                             <h4>${goal.name}</h4>
                                             <div>${goal.description}</div>
                                         </div>
@@ -104,43 +110,47 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
         ${body}
         `;
     }
-    _openModal(id){
-        let modal = this.shadowRoot.getElementById(id);
-        if(modal){
-            modal.style.scale = '1';
-            modal.style.opacity = '1';
-            let closeButton = modal.querySelector('.close_button');
-            if(closeButton){
-                closeButton.focus();
-                closeButton.onclick = () => {
-                    modal.style.scale = '0';
-                    modal.style.opacity = '0';
-                };
-            }
-        }
-        this.shadowRoot.querySelectorAll('.modal').forEach( otherModal => {
-            if(otherModal.id != id){
-                otherModal.style.scale = '0';
-                otherModal.style.opacity = '0';
-            }
-        });
-    }
-    
+   
     _goalsByPillar(){
         let goals = this.user.user_goals;
-        this.goals = {};
+        console.log(goals);
+        if(this._year != 'all_time'){
+            let currentYear = new Date().getFullYear();
+            goals = goals.filter( userGoal => {
+                let goalDate = new Date(userGoal.created_at);
+                return goalDate.getFullYear() === currentYear;
+            });
+        }
+        this._goals = {};
         for(let pillar of this.pillars){
             let slug = pillar.name.toLowerCase().replace(/\s+/g,'-');
-            this.goals[pillar.id] = {name:pillar.name,colour:pillar.colour,slug:slug,goals:[]};
+            this._goals[pillar.id] = {name:pillar.name,colour:pillar.colour,slug:slug,goals:[]};
         }
         goals.forEach( userGoal => {
             let goalName = userGoal.name;
-            let descriptions = userGoal.goals.criteria;
-            descriptions=descriptions.map( desc => html`<li>${desc.description}</li>`);
+            let criteria = userGoal.goals.criteria;
+            let progress = userGoal.progress;
+            criteria = criteria.map( criterion => {
+                if(progress){
+                    let userCriterionProgress = progress.find( cProg => cProg.criteria_id === criterion.id );
+                    if(userCriterionProgress){
+                        criterion.progress = userCriterionProgress;
+                        return criterion;
+                    }
+                }
+                return criterion;
+            });
+            let descriptions=criteria.map( desc => html`<li><span>${desc.progress.progress_value==desc.progress.target_value?'<span class="check"><span class="screen-reader-text">Completed:</span></span>':''}</span>${desc.description}</li>`);
             let description = html`<ul>${descriptions}</ul>`;
+            let aggregateTotal, aggregateProgress;
+            if(progress && progress.length > 0){
+                aggregateTotal = progress.reduce( (total,prog) => total + prog.target_value, 0);
+                aggregateProgress = progress.reduce( (total,prog) => total + prog.progress_value, 0);
+            }
             let pillarId = userGoal.goals.pillar_id;
-            if(this.goals.hasOwnProperty(pillarId)){
-                this.goals[pillarId].goals.push({name:goalName,description:description,id:userGoal.id});
+            
+            if(this._goals.hasOwnProperty(pillarId)){
+                this._goals[pillarId].goals.push({name:goalName,description:description,id:userGoal.id, total:aggregateTotal, progress:aggregateProgress});
             }
         });
     }
@@ -211,6 +221,37 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
                             color:currentColor;
                         }
                     }
+                }
+            }
+            .goal_item button{
+                position:absolute;
+                top:0;
+                left:0;
+                width:100%;
+                height:100%;
+                padding:0;
+                overflow:clip;
+                &:hover,&:focus{
+                    background-color:var(--pale-grey);
+                    color:currentColor;
+                    .progress{
+                        transform:translate(-100%,calc((var(--progress-percent) + 5%) * -1));
+                    }
+                }
+            }
+            .progress{
+                position:absolute;
+                top:100%;
+                left:0;
+                width:100%;
+                height:100%;
+                transform:translate(0,calc(var(--progress-percent)  * -1));
+                transition:transform calc(var(--transition) * 5) ease-in-out;
+                svg{
+                    width:200%;
+                    height:100%;
+                    object-fit:cover;
+                    fill:currentColor;
                 }
             }
         `

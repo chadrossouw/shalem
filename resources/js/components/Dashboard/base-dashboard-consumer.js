@@ -74,6 +74,7 @@ export const BaseDashboardConsumer = (superClass) => class extends superClass{
             action: this.action, 
             documentApprovalTime: this.documentApprovalTime
         } = this._dashboard);
+        this.requestUpdate();
     }
 
     _updateContext(newValues){

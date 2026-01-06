@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 
-class UserGoalProgress extends Model
+class UserGoalsProgress extends Model
 {
     public function criteria(): HasOne
     {

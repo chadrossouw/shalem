@@ -34,27 +34,6 @@ class TriggerGoalAssessment{
             if($userGoal->achieved_at){
                 continue;
             }
-            $userGoalProgress = $userGoal->progress;
-            $goal = $userGoal->goal;
-            $criteria = $goal->criteria;
-            if(!$userGoalProgress){
-                foreach($criteria as $criterion){
-                    $userGoalProgressEntry = new \App\Models\UserGoalProgress();
-                    $userGoalProgressEntry->user_goal_id = $userGoal->id;
-                    $userGoalProgressEntry->criteria_id = $criterion->id;
-                    $userGoalProgressEntry->progress_value = 0;
-                    if($criterion->document_points){
-                        $userGoalProgressEntry->target_value = $criterion->document_points;
-                    } 
-                    elseif($criterion->attendance){
-                        $userGoalProgressEntry->target_value = $criterion->attendance;
-                    }
-                    elseif($criterion->merits){
-                        $userGoalProgressEntry->target_value = $criterion->merits;
-                    }
-                    $userGoalProgressEntry->save();
-                }
-            }
             if($triggeringEntity instanceof \App\Models\Document){
                 // Process document-related criteria
                 $documentPoints = $triggeringEntity->points;
