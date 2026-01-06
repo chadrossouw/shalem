@@ -10,10 +10,10 @@ export class ShalemNavNotifications extends BaseNotificationsConsumer(BaseDashbo
     }
 
     render(){
-        let notifications = this.unreadNotifications[1].slice(0,3);
+        let notifications = this.unreadNotifications[1].slice(0,2);
         let moreButton = '';
         if(this.unreadNotifications[1].length > 2){
-            moreButton = html`<button class="more-button" @click=${(e) => {e.preventDefault(); this._goToNotifications()}}>See all notifications</button>`;
+            moreButton = html`<button class="more-button" @click=${(e) => {e.preventDefault(); this._goToNotifications()}}>You have ${this.unreadNotifications[1].length} more unread notifications.</button>`;
         }
         return html`
         <div class="notifications grid">
@@ -50,6 +50,11 @@ export class ShalemNavNotifications extends BaseNotificationsConsumer(BaseDashbo
     static styles = [
         super.styles,
         css`
+        .notifications{
+            max-height:100dvh;
+            overflow-y:auto;
+        }
+
         .notification{
             padding:1rem;
             display:grid;

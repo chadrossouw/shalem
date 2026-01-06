@@ -7,6 +7,8 @@ import dashboardNav from "../../icons/dashboard-nav.svg";
 import pointsNav from "../../icons/points-nav.svg";
 import uploadNav from "../../icons/upload-nav.svg";
 import goalsNav from "../../icons/goals-nav.svg";
+import verifyNav from "../../icons/verify-nav.svg";
+import pupilsNav from "../../icons/pupils-nav.svg";
 import notificationsNavClosed from "../../icons/notifications-nav-closed.svg";   
 import notificationsNavOpen from "../../icons/notifications-nav-open.svg";
 import close from "../../icons/close.svg";
@@ -70,6 +72,47 @@ export class ShalemNavbar extends BaseNavConsumer(BaseDashboardConsumer(BaseClas
                 </div>
             `;
         }
+        if(this.identifier == 'staff'){
+            let currentPage = this._dashboard.panel;
+            let navIcon = this._getNotificationIcon();
+            if(this.unreadNotifications && this.unreadNotifications[1].length > 0 && !this._dismissedNotifications){
+                let count = this.unreadNotifications[1].length<10 ? this.unreadNotifications[1].length : '+';
+                let button;
+                if(!this._openNotifications){
+                    button = html`
+                        <button class="notification_button bg_blue" @click=${this._openCloseNotifications} aria-controls="updates" aria-expanded="${this._openNotifications}"><span class="button_text">You have new notifications</span><span class="notification_count">${!this._openNotifications ? count : unsafeSVG(close)}</span></button>
+                    `;
+                }   
+                else{
+                    button = html`
+                        <button class="notification_button bg_blue" @click=${this._dismissNotifications}><span class="button_text">Dismiss</span><span class="notification_count">${unsafeSVG(close)}</span></button>
+                    `;
+                }
+                return html`
+                <div class="navbar margins bg_blue radius-big">   
+                    <shalem-swipable @swiped=${this._dismissNotifications}>
+                        ${button}
+                    </shalem-swipable>
+                    <div class="updates_panel ${this._openNotifications ? 'open' : ''}" id="updates">
+                        <shalem-nav-notifications identifier="${this.identifier}"></shalem-notifications>
+                    </div>
+                </div>
+
+                `;
+            }
+            return html`  
+                <div class="navbar margins bg_blue radius-big">      
+                    <nav>
+                        <ul class="staff_nav">
+                            <li><a href="/dashboard" @click=${(e) => this._handleNavigation(e, null, null)} aria-current="${currentPage === '' ? 'page' : 'false'}"><span aria-hidden="true">${unsafeSVG(dashboardNav)}</span><span class="screen-reader-text">Dashboard</span></a></li>
+                            <li><a href="/dashboard/documents" @click=${(e) => this._handleNavigation(e, 'documents', null)} aria-current="${currentPage === 'documents' ? 'page' : 'false'}"><span aria-hidden="true">${unsafeSVG(verifyNav)}</span><span class="screen-reader-text">Verify Documents</span></a></li>
+                            <li><a href="/dashboard/pupils" @click=${(e) => this._handleNavigation(e, 'pupils', null)} aria-current="${currentPage === 'pupils' ? 'page' : 'false'}"><span aria-hidden="true">${unsafeSVG(pupilsNav)}</span><span class="screen-reader-text">Pupils</span></a></li>
+                            <li><a href="/dashboard/notifications" @click=${(e) => this._handleNavigation(e, 'notifications','all')} aria-current="${currentPage === 'notifications' ? 'page' : 'false'}"><span aria-hidden="true">${unsafeSVG(navIcon)}</span><span class="screen-reader-text">Notifications</span></a></li>
+                        </ul>
+                    </nav>
+                </div>
+            `;
+        }
     }
 
     _openCloseNotifications(){
@@ -84,10 +127,10 @@ export class ShalemNavbar extends BaseNavConsumer(BaseDashboardConsumer(BaseClas
     _dismissNotifications(){
         this._dismissedNotifications = true;
         this._openNotifications = false;
-        this.unreadNotifications.forEach((notification) => {
+        this.unreadNotifications[1].forEach((notification) => {
             this._markAsRead(notification.id);
         });
-        this.unreadNotifications = [];
+        this.unreadNotifications[1] = [];
         this._updateContext({unreadNotifications: this.unreadNotifications});
     }
 
@@ -131,6 +174,13 @@ export class ShalemNavbar extends BaseNavConsumer(BaseDashboardConsumer(BaseClas
             display:flex;   
             gap:1rem;
             justify-content:space-between
+        }
+        ul.staff_nav{
+            gap:2rem;
+        }
+        ul.staff_nav li:last-child{
+            flex-grow:1;
+            text-align:right;
         }
         .notification_button{
             width:100%;

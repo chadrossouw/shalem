@@ -23,6 +23,18 @@ export class EventManager{
         );
     }
 
+    lazyEmit(event, detail){
+        if(document.readyState === 'loading'){
+            document.addEventListener('DOMContentLoaded', () => {
+                this.emit(event, detail);
+            });
+        }
+        else {
+            setTimeout(() => {
+                this.emit(event, detail);
+            }, 0);
+        }
+    }
     store(event, callback){
         this.events.push({event:event, callback:callback});
     }
