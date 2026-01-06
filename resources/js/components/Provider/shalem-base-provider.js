@@ -76,6 +76,8 @@ export class ShalemBaseProvider extends LitElement {
         this.eventManager.listen(`shalem-dashboard-${this.identifier}-update`,this._handleUpdate);
         this.dashboardProvider = new ContextProvider(this, {context:dashboardContext, initialValue: this.dashboardContext});
         this.eventManager.initHistory({dashboard: this.dashboard, panel: this.panel, view: this.view, action: this.action });
+        
+        this.eventManager.lazyEmit(`shalem-dashboard-updated`,this.dashboardContext);
     }
 
     disconnectedCallback() {

@@ -50,6 +50,16 @@ class Dashboard extends Controller
         ];
         $updates = Notification::where('user_id', $user->id)->where('type', 'update')->where('archived', false)->whereNull('read_at')->limit(1)->get();
         $updates->load('actions');
+        $pillars = Pillar::all(['id','name','description','colour']);
+        $pillars = $pillars->map(function($pillar){
+            return [
+                'id' => $pillar->id,
+                'name' => $pillar->name,
+                'description' => $pillar->description,
+                'colour' => $pillar->colour,
+                'slug' => strtolower(str_replace(' ', '-', $pillar->name)),
+            ];
+        });
         switch($type){
             case 'student':
                 $fields = Field::where('location','student_dashboard')->get();
@@ -96,13 +106,13 @@ class Dashboard extends Controller
                 $pillars = Pillar::all(['id','name','description','colour']);
                 $fields = Field::where('location','staff_dashboard')->get();
                 if($role=='admin'||$role=='superadmin'){
-                    return view('dashboard.staff', ['user' => $user, 'fields' => $fields, 'pillars'=>$pillars,'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token]);
+                    return view('dashboard.staff', ['user' => $user, 'fields' => $fields, 'pillars'=>$pillars,'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token, 'notifications' => $notifications, 'notificationsPagination' => $notificationsPagination, 'unreadNotifications' => $unreadNotifications, 'unreadNotificationsPagination' => $unreadNotificationsPagination, 'updates' => $updates ]);
                 }
                 elseif($role=='grade_head'){
                     $fields = Field::where('location','staff_dashboard')->get();
                     return view('dashboard.grade_head', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token]);
                 }
-                return view('dashboard.staff', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token]);
+                return view('dashboard.staff', ['user' => $user, 'fields' => $fields, 'pillars'=>$pillars,'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token,'notifications' => $notifications, 'notificationsPagination' => $notificationsPagination, 'unreadNotifications' => $unreadNotifications, 'unreadNotificationsPagination' => $unreadNotificationsPagination, 'updates' => $updates ]);
             case 'parent':
                 $fields = Field::where('location','parent_dashboard')->get();
                 return view('dashboard.parent', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action ]);

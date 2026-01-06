@@ -10,6 +10,8 @@ import cvSupportIcon from '../../icons/cv-support-icon.svg';
 import notificationsIconOpen from '../../icons/notification-icon-open.svg';
 import notificationsIconClosed from '../../icons/notification-icon-closed.svg';
 import fredExhaustedIcon from '../../icons/fred-exhausted.svg';
+import verifyIcon from '../../icons/verify-icon.svg';
+import pupilsIcon from '../../icons/pupils-icon.svg';
 
 
 export class ShalemNavigation extends BaseClass(LitElement) {
@@ -27,7 +29,6 @@ export class ShalemNavigation extends BaseClass(LitElement) {
         this._menuIsOpen = false;
         this._transitionEndIsAdded = false;
         this._prefersReduced =  window.matchMedia(`(prefers-reduced-motion: reduce)`) === true ||window.matchMedia("(prefers-reduced-motion: reduce)").matches ==true;
-
     }
 
     get lastFocusable() {
@@ -48,7 +49,7 @@ export class ShalemNavigation extends BaseClass(LitElement) {
 
     connectedCallback() {
         super.connectedCallback();
-        this._eventManager.listen('shalem-dashboard-updated',this._handleDashboardUpdate.bind(this));   
+        this._eventManager.listen('shalem-dashboard-updated',this._handleDashboardUpdate.bind(this)); 
     }
 
     render() {
@@ -104,6 +105,24 @@ export class ShalemNavigation extends BaseClass(LitElement) {
             </nav>
         `;
     }
+    
+    _renderStaffNavigation(){
+         let notificationsIcon = notificationsIconClosed;
+         if(this._notifications && this._notifications.length > 0 ){
+            let count = this._notifications.length <10 ? this._notifications.length : '+';
+            notificationsIcon = notificationsIconOpen.replace('<tspan x="0" y="0">1</tspan>', `<tspan x="0" y="0">${count}</tspan>`);
+         }
+         return html`
+            <nav>
+                <ul>
+                    <li><a href="/dashboard/documents" aria-current="${this._dashboard=='documents'?'true':'false'}">${unsafeSVG(verifyIcon)}Verify documents</a></li>
+                    <li><a href="/dashboard/pupils" aria-current="${this._dashboard=='pupils'?'true':'false'}">${unsafeSVG(pupilsIcon)}My pupils</a></li>
+                    <li><a href="/dashboard/notifications${this._notifications && this._notifications.length ? '/unread' : '/all'}" aria-current="${this._dashboard=='notifications'?'true':'false'}">${unsafeSVG(notificationsIcon)}Notifications</a></li>
+                    <li><a href="/logout">${unsafeSVG(fredExhaustedIcon)}Log out</a></li>
+                </ul>
+            </nav>
+        `;
+    }
     _renderDefaultNavigation(){
         return html`
             <nav>
@@ -120,7 +139,7 @@ export class ShalemNavigation extends BaseClass(LitElement) {
         let dashboard = dashboardContext.detail;
         this._dashboard = dashboard.dashboard;
         this._panel = dashboard.panel;
-        this._notifications = dashboard.notifications;
+        this._notifications = dashboard.unreadNotifications? dashboard.unreadNotifications[1] : [];
         this.requestUpdate();
     }
 

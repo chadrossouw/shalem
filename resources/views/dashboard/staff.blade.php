@@ -2,12 +2,15 @@
         <x-navigation.masthead :user="$user" />
         <main id="primary" class="margins">
             <shalem-base-provider 
-                identifier="staff" 
+                identifier="student" 
                 user="{{ $user->toJson() }}" 
                 fields="{{ $fields->toJson() }}" 
                 notifications="{{ json_encode($notifications) }}"
-                unreadnotifications="{{ $unreadNotifications->toJson() }}"
+                unreadnotifications="{{ json_encode($unreadNotifications) }}"
                 notificationspagination="{{ json_encode($notificationsPagination) }}"
+                unreadnotificationspagination="{{ json_encode($unreadNotificationsPagination) }}"
+                archivednotifications="{}"
+                archivednotificationspagination="{}"
                 updates="{{ $updates->toJson() }}"
                 dashboard="{{ $dashboard }}" 
                 panel="{{ $panel }}"
