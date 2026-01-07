@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit';
 import { BaseClass } from '../BaseClass';
 import { unsafeSVG } from 'lit/directives/unsafe-svg.js';
 import closeIcon from '../../icons/close-icon.svg';
+import { EventManager } from '../../utilities/events.js';
 
 export class ShalemAnchorModal extends BaseClass(LitElement) {
 
@@ -13,9 +14,31 @@ export class ShalemAnchorModal extends BaseClass(LitElement) {
     get modal() {
         return this.shadowRoot.querySelector('.modal');
     }
+    get bodySlot(){
+        let slot = this.shadowRoot.querySelector('slot[name="body"]');
+        return slot.assignedNodes({flatten:true})[0];
+    }
 
+    connectedCallback(){
+        super.connectedCallback();
+        this.eventManager = new EventManager(this);
+        this.eventManager.listen(`shalem-modals`,this._handleUpdate);
+    }
+
+    updated(){
+        if(this.open){
+            const rect = this.modal.getBoundingClientRect();
+            if(rect.right > window.innerWidth){
+                this.modal.classList.add('intersect');
+            }
+
+            this.bodySlot.classList.add('open');
+        }
+        else{
+           this.bodySlot.classList.remove('open'); 
+        }
+    }
     render(){
-        console.log(this.open);
         return html`
             <div @click=${this._handleModal}>
                 <slot name="trigger"></slot>
@@ -28,7 +51,6 @@ export class ShalemAnchorModal extends BaseClass(LitElement) {
     }
 
     _handleModal(e){
-        console.log(e);
         if(this.open){
             this.closeModal();
         }
@@ -37,18 +59,18 @@ export class ShalemAnchorModal extends BaseClass(LitElement) {
         }
     }
 
+    _handleUpdate(e){
+        if(this.open && e.detail.source !== this){
+            this.closeModal();
+        }
+    }
+
     showModal(){
         this.open = true;
         //check if modal would intersect viewport edges
-        const rect = this.modal.getBoundingClientRect();
-        if(rect.right > window.innerWidth){
-            this.modal.classList.add('intersect');
-        }
-        document.querySelectorAll('shalem-anchor-modal').forEach( otherModal => {
-            if(otherModal !== this){
-                otherModal.closeModal();
-            }
-        });
+       
+        this.eventManager.emit('shalem-modals', { source: this } );
+
     }
 
     closeModal(){
@@ -68,7 +90,7 @@ export class ShalemAnchorModal extends BaseClass(LitElement) {
             left:100%;
             transform:translateX(-50%) scale(0);
             transform-origin: bottom center;
-            padding:1rem;
+            padding:1.5rem;
             z-index:10;
             color:var(--black);
             &.open{
@@ -94,8 +116,8 @@ export class ShalemAnchorModal extends BaseClass(LitElement) {
         }
         .close{
             position:absolute;
-            top:0.5rem;
-            right:0.5rem;
+            top:0.25rem;
+            right:0.25rem;
             border:none;
             background:transparent;
             cursor:pointer;
@@ -103,16 +125,35 @@ export class ShalemAnchorModal extends BaseClass(LitElement) {
             display:block;
             aspect-ratio:1 / 1;
             width:1.5rem;
+            height:1.5rem;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border-radius:50%;
+            transition: background-color var(--transition) ease;
             svg{
-                width:1.5rem;
-                height:1.5rem;
+                width:1rem;
+                height:1rem;
                 fill:var(--black);
                 rect{
                     fill:var(--black);
                 }
             }
         }
-
+        .close span{
+            display:block;
+            height: 1rem;
+            line-height: 0;
+        }
+        .close:hover,.close:focus{
+            background-color:var(--black);
+            svg{
+                fill:var(--white);
+                rect{
+                    fill:var(--white);
+                }
+            }
+        }
         `
     ];
 }

@@ -2,15 +2,30 @@ import { LitElement, html, css } from 'lit';
 import { BaseClass } from '../BaseClass';
 import { unsafeSVG } from 'lit/directives/unsafe-svg.js';
 import closeIcon from '../../icons/close-icon.svg';
+import { EventManager } from '../../utilities/events.js';
 
 export class ShalemDialog extends BaseClass(LitElement) {
 
     static properties = {
         ...super.properties,
         background: { type: String },
+        identifier: { type: String },
+        open: { type: Boolean, reflect: true },
     }
+
     get dialog() {
         return this.shadowRoot.querySelector('dialog');
+    }
+
+    connectedCallback(){
+        super.connectedCallback();
+        this.eventManager = new EventManager(this);
+    }
+
+    firstUpdated(){
+        if(this.open){
+            this.dialog.showModal();
+        }
     }
 
     render(){
@@ -28,6 +43,7 @@ export class ShalemDialog extends BaseClass(LitElement) {
         if(e.target.tagname == 'BUTTON' || e.target.closest('button')){
             if(this.dialog.open){
                 this.dialog.close();
+                this.eventManager.emit(`dialog-closed-${this.identifier}`);
             }
             else{
                 this.dialog.showModal();

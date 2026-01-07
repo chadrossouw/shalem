@@ -7,6 +7,7 @@ import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { cardLinks } from "../../common/accessibility.js";
 import { cards,toggle } from '../../utilities/baseStyles.js';
 import closeIcon from "../../icons/close-icon.svg";
+import goalRemoveIcon from "../../icons/goals-delete.svg";
 import waves from "../../icons/waves.svg";
 
 export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass(LitElement)){
@@ -15,6 +16,7 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
         ...super.properties,
         _year: {type: String, state: true},
         _goals: {type: Object, state: true},
+        _removeGoal: {type: Object, state: true},
     }
 
     constructor(){
@@ -27,6 +29,9 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
     connectedCallback(){
         super.connectedCallback();
         ({fields: this.fields, user: this.user, pillars: this.pillars, selectableGoals: this.selectableGoals} = this._dashboard);
+        this._eventManager.listen('dialog-closed-goal-remove', () => {
+            this._removeGoal = null;
+        });
         this._goalsByPillar();
     }
 
@@ -77,15 +82,28 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
                                 ${this._goals[pillar.id].goals.map( goal => html`
                                 <div class="goal_item">
                                     <shalem-anchor-modal>
-                                        <button slot="trigger" class="radius bg_pale_grey ${pillar.colour}">
+                                        <button slot="trigger" class="radius bg_pale_grey ${pillar.colour} ${goal.total==goal.progress?'complete':''}">
                                             <span class="screen-reader-text">View details for goal: ${goal.name}</span>
                                             <span class="progress" aria-label="Progress: ${goal.progress} out of ${goal.total}" style="--progress-percent:${(goal.total > 0&&goal.progress>0) ? (goal.progress / goal.total) * 100 : 8}%;">
                                                 ${unsafeSVG(waves)}
                                             </span>
                                         </button>
-                                        <div slot="body">
+                                        <div slot="body" class="grid body_container ${goal.total==goal.progress?'complete':''}">
+                                            <div class="goal_details">
                                             <h4>${goal.name}</h4>
-                                            <div>${goal.description}</div>
+                                            <p>${goal.description}</p>
+                                            </div>
+                                            <div class="progress_bar_container">
+                                                <div class="radius bg_white ${pillar.colour} progress_bar">
+                                                    <span class="screen-reader-text">View details for goal: ${goal.name}</span>
+                                                    <span class="progress" aria-label="Progress: ${goal.progress} out of ${goal.total}" style="--progress-percent:${(goal.total > 0&&goal.progress>0) ? (goal.progress / goal.total) * 100 : 8}%;">
+                                                        ${unsafeSVG(waves)}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            ${goal.needsDocuments ? html`<button class="bg_${pillar.colour}" @click=${()=>this._handleAction({dashboard: 'documents', panel: 'upload', view: null})}>Upload a document</button>` : html`<div></div>`}
+                                            ${goal.total!=goal.progress ? html`<button class="bg_${pillar.colour}" @click=${()=>this._handleRemoveGoal(goal)}>Remove</button>` : html`<div class="goal_complete">Goal complete!</div>`}
+
                                         </div>
                                     </shalem-anchor-modal>
                                 </div>
@@ -93,7 +111,7 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
                         ` : html`<div class="no_goals">No goals set yet.</div>`}
                     </div>`;
                 })}
-            `;
+            </div>`;
         }
         
         return html`
@@ -108,12 +126,20 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
         </div>
         
         ${body}
+        ${this._removeGoal? html`<shalem-dialog open identifier="goal-remove">
+            <span slot="title" class="flex white">${unsafeSVG(goalRemoveIcon)}<h2>Remove ${this._removeGoal.name}</h2></span>
+            <div slot="body">
+                <p class="white">Are you sure you want to remove this goal?</p>
+                <button class="bg_blue" @click=${()=>this._handleRemoveGoalConfirm()}>Yes. It's not working for me</button>
+                <button class="bg_light_blue" @click=${()=>this._handleRemoveGoalCancel()}>No. Wait. I want to keep going</button>
+            </div>
+        </shalem-dialog>` : ''
+        }
         `;
     }
    
     _goalsByPillar(){
         let goals = this.user.user_goals;
-        console.log(goals);
         if(this._year != 'all_time'){
             let currentYear = new Date().getFullYear();
             goals = goals.filter( userGoal => {
@@ -140,17 +166,17 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
                 }
                 return criterion;
             });
-            let descriptions=criteria.map( desc => html`<li><span>${desc.progress.progress_value==desc.progress.target_value?'<span class="check"><span class="screen-reader-text">Completed:</span></span>':''}</span>${desc.description}</li>`);
-            let description = html`<ul>${descriptions}</ul>`;
+            let descriptions=criteria.map( desc => html`<li><span>${desc.progress.progress_value==desc.progress.target_value?html`<span class="check"><span class="screen-reader-text">Completed:</span></span>`:''}</span>${desc.description}</li>`);
+            let description = html`<p>${userGoal.goals.description}</p><ul>${descriptions}</ul>`;
             let aggregateTotal, aggregateProgress;
             if(progress && progress.length > 0){
                 aggregateTotal = progress.reduce( (total,prog) => total + prog.target_value, 0);
                 aggregateProgress = progress.reduce( (total,prog) => total + prog.progress_value, 0);
             }
             let pillarId = userGoal.goals.pillar_id;
-            
+            let needsDocuments = criteria.some( criterion => {return criterion.progress.progress_value!=criterion.progress.target_value && !criterion.attendance && !criterion.merits} );
             if(this._goals.hasOwnProperty(pillarId)){
-                this._goals[pillarId].goals.push({name:goalName,description:description,id:userGoal.id, total:aggregateTotal, progress:aggregateProgress});
+                this._goals[pillarId].goals.push({name:goalName,description:description,id:userGoal.id, total:aggregateTotal, progress:aggregateProgress, needsDocuments:needsDocuments});
             }
         });
     }
@@ -166,6 +192,14 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
 
     _handleAddGoal(pillar){
         this._updateContext({panel: pillar.slug});
+    }
+
+    _handleRemoveGoal(goal){
+        this._removeGoal = goal;
+    }
+
+    _handleRemoveGoalCancel(){
+        this._removeGoal = null;
     }
     
     static styles = [
@@ -196,7 +230,7 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
                 .goal_item{
                     aspect-ratio:1 / 1;
                     position:relative;
-                    &>button{
+                    &>button,&.progress_bar{
                         width:100%;
                         height:100%;
                         border:none;
@@ -222,8 +256,34 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
                         }
                     }
                 }
+                ul{
+                    margin:0;
+                    list-style:none;
+                    padding-left:1.2rem;
+                    li{
+                        margin-bottom:0.5rem;
+                        position:relative;
+                        &>span{
+                            position:absolute;
+                            left:-1.2rem;
+                            top:0.5rem;
+                            width:0.5rem;
+                            height:0.5rem;
+                            border-radius:50%;
+                            background-color:var(--white);
+                            span.check{
+                                width: 1rem;
+                                height: 0.35rem;
+                                border-bottom: 2px solid var(--green);
+                                border-left: 2px solid var(--green);
+                                display: block;
+                                transform: rotate(-45deg) translate(2px, -2px);
+                            }
+                        }
+                    }
+                }
             }
-            .goal_item button{
+            .goal_item button.bg_pale_grey,.goal_item .progress_bar{
                 position:absolute;
                 top:0;
                 left:0;
@@ -238,6 +298,10 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
                         transform:translate(-100%,calc((var(--progress-percent) + 5%) * -1));
                     }
                 }
+            }
+            .progress_bar_container{
+                position:relative;
+                aspect-ratio:1 / 1;
             }
             .progress{
                 position:absolute;
@@ -254,6 +318,76 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
                     fill:currentColor;
                 }
             }
+            .body_container{
+                grid-template-columns:1fr 75px;
+                gap:1rem;
+                h4{
+                    font-size:1rem;
+                    margin-bottom:0.5rem;
+                }
+                .progress_bar_container{
+                    grid-column:2 / 3;
+                }
+                button{
+                    grid-column:1 / -1;
+                }
+            }
+            .goal_complete{
+                grid-column:1 / -1;
+                text-align:center;
+                aspect-ratio:1;
+                border-radius:50%;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                font-weight:bold;
+                transform:scale(0.1);
+                transition:transform var(--transition) cubic-bezier(0, 0.29, 1, 0.72);
+                background-image:radial-gradient(
+                    var(--yellow-shade-2)0 50%,transparent 0 100%),
+                    conic-gradient(
+                        var(--purple-shade-1) 0 10deg,
+                        var(--yellow-shade-2) 0 20deg,
+                        var(--blue-shade-1) 0 30deg,
+                        var(--yellow-shade-2) 0 40deg,
+                        var(--light-blue-shade-1) 0 50deg,
+                        var(--yellow-shade-2) 0 60deg,
+                        var(--aqua) 0 70deg,
+                        var(--yellow-shade-2) 0 80deg,
+                        var(--green-shade-1) 0 90deg,
+                        var(--yellow-shade-2) 0 100deg,
+                        var(--yellow-shade-1) 0 110deg,
+                        var(--yellow-shade-2) 0 120deg,
+                        var(--purple-shade-1) 0 130deg,
+                        var(--yellow-shade-2) 0 140deg,
+                        var(--blue-shade-1) 0 150deg,
+                        var(--yellow-shade-2) 0 160deg,
+                        var(--blue-shade-1) 0 170deg,
+                        var(--yellow-shade-2) 0 180deg,
+                        var(--light-blue-shade-1) 0 190deg,
+                        var(--yellow-shade-2) 0 200deg,
+                        var(--aqua) 0 210deg,
+                        var(--yellow-shade-2) 0 220deg,
+                        var(--green-shade-1) 0 230deg,
+                        var(--yellow-shade-2) 0 240deg,
+                        var(--yellow-shade-1) 0 250deg,
+                        var(--yellow-shade-2) 0 260deg,
+                        var(--purple-shade-1) 0 270deg,
+                        var(--yellow-shade-2) 0 280deg,
+                        var(--blue-shade-1) 0 290deg,
+                        var(--yellow-shade-2) 0 300deg,
+                        var(--light-blue-shade-1) 0 310deg,
+                        var(--yellow-shade-2) 0 320deg,
+                        var(--aqua) 0 330deg,
+                        var(--yellow-shade-2) 0 340deg,
+                        var(--green-shade-1) 0 350deg,
+                        var(--yellow-shade-2) 0 360deg)
+                ;
+            }
+            .open .goal_complete{
+                transform:scale(1);
+            }
+           
         `
     ];
 }
