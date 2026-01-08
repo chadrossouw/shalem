@@ -25,6 +25,15 @@ class Document extends Model
         'updated_at' => '',
     ];
 
+    protected $fillable = [
+        'title',
+        'description',
+        'file_path',
+        'user_id',
+        'pillar_id',
+        'type',
+    ];
+
     public function user(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'user_id');

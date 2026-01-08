@@ -81,7 +81,7 @@ class DocumentController extends Controller
         $query = $request->input('query','');
         $documents = Document::search($query)
             ->where('user_id', $user->id)
-            ->paginate(2);
+            ->paginate(6);
         $documents->load('document_status');
         $documents->map(function($document) {
             $document->document_status->load('user');
