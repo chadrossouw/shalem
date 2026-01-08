@@ -9,6 +9,7 @@ import { cards,toggle } from '../../utilities/baseStyles.js';
 import closeIcon from "../../icons/close-icon.svg";
 import goalRemoveIcon from "../../icons/goals-delete.svg";
 import waves from "../../icons/waves.svg";
+import { safeFetch } from "../../common/xsrf.js";
 
 export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass(LitElement)){
 
@@ -127,10 +128,10 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
         
         ${body}
         ${this._removeGoal? html`<shalem-dialog open identifier="goal-remove">
-            <span slot="title" class="flex white">${unsafeSVG(goalRemoveIcon)}<h2>Remove ${this._removeGoal.name}</h2></span>
-            <div slot="body">
-                <p class="white">Are you sure you want to remove this goal?</p>
-                <button class="bg_blue" @click=${()=>this._handleRemoveGoalConfirm()}>Yes. It's not working for me</button>
+            <span slot="title" class="flex white modal_title">${unsafeSVG(goalRemoveIcon)}<h2>Remove ${this._removeGoal.name}</h2></span>
+            <div slot="body" class="modal_body">
+                <p class="white">Are you SURE you want to remove this goal?</p>
+                <button class="bg_blue" @click=${(e)=>this._handleRemoveGoalConfirm(e)}>Yes. It's not working for me</button>
                 <button class="bg_light_blue" @click=${()=>this._handleRemoveGoalCancel()}>No. Wait. I want to keep going</button>
             </div>
         </shalem-dialog>` : ''
@@ -201,7 +202,34 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
     _handleRemoveGoalCancel(){
         this._removeGoal = null;
     }
-    
+
+    _handleRemoveGoalConfirm(e){
+        e.preventDefault();
+        e.stopPropagation();
+        safeFetch('/api/goals/remove',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({user_goal_id: this._removeGoal.id})
+        })
+        .then( response => {
+            if(!response.ok){
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then( data => {
+            // Refresh goals
+            this._dashboard.user.user_goals = this._dashboard.user.user_goals.filter( ug => ug.id != this._removeGoal.id );
+            this._goalsByPillar();
+            this._removeGoal = null;
+        })
+        .catch( error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+    }
+
     static styles = [
         super.styles,
         cards,
@@ -387,7 +415,20 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
             .open .goal_complete{
                 transform:scale(1);
             }
-           
+            .modal_title{
+                align-items:center;
+                margin-bottom:1rem;
+                gap:1rem;
+                h2{
+                    margin:0;
+                }
+            }
+            .modal_body{
+                button{
+                    margin-bottom:1rem;
+                    width:100%;
+                }
+            }
         `
     ];
 }

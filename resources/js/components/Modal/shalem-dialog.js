@@ -74,8 +74,8 @@ export class ShalemDialog extends BaseClass(LitElement) {
             color:var(--allin-highlight-color,#472961);
             background-color:transparent;
             position:absolute;
-            top:2rem;
-            right:2rem;
+            top:1rem;
+            right:1rem;
             display:flex;
             align-items:center;
             gap:0.5rem;

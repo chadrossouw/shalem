@@ -109,4 +109,5 @@ Route::middleware(['auth:sanctum'])->group(function(){
 Route::middleware(['auth:sanctum'])->group(function(){
     Route::get('/goals/by-pillar', [GoalsController::class, 'listGoalsByPillar'])->name('api.goals.by-pillar');
     Route::post('/goals/set', [GoalsController::class, 'setGoal'])->name('api.goals.set');
+    Route::post('/goals/remove', [GoalsController::class, 'removeGoal'])->name('api.goals.remove');
 }); 
