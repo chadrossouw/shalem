@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Services\PdfService;
 use App\Models\CVSupport;
 use App\Models\User;
-use Illuminate\Container\Attributes\Storage;
+use \Illuminate\Support\Facades\Storage;
 
 class CVSupportController extends Controller
 {
@@ -34,8 +34,25 @@ class CVSupportController extends Controller
 
     public function create(Request $request)
     {
-        
-        $cvSupport = CVSupport::create($request->all());
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'document_ids' => 'nullable|array',
+        ]);
+        $user = $request->user();
+        $cvSupport = CVSupport::create([
+            'name' => strip_tags($request->input('name')),
+            'description' => strip_tags($request->input('description','')),
+
+            'user_id' => $user->id,
+        ]);
+        if ($request->has('document_ids')) {
+            $cvSupport->documents()->sync($request->input('document_ids'));
+        }
+        $cvSupport->load('documents');
+        $this->generateCVPdf($cvSupport,$user);
+        $cvSupport->file_path = storage_path('pdfs/'.$user->uid.'/'.$cvSupport->id.'.pdf');
+        $cvSupport->save();
         return response()->json($cvSupport, 201);
     }
 

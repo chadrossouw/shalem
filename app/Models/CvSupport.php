@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Laravel\Scout\Searchable;
 
 class CvSupport extends Model
@@ -33,6 +34,11 @@ class CvSupport extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function documents(): BelongsToMany
+    {
+        return $this->belongsToMany(Document::class, 'cv_support_document', 'cv_support_id', 'document_id');
     }
 
     public function getPublicFilePathAttribute(){
