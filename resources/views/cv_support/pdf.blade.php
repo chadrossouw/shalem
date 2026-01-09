@@ -21,9 +21,30 @@
         <main id="primary" class="">
             <div class="">
                 <h1 class="">
-                    Dashboard
+                   {{ $cvSupport->name }}
                 </h1>
+                <h3>CV Support Document for {{ $cvSupport->user->first_name }} {{ $cvSupport->user->last_name }}</h3>
+                <h4>Created on: {{ $cvSupport->created_at->format('j F Y') }}</h4>
+                <p>{{ $cvSupport->description }}</p>
+                <hr />
             </div>
+            <div class="">
+                @if(count($docsAggregated) > 0)
+                    <ul>
+                        @foreach($docsAggregated as $year=>$documents)
+                            <h3>{{ $year }}</h3>
+                            <ul>
+                                @foreach($documents as $document)
+                                    <li>
+                                        <strong>{{ $document->title }}</strong><br />
+                                        <em>{{ $document->description }}</em><br />
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endforeach
+                    </ul>
+                @endif
+            </div>    
         </main>
         <footer id="colophon" class="">
             <div class="container mx-auto px-4">

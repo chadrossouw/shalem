@@ -33,6 +33,7 @@ import { ShalemStudentDashboardDocuments } from "./components/Dashboard/shalem-s
 import { ShalemStudentDashboardPoints } from "./components/Dashboard/shalem-student-dashboard-points.js";
 import { ShalemStudentDashboardGoals } from "./components/Dashboard/shalem-student-dashboard-goals.js";
 import { ShalemDashboardNotifications } from "./components/Dashboard/shalem-dashboard-notifications.js";
+import { ShalemStudentDashboardCVSupport } from "./components/Dashboard/shalem-student-dashboard-cv-support.js";
 
 //Staff Dashboard elements
 import { ShalemStaffDashboard } from "./components/Dashboard/shalem-staff-dashboard.js";
@@ -55,6 +56,13 @@ import { ShalemStudentPanelBadges } from "./components/Dashboard/Panel/shalem-st
 
 //Goals
 import { ShalemStudentPanelGoals } from "./components/Dashboard/Panel/shalem-student-panel-goals-panel.js";
+
+//CV Support
+import { ShalemStudentPanelCVSupport } from "./components/Dashboard/Panel/shalem-student-panel-cv-support.js";
+import { ShalemStudentPanelCVSupportList } from "./components/Dashboard/Panel/shalem-student-panel-cv-support-list.js";
+import { ShalemStudentPanelCVSupportCreate } from "./components/Dashboard/Panel/shalem-student-panel-cv-support-create.js";
+import { ShalemStudentPanelCVSupportDocumentSelector } from "./components/Dashboard/Panel/shalem-student-panel-cv-support-document-selector.js";
+import { ShalemCvSupport } from "./components/Dashboard/View/shalem-cv-support.js";
 
 //Help Dashboard
 import { ShalemDashboardHelp } from "./components/Dashboard/shalem-dashboard-help.js";
@@ -93,6 +101,7 @@ window.customElements.define("shalem-student-dashboard-documents", ShalemStudent
 window.customElements.define("shalem-student-dashboard-points", ShalemStudentDashboardPoints);
 window.customElements.define("shalem-student-dashboard-goals", ShalemStudentDashboardGoals);
 window.customElements.define("shalem-dashboard-notifications", ShalemDashboardNotifications);
+window.customElements.define("shalem-student-dashboard-cv-support", ShalemStudentDashboardCVSupport);
 
 //Staff Dashboard elements
 window.customElements.define("shalem-staff-dashboard", ShalemStaffDashboard);
@@ -115,6 +124,13 @@ window.customElements.define("shalem-student-panel-badges", ShalemStudentPanelBa
 
 //Goals
 window.customElements.define("shalem-student-panel-goals-panel", ShalemStudentPanelGoals);
+
+//CV Support
+window.customElements.define("shalem-student-panel-cv-support", ShalemStudentPanelCVSupport);
+window.customElements.define("shalem-student-panel-cv-support-list", ShalemStudentPanelCVSupportList);
+window.customElements.define("shalem-student-panel-cv-support-create", ShalemStudentPanelCVSupportCreate);
+window.customElements.define("shalem-student-panel-cv-support-document-selector", ShalemStudentPanelCVSupportDocumentSelector);
+window.customElements.define("shalem-cv-support", ShalemCvSupport);
 
 //Help Dashboard
 window.customElements.define("shalem-dashboard-help", ShalemDashboardHelp);

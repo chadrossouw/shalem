@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Laravel\Scout\Searchable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use \Illuminate\Support\Facades\Storage;
 
 class CvSupport extends Model
 {
@@ -17,7 +19,6 @@ class CvSupport extends Model
         'description' => '',
         'file_path' => '',
         'user_id' => '',
-        'document_ids' => '',
         'created_at' => '',
         'updated_at' => '',
     ];
@@ -27,7 +28,6 @@ class CvSupport extends Model
         'description',
         'file_path',
         'user_id',
-        'document_ids',
     ];
 
 
@@ -41,10 +41,12 @@ class CvSupport extends Model
         return $this->belongsToMany(Document::class, 'cv_support_document', 'cv_support_id', 'document_id');
     }
 
-    public function getPublicFilePathAttribute(){
-        return \Illuminate\Support\Facades\Storage::temporaryUrl($this->file_path, now()->addMinutes(30));
+    protected function filePath(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => Storage::temporaryUrl($value, now()->addMinutes(30)),
+        );
     }
-
 
     public function toSearchableArray(): array
     {

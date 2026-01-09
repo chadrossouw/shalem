@@ -28,7 +28,7 @@ class CVSupportController extends Controller
         $query = $request->input('query','');
         $documents = CVSupport::search($query)
             ->where('user_id', $user->id)
-            ->paginate(2);
+            ->paginate(6);
         return response()->json(['documents' => $documents], 200);
     }
 
@@ -37,27 +37,31 @@ class CVSupportController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'document_ids' => 'nullable|array',
+            'document_ids' => 'nullable|string',
         ]);
         $user = $request->user();
         $cvSupport = CVSupport::create([
             'name' => strip_tags($request->input('name')),
             'description' => strip_tags($request->input('description','')),
-
             'user_id' => $user->id,
         ]);
         if ($request->has('document_ids')) {
-            $cvSupport->documents()->sync($request->input('document_ids'));
+            $doc_ids = explode(',', $request->input('document_ids'));
+            $cvSupport->documents()->sync($doc_ids);
         }
-        $cvSupport->load('documents');
+        $cvSupport->load('documents')->orderBy('created_at','desc');
         $this->generateCVPdf($cvSupport,$user);
-        $cvSupport->file_path = storage_path('pdfs/'.$user->uid.'/'.$cvSupport->id.'.pdf');
+        $cvSupport->file_path = 'pdfs/'.$cvSupport->id.'.pdf';
         $cvSupport->save();
         return response()->json($cvSupport, 201);
     }
 
-    public function delete(Request $request, $id)
+    public function delete(Request $request)
     {
+        $request->validate([
+            'cv_id' => 'required|integer|exists:cv_supports,id',
+        ]);
+        $id = $request->input('cv_id');
         $user = $request->user();
         $cvSupport = CVSupport::where('id', $id)->where('user_id', $user->id)->firstOrFail();
         Storage::delete($cvSupport->file_path);
@@ -77,8 +81,17 @@ class CVSupportController extends Controller
     //
     private function generateCVPdf(CVSupport $cvSupport,User $user)
     {
-        $html = view('cv_support.pdf', ['cvSupport' => $cvSupport])->render();
-        $pdfService = new PdfService($html, $user->uid, $cvSupport->id);
+        $docs = $cvSupport->documents;
+        $docsAggregated = [];
+        foreach($docs as $doc){
+            $year = $doc->created_at->format('Y');
+            if(!isset($docsAggregated[$year])){
+                $docsAggregated[$year] = [];
+            }
+            $docsAggregated[$year][] = $doc;
+        }
+        $html = view('cv_support.pdf', ['cvSupport' => $cvSupport, 'docsAggregated' => $docsAggregated])->render();
+        $pdfService = new PdfService($html, $user->id, $cvSupport->id);
         $pdfService->create_pdf();
 
         return response()->json([

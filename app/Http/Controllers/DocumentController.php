@@ -75,6 +75,17 @@ class DocumentController extends Controller
         });
         return response()->json(['documents' => $documents], 200);
     }
+    
+    public function listApproved(Request $request){
+        $user = $request->user();
+        if($request->has('query')){
+            return $this->search($request);
+        }
+        $documents = Document::where('user_id',$user->id)->whereHas('document_statuses', function($query){
+            $query->where('status', 'approved');
+        })->orderBy('created_at','desc')->paginate(6);
+        return response()->json(['documents' => $documents], 200);
+    }
 
     public function search(Request $request){
         $user = $request->user();

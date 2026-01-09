@@ -97,6 +97,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::middleware(['auth:sanctum'])->group(function(){
     Route::post('/document/upload', [DocumentController::class, 'upload'])->name('api.document.upload');
     Route::get('/documents', [DocumentController::class, 'list'])->name('api.documents.list');
+    Route::get('/documents/approved', [DocumentController::class, 'listApproved'])->name('api.documents.approved.list');
     Route::get('/document/{id}', [DocumentController::class, 'get'])->name('api.document.get');
 });
 
@@ -111,3 +112,11 @@ Route::middleware(['auth:sanctum'])->group(function(){
     Route::post('/goals/set', [GoalsController::class, 'setGoal'])->name('api.goals.set');
     Route::post('/goals/remove', [GoalsController::class, 'removeGoal'])->name('api.goals.remove');
 }); 
+
+//CV Support Routes
+Route::middleware(['auth:sanctum'])->group(function(){
+    Route::get('/cvs', [\App\Http\Controllers\CVSupportController::class, 'list'])->name('api.cvs.list');
+    Route::get('/cv/{id}', [\App\Http\Controllers\CVSupportController::class, 'get'])->name('api.cvs.search');
+    Route::post('/cvs/create', [\App\Http\Controllers\CVSupportController::class, 'create'])->name('api.cvs.create');
+    Route::post('/cvs/delete', [\App\Http\Controllers\CVSupportController::class, 'delete'])->name('api.cvs.delete');
+});

@@ -128,7 +128,7 @@ export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationList
     }
 
     async _fetchDocuments(page=1,query=false,refresh=false){
-        if(this.documents[page] && !refresh && !query){
+        if(this.documents && this.documents[page] && !refresh && !query){
             this.documentsPagination.current_page = page;
             
             this._updateContext({documentsPagination: this.documentsPagination});
@@ -140,6 +140,9 @@ export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationList
         }
         const response = await safeFetch(fetchUrl);
         const data = await response.json();
+        if(!this.documents){
+            this.documents = {};
+        }
         this.documents[page] = data.documents.data;
         delete data.documents.data;
         this.documentsPagination = data.documents;

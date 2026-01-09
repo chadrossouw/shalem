@@ -44,7 +44,7 @@ class Document extends Model
         return $this->hasOne(DocumentStatus::class,  'document_id', 'id')->latestOfMany();
     }
 
-    public function document_statuses()
+    public function document_statuses(): HasMany
     {
         return $this->hasMany(DocumentStatus::class,  'document_id', 'id');
     }

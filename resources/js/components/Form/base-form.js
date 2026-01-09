@@ -39,17 +39,23 @@ export const BaseForm = (superClass) => class extends superClass{
         }
     }
 
-    _validateForm(){
+    _validateForm(group = null){
         this._formResponse.setAttribute('aria-live','polite');
         this._clearResponse();
-
+        let form;
+        if(group){
+            form = group;
+        }
+        else{
+            form = this._form;
+        }
         let errors = [];
-        let dependentFields = this._form.querySelectorAll('[data-requiredif]');
+        let dependentFields = form.querySelectorAll('[data-requiredif]');
         dependentFields.forEach(field=>{
             field.removeAttribute('aria-required');
             let dependency = field.dataset.requiredif;
             if(dependency){
-                dependency = this._form.querySelector(`#${dependency}`);
+                dependency = form.querySelector(`#${dependency}`);
                 if(dependency){
                     let potentialValue = field.dataset.requiredifvalue;
                     if(potentialValue){
@@ -66,7 +72,7 @@ export const BaseForm = (superClass) => class extends superClass{
             }
         });    
         
-        let requiredFields = this._form.querySelectorAll('[aria-required="true"]');
+        let requiredFields = form.querySelectorAll('[aria-required="true"]');
         requiredFields.forEach(field=>{ 
             field.removeAttribute('aria-invalid');
             field.removeAttribute('aria-describedby');
@@ -157,7 +163,7 @@ export const BaseForm = (superClass) => class extends superClass{
         
         
             
-        const emailFields = this._form.querySelectorAll('[type=email]');
+        const emailFields = form.querySelectorAll('[type=email]');
         //validate email
         if(emailFields.length>0){
             emailFields.forEach(emailField=>{
@@ -187,7 +193,7 @@ export const BaseForm = (superClass) => class extends superClass{
                 }
             });
         }
-        const urlFields = this._form.querySelectorAll('[type=url]');
+        const urlFields = form.querySelectorAll('[type=url]');
         //validate url
         if(urlFields.length>0){
             urlFields.forEach(urlField=>{
@@ -217,7 +223,7 @@ export const BaseForm = (superClass) => class extends superClass{
         }
         if(errors.length>0){
             let pError = document.createElement('p');
-            pError.innerHTML = msg(str`Failed to submit because ${errors.length} ${errors.length>1?'fields are':'field is'} invalid. Please correct the errors below:<ul><li>${errors.join('</li><li>')}</li></ul>`,{desc: "Error messages for invalid form submission"});
+            pError.innerHTML = `Failed to submit because ${errors.length} ${errors.length>1?'fields are':'field is'} invalid. Please correct the errors below:<ul><li>${errors.join('</li><li>')}</li></ul>`;
             this._formResponse.appendChild(pError);
             this._formResponse.classList.add('error');
             return false;
