@@ -22,6 +22,7 @@ import { ShalemDialog } from "./components/Modal/shalem-dialog.js";
 import { ShalemPointsIcon } from "./components/Points/shalem-points-icon.js";
 import { ShalemTooltip } from "./components/Tooltip/shalem-tooltip.js";
 import { ShalemAnchorModal } from "./components/Modal/shalem-anchor-modal.js";
+import { ShalemFormWrapper } from "./components/Form/form-wrapper.js";
 
 //Student Dashboard elements
 import { ShalemStudentDashboard } from "./components/Dashboard/shalem-student-dashboard.js";
@@ -38,6 +39,7 @@ import { ShalemStudentDashboardCVSupport } from "./components/Dashboard/shalem-s
 //Staff Dashboard elements
 import { ShalemStaffDashboard } from "./components/Dashboard/shalem-staff-dashboard.js";
 import { ShalemStaffDashboardHome } from "./components/Dashboard/shalem-staff-dashboard-home.js";
+import { ShalemStaffDashboardDocuments } from "./components/Dashboard/shalem-staff-dashboard-documents.js";
 
 //Documents
 import { ShalemStudentPanelDocumentUpload } from "./components/Dashboard/Panel/shalem-student-panel-document-upload.js";
@@ -90,6 +92,7 @@ window.customElements.define("shalem-dialog", ShalemDialog);
 window.customElements.define("shalem-points-icon", ShalemPointsIcon);
 window.customElements.define("shalem-tooltip", ShalemTooltip);
 window.customElements.define("shalem-anchor-modal", ShalemAnchorModal);
+window.customElements.define("shalem-form-wrapper", ShalemFormWrapper);
 
 //Student Dashboard elements
 window.customElements.define("shalem-student-dashboard", ShalemStudentDashboard);
@@ -106,6 +109,7 @@ window.customElements.define("shalem-student-dashboard-cv-support", ShalemStuden
 //Staff Dashboard elements
 window.customElements.define("shalem-staff-dashboard", ShalemStaffDashboard);
 window.customElements.define("shalem-staff-dashboard-home", ShalemStaffDashboardHome);
+window.customElements.define("shalem-staff-dashboard-documents", ShalemStaffDashboardDocuments);
 
 //Documents
 window.customElements.define("shalem-student-panel-document-upload", ShalemStudentPanelDocumentUpload);

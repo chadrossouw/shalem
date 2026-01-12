@@ -33,14 +33,17 @@ export class ShalemDocument extends DocumentHelper(BaseDashboardConsumer(BaseCla
         let pillar = this.document.pillar_id ? this.pillars.find(p => p.id == this.document.pillar_id) : null;
         let pillarHtml = pillar ? html`<dt>Pillar:</dt><dd>${pillar.name}</dd>` : '';
         let typeHtml = this.document.type ? html`<dt>Type:</dt><dd>${this.document.type}</dd>` : '';
+        let statusMessage = this._getStatusMessage();
+        
         let header = html`
         <div class="header_with_icon header_with_document_status margins">
             <div class="left">
                 ${unsafeSVG(archiveIcon)}
-                <p class="${this.document.document_status.status}">${this.document.document_status.status_message}</p>
+                <p class="${this.document.document_status.status}">${statusMessage}</p>
             </div>
             <div class="right">
                 <h1 class="h3">${this.document.title}</h1>
+                ${this.action == 'review'?html`<h2 class="h3">${this.document.userName}</h2>`:''}
                 <p class="description">${this.document.description}</p>
                 <dl>
                     ${pillarHtml}
@@ -53,6 +56,29 @@ export class ShalemDocument extends DocumentHelper(BaseDashboardConsumer(BaseCla
         `; 
         let body = '';
         if(this.action == 'view'){
+            if(!this.fileUrl){
+                body = html`<shalem-loader>Cleaning the cupboards...</shalem-loader>`;
+            }
+            else{
+                if(this.fileType == 'pdf'){
+                    body = html`
+                    <div class="document_viewer margins">
+                        <shalem-pdf-viewe/r file="${this.fileUrl}"></shalem-pdf-viewer>
+                    </div>
+                    `;
+                }
+                else{
+                    body = html`
+                    <div class="document_viewer margins">
+                        <div class="bg_green bg_shade_2 inner_padding radius">
+                            <img src="${this.fileUrl}" alt="Document Image" />
+                        </div>
+                    </div>
+                    `;
+                }
+            }
+        }
+        else if(this.action == 'review'){
             if(!this.fileUrl){
                 body = html`<shalem-loader>Cleaning the cupboards...</shalem-loader>`;
             }

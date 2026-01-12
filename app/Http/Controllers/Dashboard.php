@@ -7,7 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\Field;
 use App\Models\Pillar;
 use App\Models\Notification;
+use App\Models\User;
 use App\Models\UserGoal;
+use App\Models\Document;
+
 
 class Dashboard extends Controller
 {
@@ -71,25 +74,6 @@ class Dashboard extends Controller
                         $query->with('criteria');
                     },
                     'userGoals.progress']);
-                /* $userGoals = UserGoal::where('user_id', $user->id)->with([
-                    'goals'=>function($query){
-                        $query->with('criteria');
-                    },
-                    'progress'=>function($query){
-                        $query->with('criteria');
-                    },
-                ])->get(); */
-                /* $user->load('userGoals')->load('userGoals.goals','userGoals.progress');
-                $Test = $user->userGoals;
-                $Test->map(function(UserGoal $userGoal){
-                    $userGoal->goals->map(function($goal){
-                        $goal->load('criteria');
-                    });
-                    $userGoal->progress->map(function($progress){
-                        $progress->load('criteria');
-                    });
-                }); */
-              /*   $user->load('userGoals')->load()->load('userGoals.progress.criteria'); */
                 $pillars = Pillar::all(['id','name','description','colour']);
                 $pillars = $pillars->map(function($pillar){
                     return [
@@ -105,6 +89,20 @@ class Dashboard extends Controller
                 $role = $user->staffRole->role ?? 'staff';
                 $pillars = Pillar::all(['id','name','description','colour']);
                 $fields = Field::where('location','staff_dashboard')->get();
+                $mentees = User::whereHas('mentor', function($query) use ($user){
+                    $query->where('user_id', $user->id);
+                })->get();
+                $documents = [];
+                foreach($mentees as $mentee){
+                    $doc =  Document::where('user_id',$mentee->id)->whereHas('document_status', function($query){
+                        $query->where('status', 'pending');
+                    })->orderBy('created_at','asc')->get();
+                    $doc->load('document_status');
+                    if($doc->count()>0){
+                        $documents[$mentee->id] = $doc;
+                    }
+                }
+
                 if($role=='admin'||$role=='superadmin'){
                     return view('dashboard.staff', ['user' => $user, 'fields' => $fields, 'pillars'=>$pillars,'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token, 'notifications' => $notifications, 'notificationsPagination' => $notificationsPagination, 'unreadNotifications' => $unreadNotifications, 'unreadNotificationsPagination' => $unreadNotificationsPagination, 'updates' => $updates ]);
                 }
@@ -112,7 +110,7 @@ class Dashboard extends Controller
                     $fields = Field::where('location','staff_dashboard')->get();
                     return view('dashboard.grade_head', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token]);
                 }
-                return view('dashboard.staff', ['user' => $user, 'fields' => $fields, 'pillars'=>$pillars,'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token,'notifications' => $notifications, 'notificationsPagination' => $notificationsPagination, 'unreadNotifications' => $unreadNotifications, 'unreadNotificationsPagination' => $unreadNotificationsPagination, 'updates' => $updates ]);
+                return view('dashboard.staff', ['user' => $user, 'fields' => $fields, 'pillars'=>$pillars,'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token,'notifications' => $notifications, 'notificationsPagination' => $notificationsPagination, 'unreadNotifications' => $unreadNotifications, 'unreadNotificationsPagination' => $unreadNotificationsPagination, 'updates' => $updates , 'documents'=>$documents, 'mentees'=>$mentees]);
             case 'parent':
                 $fields = Field::where('location','parent_dashboard')->get();
                 return view('dashboard.parent', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action ]);

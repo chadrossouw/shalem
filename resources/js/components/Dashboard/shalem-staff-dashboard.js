@@ -31,25 +31,18 @@ export class ShalemStaffDashboard extends BaseDashboardConsumer(BaseClass(LitEle
                 </shalem-student-dashboard-home>`;
             case 'documents':
                 return html`
-                <shalem-student-dashboard-documents
+                <shalem-staff-dashboard-documents
                     identifier="${this.identifier}"
                 >
                     ${nav}
-                </shalem-student-dashboard-documents>`;
-            case 'points':
+                </shalem-staff-dashboard-documents>`;
+            case 'pupils':
                 return html`
-                <shalem-student-dashboard-points
+                <shalem-staff-dashboard-pupils
                     identifier="${this.identifier}"
                 >
                     ${nav}
-                </shalem-student-dashboard-points>`;
-            case 'goals':
-                return html`
-                <shalem-student-dashboard-goals
-                    identifier="${this.identifier}"
-                >
-                    ${nav}
-                </shalem-student-dashboard-goals>`;
+                </shalem-staff-dashboard-pupils>`;
             case 'notifications':
                 return html`
                 <shalem-dashboard-notifications
@@ -66,11 +59,11 @@ export class ShalemStaffDashboard extends BaseDashboardConsumer(BaseClass(LitEle
                 </shalem-dashboard-help>`;
             default:``
                 return html`
-                <shalem-student-dashboard-home
+                <shalem-staff-dashboard-home
                     identifier="${this.identifier}"
                 >
                     ${nav}
-                </shalem-student-dashboard-home>`;
+                </shalem-staff-dashboard-home>`;
         }
     }
     

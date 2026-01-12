@@ -32,6 +32,7 @@ export const BaseDashboardConsumer = (superClass) => class extends superClass{
         pillars: { type: Array, state:true },
         view: {type: String, state:true},
         action: {type: String, state:true},
+        mentees: {type: Object, state:true},
     }
     
     connectedCallback(){
@@ -82,7 +83,8 @@ export const BaseDashboardConsumer = (superClass) => class extends superClass{
             panel: this.panel, 
             view: this.view, 
             action: this.action, 
-            documentApprovalTime: this.documentApprovalTime
+            documentApprovalTime: this.documentApprovalTime,
+            mentees: this.mentees
         } = this._dashboard);
         this.requestUpdate();
     }

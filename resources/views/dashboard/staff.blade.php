@@ -2,7 +2,7 @@
         <x-navigation.masthead :user="$user" />
         <main id="primary" class="margins">
             <shalem-base-provider 
-                identifier="student" 
+                identifier="staff" 
                 user="{{ $user->toJson() }}" 
                 fields="{{ $fields->toJson() }}" 
                 notifications="{{ json_encode($notifications) }}"
@@ -17,6 +17,8 @@
                 view="{{ $view }}"
                 action="{{ $action }}"
                 pillars="{{ $pillars->toJson() }}"
+                documents="{{ json_encode($documents) }}"
+                mentees="{{ json_encode($mentees) }}"
                 @if(isset($token))
                     token="{{ $token }}"
                 @endif

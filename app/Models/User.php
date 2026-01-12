@@ -52,6 +52,11 @@ class User extends Authenticatable
         return $this->hasOne(Student::class);
     }
 
+    public function documents(): HasMany
+    {
+        return $this->hasMany(Document::class, 'user_id', 'id');
+    }
+
     public function staffRole(): HasOne
     {
         return $this->hasOne(StaffRole::class);

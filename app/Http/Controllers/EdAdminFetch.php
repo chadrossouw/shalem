@@ -30,7 +30,7 @@ class EdAdminFetch extends Controller
         $this->fetchStaff();
         $this->fetchSubjectSetup();
         $this->fetchStaffClasses();
-        $this->fetchParents();
+       // $this->fetchParents();
         $this->fetchStudentClasses();
         $this->fetchStudentSubjects();
         $this->fetchStudents();  
@@ -445,6 +445,7 @@ class EdAdminFetch extends Controller
             $mentor = $mentorGroup?array_find($this->mentors, function($mentor) use ($mentorGroup) {
                 return $mentor['SubjectID'] === $mentorGroup['SubjectSetupID'];
             }):null;
+            
             
             if($mentor){
                 $mentorUser = $all_staff->where('edadmin_id', $mentor['StaffID'])->first();

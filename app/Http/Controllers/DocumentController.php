@@ -110,4 +110,24 @@ class DocumentController extends Controller
         $document->document_status->load('user');
         return response()->json($document, 200);
     }
+
+    public function approve(Request $request){
+        $request->validate([
+            'document_id' => 'required|integer|exists:documents,id',
+            'type' => 'required|string',
+            'status_message' => 'nullable|string',
+        ]);
+        $user = $request->user();
+        $document = Document::where('id', intval($request->input('document_id')))->first();
+        if(!$document){
+            return response()->json(['error' => 'Document not found'], 404);
+        }
+        DocumentStatus::create([
+            'document_id' => $document->id,
+            'status' => 'approved',
+            'status_message' => strip_tags($request->input('status_message','Your document has been approved.')),
+            'user_id' => $user->id,
+        ]);
+        return response()->json(['message' => 'Document approved successfully'], 200);
+    }
 }

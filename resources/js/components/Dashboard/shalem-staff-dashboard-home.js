@@ -19,12 +19,13 @@ export class ShalemStaffDashboardHome extends BaseDashboardConsumer(BaseClass(Li
 
     connectedCallback(){
         super.connectedCallback();
-        
-        ({fields: this.fields, user: this.user} = this._dashboard);
-        console.log(this.user);
+        this._countDocs();
     } 
 
     updated(changedProperties){
+        if(changedProperties.has('documents')){
+            this._countDocs();
+        }
         cardLinks(this.shadowRoot);
     }
 
@@ -50,9 +51,14 @@ export class ShalemStaffDashboardHome extends BaseDashboardConsumer(BaseClass(Li
                         ${this.fields?.staff_dashboard_view_documents ?? 'Verify documents'}
                     </shalem-editable-field>
                 </h2>
-                <button class="card_target bg_white purple" @click=${() => this._handleAction({dashboard: 'documents', panel:null,view: null})}>
-                    Let's go
-                </button>
+                ${this.documentCount > 0 ? html`
+                    <div class="document_count bg_white purple">
+                        ${this.documentCount} 
+                    </div>
+                    <button class="card_target bg_white purple" @click=${() => this._handleAction({dashboard: 'documents', panel:null,view: null})}>
+                        Let's go
+                    </button>
+                ` : html`<div class="no_documents">You're all caught up!</div>`}
             </div>
             <div class="card blob bg_aqua pupils radius-big inner_padding">
                 <h2 class="white">
@@ -66,6 +72,14 @@ export class ShalemStaffDashboardHome extends BaseDashboardConsumer(BaseClass(Li
             </div>
         </div> 
         `;
+    }
+
+    _countDocs(){
+        let count = 0;
+        for (const docs in this.documents){
+            count += this.documents[docs].length;
+        }
+        this.documentCount = count;
     }
 
     static styles = [

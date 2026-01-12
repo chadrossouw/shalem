@@ -101,6 +101,12 @@ Route::middleware(['auth:sanctum'])->group(function(){
     Route::get('/document/{id}', [DocumentController::class, 'get'])->name('api.document.get');
 });
 
+//Staff Document Review Routes
+Route::middleware(['auth:sanctum','abilities:staff:staff,staff:grade_head,staff:admin,staff:superadmin'])->group(function(){
+    Route::post('/document/approve', [DocumentController::class, 'approve'])->name('api.document.approve');
+    Route::post('/document/reject', [DocumentController::class, 'reject'])->name('api.document.reject');
+});
+
 //Badges Routes
 Route::middleware(['auth:sanctum'])->group(function(){
     Route::get('/badges', [BadgesController::class, 'list'])->name('api.badges.list');
