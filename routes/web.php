@@ -27,6 +27,9 @@ Route::get('/', function (Request $request) {
     if($request->query('error')){
         $error_message = ShalemError::getMessage($request->query('error'));
     }
+    elseif(session()->has('error')){
+        $error_message = session()->get('error');
+    }
     
     return view('home',['user'=>$user, 'fields'=>Field::where('location','home')->get(), 'avatars'=>Avatar::all(), 'error'=>$error_message]);
 });

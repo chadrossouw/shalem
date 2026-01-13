@@ -49,6 +49,11 @@ class Document extends Model
         return $this->hasMany(DocumentStatus::class,  'document_id', 'id');
     }
 
+    public function points(): HasOne
+    {
+        return $this->hasOne(UserPoints::class, 'document_id', 'id');
+    }
+
     protected function filePath(): Attribute
     {
         return Attribute::make(

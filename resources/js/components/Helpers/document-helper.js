@@ -18,8 +18,8 @@ export const DocumentHelper = (superClass) => class extends superClass{
                     <button slot="trigger">${unsafeSVG(approve)}Approve</button>
                     <h2 slot="title" class="white">Approve this document</h2>
                     <div slot="body">
-                        <shalem-form-wrapper>
-                            <form id="approve_document_form" @submit=${this._handleSubmit} action="${this.restUrl}document/approve"}>
+                        <shalem-form-wrapper identifier=${this.identifier}>
+                            <form id="approve_document_form" action="${this.restUrl}document/approve"}>
                                 <label for="type" class="white">Select document type
                                     <shalem-tooltip>
                                         <shalem-editable-field name="staff_document_approve_type_tooltip" location="staff-dashboard" ?admin=${this.isAdmin}>
@@ -35,9 +35,11 @@ export const DocumentHelper = (superClass) => class extends superClass{
                                 <label for="status_message" class="white">Optional message to the student</label>
                                 <textarea name="status_message" placeholder="Enter a message to the student (optional)"></textarea>
                                 <input type="hidden" name="document_id" value="${document.id}" />
+                                <div class="form_response white"></div>
                                 <div class="flex button-group">
                                     <button class="bg_blue" type="submit" @click=${(e)=>{e.stopPropagation()}}>${unsafeSVG(approve)}Approve Document</button>
                                 </div>
+                                
                             </form>
                         </shalem-form-wrapper>
                     </div>

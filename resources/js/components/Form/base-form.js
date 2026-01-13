@@ -2,7 +2,14 @@ import { safeFetch } from "../../common/xsrf.js";
 import { formStyles } from '../../utilities/formStyles.js';
 export const BaseForm = (superClass) => class extends superClass{
     get _form(){
-        return this.shadowRoot.querySelector('form');
+        let form = this.shadowRoot.querySelector('form');
+        if(!form){
+            const slottedElements = this.shadowRoot.querySelector('slot')?.assignedNodes({flatten:true});
+            if(slottedElements){
+                form = slottedElements.find(el => el.tagName === 'FORM');
+            }
+        }
+        return form;
     }
 
     get _type(){

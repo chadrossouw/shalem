@@ -38,7 +38,7 @@ class ProcessDocumentNotifications
                 user: $mentor->user,
                 message: "A new document '{$document->title}' has been uploaded by {$user->first_name} {$user->last_name}.",
                 subject: 'New Document Uploaded',
-                type: 'document_uploaded',
+                type: 'notification',
                 messageActions: [
                     [
                         'title' => 'Approve Document',
@@ -46,8 +46,8 @@ class ProcessDocumentNotifications
                         'type_id' => $document->id,
                         'action' => 'approve',
                         'dashboard' => 'documents',
-                        'panel' => $document->id,
-                        'view' => null,
+                        'panel' => 'documents',
+                        'view' => $document->id,
                         'status' => 'pending',
                     ]
                 ],

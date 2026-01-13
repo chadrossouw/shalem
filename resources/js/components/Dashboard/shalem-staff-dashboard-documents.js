@@ -7,6 +7,8 @@ import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { cardLinks } from "../../common/accessibility.js";
 import { dateToString } from "../../common/date.js";
 import { documentStatusMap } from "../../common/document-status-map.js";
+import { safeFetch } from "../../common/xsrf.js";
+import JSConfetti from 'js-confetti';
 import view from '../../icons/view.svg';
 
 export class ShalemStaffDashboardDocuments extends BaseDashboardConsumer(BaseClass(LitElement)){
@@ -26,6 +28,18 @@ export class ShalemStaffDashboardDocuments extends BaseDashboardConsumer(BaseCla
             //find document by id
             this._setDocumentFromView();
         }
+        else if (this.view == 'success'){
+            this.document = null;
+            this._fetchDocuments();
+        }
+        this.jsConfetti = new JSConfetti();
+        this.confettiOptions = {
+            confettiColors: [
+                '#04898D', '#00316A', '#FFA700', '#0083D7', '#901065', '#8AB61E',
+            ],
+            confettiRadius: 9,
+            confettiNumber: 1500,
+        };
     }
 
     disconnectedCallback(){
@@ -38,6 +52,10 @@ export class ShalemStaffDashboardDocuments extends BaseDashboardConsumer(BaseCla
             //find document by id
             this._setDocumentFromView();
             }
+            else if (this.view == 'success'){
+                this.document = null;
+                this._fetchDocuments();
+            }
         }
         cardLinks(this.shadowRoot);
     }
@@ -45,6 +63,26 @@ export class ShalemStaffDashboardDocuments extends BaseDashboardConsumer(BaseCla
 
     render(){
         if(this.view){
+            console.log('Rendering document view', this.view);
+            if(this.view == 'success'){
+                this.jsConfetti.addConfetti(
+                    this.confettiOptions
+                );
+                return html`
+                <slot></slot>
+                <div class="header_with_icon margins">
+                    ${unsafeSVG(verifyIcon)}
+                    <shalem-editable-field name="staff_dashboard_documents_approval_success_message" location="staff-dashboard" ?admin=${this.isAdmin}>
+                        <h2>${this.fields?.staff_dashboard_documents_approval_success_message ?? 'The document has been successfully processed.'}</h2>
+                    </shalem-editable-field>
+                </div>
+                <div class="margins">
+                    <button class="bg_blue white" @click=${()=>this._handleAction({dashboard: 'documents', panel:null, view:null, action:null})}>
+                        ${unsafeSVG(backArrow)}Back to Documents
+                    </button>
+                </div>
+                `;
+            }
             this._setDocumentFromView();
             return html`
             <shalem-document identifier="${this.identifier}">
@@ -114,11 +152,23 @@ export class ShalemStaffDashboardDocuments extends BaseDashboardConsumer(BaseCla
             //fetch document from server
             const response = await safeFetch(`${this.restUrl}document/${this.view}`);
             foundDocument = await response.json();
+            if(!foundDocument){
+                console.error('Document not found');
+                this._handleAction({dashboard: 'documents', panel:null, view:null, action:null});
+                return;
+            }
         }
         this.document = foundDocument;
         let menteeName = this.mentees.find(_mentee=>_mentee.id==user)
         this.document.userName = `${menteeName.first_name} ${menteeName.last_name}`;
         this._updateContext({document: this.document});
+    }
+
+    async _fetchDocuments(){
+        const response = await safeFetch(`${this.restUrl}staff/documents`);
+        const data = await response.json();
+        this.documents = data.documents;
+        this._updateContext({documents: this.documents, document: this.document});
     }
 
     static styles = [

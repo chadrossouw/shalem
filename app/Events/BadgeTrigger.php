@@ -14,14 +14,14 @@ use App\Models\Document;
 use App\Models\Merit;
 use App\Models\Attendance;
 
-class GoalTrigger
+class BadgeTrigger
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(public User $user, public Document|Merit|Attendance $triggeringEntity )
+    public function __construct(public User $user )
     {
         //
     }

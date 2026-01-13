@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Document;
 use App\Models\DocumentStatus;
 use App\Events\DocumentUploaded;
+use App\Events\DocumentProcessed;
+use App\Models\User;
 class DocumentController extends Controller
 {
     public function upload(Request $request){
@@ -75,6 +77,24 @@ class DocumentController extends Controller
         });
         return response()->json(['documents' => $documents], 200);
     }
+
+    public function staffList(Request $request){
+        $user = $request->user();
+        $mentees = User::whereHas('mentor', function($query) use ($user){
+            $query->where('user_id', $user->id);
+        })->get();
+        $documents = [];
+        foreach($mentees as $mentee){
+            $doc =  Document::where('user_id',$mentee->id)->whereHas('document_status', function($query){
+                $query->where('status', 'pending');
+            })->orderBy('created_at','asc')->get();
+            $doc->load('document_status');
+            if($doc->count()>0){
+                $documents[$mentee->id] = $doc;
+            }
+        }
+        return response()->json(['documents' => $documents], 200);
+    }
     
     public function listApproved(Request $request){
         $user = $request->user();
@@ -122,12 +142,19 @@ class DocumentController extends Controller
         if(!$document){
             return response()->json(['error' => 'Document not found'], 404);
         }
+        $document->type = strip_tags($request->input('type'));
+        $document->save();
+        $status_message = strip_tags($request->input('status_message'));
+        if(!$status_message){
+            $status_message = 'Your document has been approved.';
+        }
         DocumentStatus::create([
             'document_id' => $document->id,
             'status' => 'approved',
-            'status_message' => strip_tags($request->input('status_message','Your document has been approved.')),
+            'status_message' => $status_message,
             'user_id' => $user->id,
         ]);
-        return response()->json(['message' => 'Document approved successfully'], 200);
+        DocumentProcessed::dispatch($document);
+        return response()->json(['message' => 'Document approved successfully','action'=>['dashboard'=>'documents','panel'=>'document','view'=>'success']], 200);
     }
 }

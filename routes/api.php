@@ -102,7 +102,8 @@ Route::middleware(['auth:sanctum'])->group(function(){
 });
 
 //Staff Document Review Routes
-Route::middleware(['auth:sanctum','abilities:staff:staff,staff:grade_head,staff:admin,staff:superadmin'])->group(function(){
+Route::middleware(['auth:sanctum','abilities:staff'])->group(function(){
+    Route::get('/staff/documents', [DocumentController::class, 'staffList'])->name('api.staff.documents.list');
     Route::post('/document/approve', [DocumentController::class, 'approve'])->name('api.document.approve');
     Route::post('/document/reject', [DocumentController::class, 'reject'])->name('api.document.reject');
 });

@@ -26,7 +26,6 @@ class TriggerGoalAssessment{
         //
         $user = $event->user;
         $triggeringEntity = $event->triggeringEntity;
-        $triggerValue = $event->value;
         $userGoals = $user->userGoals();
 
 
@@ -45,7 +44,7 @@ class TriggerGoalAssessment{
                     $documentPillar = $triggeringEntity->pillar;
                     if($criteriaPillar == $documentPillar && $criteriaType == $documentType){
                         if($criterion->document_points){
-                            $progressEntry->progress_value += $documentPoints;
+                            $progressEntry->progress_value += $documentPoints->value;
                             if($progressEntry->progress_value >= $progressEntry->target_value){
                                 $progressEntry->progress_value = $progressEntry->target_value;
                             }
@@ -74,7 +73,7 @@ class TriggerGoalAssessment{
                     $user,
                     "Congratulations! You have achieved your goal: {$userGoal->goal_name}.",
                     'Goal Achieved',
-                    'goal_achieved',
+                    'update',
                     []
                 );
 

@@ -41,9 +41,9 @@ class GoogleAuthController extends Controller
             Auth::login($existingUser, true); // true for remember me
             
             $request->session()->regenerate();
-            $token_permission = ['user:'.$existingUser->type];
+            $token_permission = [$existingUser->type];
             if( $existingUser->staffRole ){
-                $token_permission[] = ['staff:'.$existingUser->staffRole->role];
+                $token_permission[] = $existingUser->staffRole->role;
             }
             $token = $existingUser->createToken('auth_token',$token_permission); 
             session_start();

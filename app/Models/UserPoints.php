@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class UserPoints extends Model
 {
+    protected $fillable = [
+        'user_id',
+        'document_id',
+        'point_id',
+        'value',
+    ];
     //
     public function points(): HasOne
     {

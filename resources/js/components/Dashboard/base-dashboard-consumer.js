@@ -108,6 +108,7 @@ export const BaseDashboardConsumer = (superClass) => class extends superClass{
     }
 
     _handleAction(action){
+        console.log('Handling action', action);
         this._updateContext({...action});
     }
 }
