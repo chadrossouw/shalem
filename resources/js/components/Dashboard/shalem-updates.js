@@ -11,7 +11,13 @@ export class ShalemUpdates extends BaseDashboardConsumer(BaseClass(LitElement)) 
         document.body.classList.add('updates');
         ({updates:this.updates} = this._dashboard);
         this._update = this.updates[0];
-        this._update.actions = JSON.parse(this._update.actions);
+        console.log(this._update);
+        try{
+            this._update.actions = this._update.actions?JSON.parse(this._update.actions):[];
+        }
+        catch(e){
+            this._update.actions = [];
+        }
     }
 
     disconnectedCallback() {
@@ -31,7 +37,7 @@ export class ShalemUpdates extends BaseDashboardConsumer(BaseClass(LitElement)) 
         <div class="padding bg_green">
         ${avatar}
         <h1 class="white">${this._update.subject}</h1>
-        <p>${this._update.message}</p>
+        <p class="white">${this._update.message}</p>
         <div class="grid">
             ${this._update.actions.map(action => html`<button class="bg_green bg_shade_1 black" @click=${(e) => {e.preventDefault(); this._handleActionClick(action.action)}}>${action.title}</button>`)}
             <button class="bg_light_blue" @click=${this._handleDismissClick}>Dismiss</button>
@@ -84,6 +90,17 @@ export class ShalemUpdates extends BaseDashboardConsumer(BaseClass(LitElement)) 
                 padding-top:var(--header-height);
                 padding-bottom:var(--header-height);
             }
+
+        }
+        shalem-avatar{
+            svg{
+                max-height:33dvh;
+                margin-left:auto;
+                display:block;
+            }
+        }
+        p{
+            font-size:1.4rem;
         }
     `];
 }

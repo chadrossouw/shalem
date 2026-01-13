@@ -1,5 +1,6 @@
 import help from '../../icons/help.svg';
 import edit from '../../icons/edit.svg';
+import editFormal from '../../icons/edit-formal.svg';
 import view from '../../icons/view.svg';
 import approve from '../../icons/approve.svg';
 import deleteicon from '../../icons/deleteicon.svg';
@@ -44,6 +45,14 @@ export const DocumentHelper = (superClass) => class extends superClass{
                         </shalem-form-wrapper>
                     </div>
                 </shalem-dialog>
+            `});
+            buttons.push({name:'edit',html: html`
+                <button class="bg_blue" @click=${() => this._clickHandler('review-edit', document)}>${unsafeSVG(editFormal)}Edit</button>
+            `});
+        }
+        else if(this.action == 'review-edit'){
+            buttons.push({name:'review',html: html`
+                <button class="bg_blue" @click=${() => this._clickHandler('review', document)}>${unsafeSVG(approve)}Return to Review</button>
             `});
         }
         else{
@@ -95,19 +104,19 @@ export const DocumentHelper = (superClass) => class extends superClass{
                     <button @click=${() => this._clickHandler('help', document)}>${unsafeSVG(help)}Help</button>
                 `});
             }
-            if(this.action){
-                
-                buttons = buttons.filter(b => b.name !== this.action).map(b => b.html);
-                buttons.push(html`<button class="back" @click=${() => this._clickHandler('return',null)}>${unsafeSVG(arrowLeft)}Back to my documents</button>`);
-                return buttons;
-            }
+            
+        }
+        if(this.action){
+            buttons = buttons.filter(b => b.name !== this.action).map(b => b.html);
+            buttons.push(html`<button class="back" @click=${() => this._clickHandler('return',null)}>${unsafeSVG(arrowLeft)}Back to my documents</button>`);
+            return buttons;
         }
         return buttons.map(b => b.html);
     }
 
     _getStatusMessage(){
         let statusMessage;
-        if(this.action == 'review'){
+        if(this.action == 'review'||this.action == 'review-edit'){
             let createdDate = new Date(this.document.created_at);
             let createdDatePlusAppTime =  new Date(createdDate);
             createdDatePlusAppTime.setDate(createdDate.getDate() + this.documentApprovalTime);
@@ -140,6 +149,12 @@ export const DocumentHelper = (superClass) => class extends superClass{
                 break;
             case 'return':
                 this._updateContext({panel: 'my-documents', view: null, action: null});
+                break;
+            case 'review':
+                this._updateContext({panel: 'documents', view: document.id, action: 'review'});
+                break;
+            case 'review-edit':
+                this._updateContext({panel: 'documents', view: document.id, action: 'review-edit'});
                 break;
         }
     }

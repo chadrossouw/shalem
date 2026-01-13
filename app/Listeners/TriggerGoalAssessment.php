@@ -26,7 +26,7 @@ class TriggerGoalAssessment{
         //
         $user = $event->user;
         $triggeringEntity = $event->triggeringEntity;
-        $userGoals = $user->userGoals();
+        $userGoals = $user->userGoals;
 
 
         foreach($userGoals as $userGoal){
@@ -37,11 +37,11 @@ class TriggerGoalAssessment{
                 // Process document-related criteria
                 $documentPoints = $triggeringEntity->points;
                 foreach($userGoal->progress as $progressEntry){
-                    $criterion = $progressEntry->criterion;
-                    $criteriaPillar = $criterion->pillar;
+                    $criterion = $progressEntry->criteria;
+                    $criteriaPillar = intval($criterion->pillar);
                     $criteriaType = $criterion->document_type;
                     $documentType = $triggeringEntity->type;
-                    $documentPillar = $triggeringEntity->pillar;
+                    $documentPillar = intval($triggeringEntity->pillar_id);
                     if($criteriaPillar == $documentPillar && $criteriaType == $documentType){
                         if($criterion->document_points){
                             $progressEntry->progress_value += $documentPoints->value;
@@ -74,7 +74,16 @@ class TriggerGoalAssessment{
                     "Congratulations! You have achieved your goal: {$userGoal->goal_name}.",
                     'Goal Achieved',
                     'update',
-                    []
+                    messageActions: [
+                        [
+                            'title' => 'Set some more',
+                            'dashboard' => 'goals',
+                            'panel' => null,
+                            'view' => null,
+                        ]
+                    ],
+                    senderId:null,
+                    avatarId: 58
                 );
 
             }

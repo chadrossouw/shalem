@@ -365,7 +365,9 @@ export const baseStyles = css`
         justify-content:flex-start;
         margin-top:2rem;
     }
-    
+    .sc{
+        text-transform:capitalize;
+    }
 `;
 
 export const cards = css`

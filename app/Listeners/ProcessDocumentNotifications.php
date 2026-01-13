@@ -42,8 +42,6 @@ class ProcessDocumentNotifications
                 messageActions: [
                     [
                         'title' => 'Approve Document',
-                        'type' => 'document',
-                        'type_id' => $document->id,
                         'action' => 'approve',
                         'dashboard' => 'documents',
                         'panel' => 'documents',

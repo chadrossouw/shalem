@@ -17,7 +17,7 @@ class NotificationService
      * @param int|null $senderId
      * @return void
      */
-    public function createNotification(User $user, string $message, string $subject, string $type, array $messageActions, ?int $senderId = null)
+    public function createNotification(User $user, string $message, string $subject, string $type, array $messageActions, ?int $senderId = null, ?int $avatarId = null): void
     {
         // Logic to send update notification to the user
         $notification = Notification::create([
@@ -26,14 +26,13 @@ class NotificationService
             'message' => $message,
             'type' => $type,
             'sender_id' => $senderId,
-            'is_read' => false,
+            'read_at' => null,
+            'avatar_id' => $avatarId,
         ]);
         foreach ($messageActions as $action) {
             NotificationAction::create([
                 'notification_id' => $notification->id,
-                'title' => $action['title'] ?? null,
-                'type' => $action['type'] ?? null,
-                'type_id' => $action['type_id'] ?? null,
+                'title' => $action['title'] ?? 'Go',
                 'action' => $action['action'] ?? null,
                 'dashboard' => $action['dashboard'] ?? null,
                 'panel' => $action['panel'] ?? null,

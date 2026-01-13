@@ -218,7 +218,7 @@ export class ShalemNavbar extends BaseNavConsumer(BaseDashboardConsumer(BaseClas
             background-color: var(--light-blue-shade-2);
             border-bottom-left-radius:var(--border-radius-big);
             border-bottom-right-radius:var(--border-radius-big);
-            
+            z-index:100;
         }
         `
     ];

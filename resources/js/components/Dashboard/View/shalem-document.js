@@ -32,7 +32,7 @@ export class ShalemDocument extends DocumentHelper(BaseDashboardConsumer(BaseCla
     render(){
         let pillar = this.document.pillar_id ? this.pillars.find(p => p.id == this.document.pillar_id) : null;
         let pillarHtml = pillar ? html`<dt>Pillar:</dt><dd>${pillar.name}</dd>` : '';
-        let typeHtml = this.document.type ? html`<dt>Type:</dt><dd>${this.document.type}</dd>` : '';
+        let typeHtml = this.document.type ? html`<dt>Type:</dt><dd class="sc">${this.document.type}</dd>` : '';
         let statusMessage = this._getStatusMessage();
         
         let header = html`
@@ -43,7 +43,7 @@ export class ShalemDocument extends DocumentHelper(BaseDashboardConsumer(BaseCla
             </div>
             <div class="right">
                 <h1 class="h3">${this.document.title}</h1>
-                ${this.action == 'review'?html`<h2 class="h3">${this.document.userName}</h2>`:''}
+                ${this.action == 'review'||this.action == 'review-edit'?html`<h2 class="h3">${this.document.userName}</h2>`:''}
                 <p class="description">${this.document.description}</p>
                 <dl>
                     ${pillarHtml}
@@ -101,7 +101,7 @@ export class ShalemDocument extends DocumentHelper(BaseDashboardConsumer(BaseCla
                 }
             }
         }
-        else if(this.action == 'edit'){
+        else if(this.action == 'edit'||this.action == 'review-edit'){
             let preview = '';
             if(this.fileType == 'pdf'){
                 preview = html`
@@ -186,6 +186,29 @@ export class ShalemDocument extends DocumentHelper(BaseDashboardConsumer(BaseCla
             display:flex;
             gap:1rem;
             flex-wrap:wrap;
+            button,shalem-dialog{
+                width:100%;
+                justify-content:center;
+            }
+            button{
+                position:relative;
+                svg{
+                    position:absolute;
+                    left:0.75rem;
+                    top:0.75rem;
+                }
+            }
+        }
+        @media screen and (min-width:700px){
+            .document_footer{
+               
+                button{
+                    width:55%;
+                }
+            }
+        }
+        .margins:has(>shalem-student-panel-document-upload){
+            margin-bottom:2rem;
         }
         `
     ];

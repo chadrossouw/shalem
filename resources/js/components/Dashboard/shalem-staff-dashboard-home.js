@@ -1,4 +1,4 @@
-import { html, LitElement } from "lit";
+import { css,html, LitElement } from "lit";
 import { BaseDashboardConsumer } from "./base-dashboard-consumer.js";
 import { BaseClass } from "../BaseClass.js";
 import uploadIcon from "../../icons/upload-icon.svg";
@@ -85,5 +85,23 @@ export class ShalemStaffDashboardHome extends BaseDashboardConsumer(BaseClass(Li
     static styles = [
         ...super.styles,
         cards,
+        css`
+            .documents{
+                position:relative;
+            }
+            .document_count{
+                position:absolute;
+                top:-0.5rem;
+                right:-0.5rem;
+                font-size:2.5rem;
+                font-weight:bold;
+                width:4rem;
+                height:4rem;
+                border-radius:50%;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+            }
+        `
     ];
 }

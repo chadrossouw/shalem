@@ -8,6 +8,10 @@ export const formStyles = css`
         border:2px solid var(--purple-shade-1);
     }
 
+    textarea{
+        min-height:8rem;
+        font-family:var(--font-sans);
+    }
     input:focus,textarea:focus,select:focus{
         outline:2px solid var(--purple-shade-2)
     }

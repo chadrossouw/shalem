@@ -50,7 +50,7 @@ export class ShalemStaffDashboardDocuments extends BaseDashboardConsumer(BaseCla
         if(changedProperties.has('view')){
             if(this.view && this.view != 'success'){
             //find document by id
-            this._setDocumentFromView();
+                this._setDocumentFromView();
             }
             else if (this.view == 'success'){
                 this.document = null;
@@ -63,7 +63,6 @@ export class ShalemStaffDashboardDocuments extends BaseDashboardConsumer(BaseCla
 
     render(){
         if(this.view){
-            console.log('Rendering document view', this.view);
             if(this.view == 'success'){
                 this.jsConfetti.addConfetti(
                     this.confettiOptions
@@ -90,20 +89,20 @@ export class ShalemStaffDashboardDocuments extends BaseDashboardConsumer(BaseCla
             `;
         }
         let list = [];
+        let count = 0;
         for(let mentee in this.documents){
             let docs = this.documents[mentee];
             let menteeName = this.mentees.find(_mentee=>_mentee.id==mentee)
-
             let markup = html`
-                <details open>
-                    <summary><h3>${menteeName.first_name} ${menteeName.last_name}</h3><div class="count">${docs.length}</div></summary>
+                <details ?open="${count==0}">
+                    <summary><h3>${menteeName.first_name} ${menteeName.last_name}</h3><div class="count bg_aqua white">${docs.length}</div></summary>
                     <div class="content">
                          <ul class="documents_list cards">
                             ${docs.map(document => {
                                 let date = dateToString(document.created_at);
                                
                                 return html`
-                                <li class="${document.document_status.status} grid grid_50 shadow radius">
+                                <li class="${document.document_status.status} grid grid_50 shadow radius bg_white">
                                     <div class='header'>
                                         <h4>${document.title}</h4>
                                         <p class="description">${document.description}</p>
@@ -122,7 +121,11 @@ export class ShalemStaffDashboardDocuments extends BaseDashboardConsumer(BaseCla
                     </div>
                 </details>
             `;
+            count++;
             list.push(markup);
+        }
+        if(!list.length){
+            list = html`<p>No documents to verify at this time. You're all done here</p><button class="bg_blue white" @click=${()=>this._handleAction({dashboard: 'home', panel:null, view:null, action:null})}>Go to Dashboard</button>`;
         }
         return html`
         <slot></slot>
@@ -150,10 +153,13 @@ export class ShalemStaffDashboardDocuments extends BaseDashboardConsumer(BaseCla
         }
         if(!foundDocument){
             //fetch document from server
-            const response = await safeFetch(`${this.restUrl}document/${this.view}`);
-            foundDocument = await response.json();
-            if(!foundDocument){
-                console.error('Document not found');
+            try{
+                const response = await safeFetch(`${this.restUrl}document/${this.view}`);
+                foundDocument = await response.json();
+                console.log('Fetched document from server', foundDocument);
+            }
+            catch(error){
+                console.error('Document not found', error);
                 this._handleAction({dashboard: 'documents', panel:null, view:null, action:null});
                 return;
             }
@@ -210,6 +216,52 @@ export class ShalemStaffDashboardDocuments extends BaseDashboardConsumer(BaseCla
         }
         .changes_requested .status{
             color:var(--yellow);
+        }
+        details{
+            
+            padding:1rem;
+            background-color:var(--light-blue-shade-2);
+            border-radius:var(--border-radius-big);
+            margin-bottom:2rem;
+            summary{
+                cursor:pointer;
+                display:flex;
+                align-items:center;
+                gap:1rem;
+                position:relative;
+                &::before{
+                    content:'';
+                    display:inline-block;
+                    width:1px;
+                    height:1px;
+                    border: 1rem solid transparent;
+                    border-top:1.5rem solid var(--aqua);
+                    transition:transform 0.3s ease;
+                    transform:rotate(-90deg) translate(0,25%);
+                }
+                h3{
+                    margin:0;
+                }
+            }
+            .content{
+                margin-top:1rem;
+            }
+            .count{
+                position:absolute;
+                top:-1.5rem;
+                right:-1.5rem;
+                font-size:2.5rem;
+                font-weight:bold;
+                width:4rem;
+                height:4rem;
+                border-radius:50%;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+            }
+            &[open] summary::before{
+                transform:rotate(0deg) translate(0,25%);
+            }
         }
         `
     ];

@@ -8,12 +8,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Notification extends Model
 {
     //
+    protected $attributes = [
+        
+    ];
+
     protected $fillable = [
         'user_id',
         'subject',
         'message',
         'type',
-        'is_read',
+        'read_at',
+        'sender_id',
+        'avatar_id',
     ];
 
     public function actions(): HasMany
