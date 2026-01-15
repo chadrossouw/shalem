@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Document;
 use App\Models\DocumentStatus;
-use App\Events\DocumentUploaded;
+use App\Events\DocumentNotify;
 use App\Events\DocumentProcessed;
 use App\Models\User;
 class DocumentController extends Controller
@@ -38,7 +38,7 @@ class DocumentController extends Controller
                 'status_message' => 'Your document has been updated and is waiting for approval.',
                 'user_id' => '',
             ]);
-            DocumentUploaded::dispatch($document);
+            DocumentNotify::dispatch($document);
             return response()->json(['view' => 'success'], 200);
         }
         $file = $request->file('document_file');
@@ -60,7 +60,7 @@ class DocumentController extends Controller
             'status_message' => 'Your document has been uploaded and is waiting for approval.',
             'user_id' => '',
         ]);
-        DocumentUploaded::dispatch($document);
+        DocumentNotify::dispatch($document);
         return response()->json(['view' => 'success'], 200);
     }
 
@@ -156,5 +156,35 @@ class DocumentController extends Controller
         ]);
         DocumentProcessed::dispatch($document);
         return response()->json(['message' => 'Document approved successfully','action'=>['dashboard'=>'documents','panel'=>'document','view'=>'success']], 200);
+    }
+
+    public function forward(Request $request){
+        $request->validate([
+            'document_id' => 'required|integer|exists:documents,id',
+            'recipient' => 'required|uuid|exists:users,id',
+            'reason' => 'required|string',
+        ]);
+        $user = $request->user();
+        $document = Document::where('id', intval($request->input('document_id')))->first();
+        if(!$document){
+            return response()->json(['error' => 'Document not found'], 404);
+        }
+        DocumentStatus::create([
+            'document_id' => $document->id,
+            'status' => 'forwarded',
+            'status_message' => strip_tags($request->input('reason')),
+            'user_id' => $user->id,
+        ]);
+        $forwardTo = User::where('id', $request->input('recipient'))->first();
+        if(!$forwardTo){
+            return response()->json(['error' => 'User to forward to not found'], 404);
+        }
+        $forwardedDocument = new \App\Models\ForwardedDocument();
+        $forwardedDocument->user_id = $forwardTo->id;
+        $forwardedDocument->document_id = $document->id;
+        $forwardedDocument->forwarded_by = $user->id;
+        $forwardedDocument->save();
+        DocumentNotify::dispatch($document);
+        return response()->json(['message' => 'Document forwarded successfully','action'=>['dashboard'=>'documents','panel'=>'document','view'=>'success-forwarded']], 200);
     }
 }

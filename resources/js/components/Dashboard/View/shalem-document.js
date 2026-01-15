@@ -169,7 +169,7 @@ export class ShalemDocument extends DocumentHelper(BaseDashboardConsumer(BaseCla
     static styles = [
         super.styles,
         css`
-        .pending{
+        .pending, .forwarded{
             color:var(--blue);
         }
         .approved{

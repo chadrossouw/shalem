@@ -11,6 +11,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\BadgesController;
 use App\Http\Controllers\GoalsController;
+use App\Http\Controllers\PeopleController;
 use App\Models\User;
 
 
@@ -102,10 +103,18 @@ Route::middleware(['auth:sanctum'])->group(function(){
 });
 
 //Staff Document Review Routes
-Route::middleware(['auth:sanctum','abilities:staff'])->group(function(){
+Route::middleware(['auth:sanctum','ability:staff,grade_head,admin,super_admin'])->group(function(){
     Route::get('/staff/documents', [DocumentController::class, 'staffList'])->name('api.staff.documents.list');
     Route::post('/document/approve', [DocumentController::class, 'approve'])->name('api.document.approve');
     Route::post('/document/reject', [DocumentController::class, 'reject'])->name('api.document.reject');
+    Route::post('/document/forward', [DocumentController::class, 'forward'])->name('api.document.forward');
+});
+
+//Users Routes
+Route::middleware(['auth:sanctum','ability:staff,grade_head,admin,super_admin'])->group(function(){
+    Route::get('/staff',[PeopleController::class,'listStaff'])->name('api.staff.list');
+    Route::get('/students/{mentee}',[PeopleController::class,'listStudents'])->name('api.students.list');
+    Route::get('/student/{id}',[PeopleController::class,'getStudent'])->name('api.parents.list');
 });
 
 //Badges Routes

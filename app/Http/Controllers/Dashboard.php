@@ -10,7 +10,7 @@ use App\Models\Notification;
 use App\Models\User;
 use App\Models\UserGoal;
 use App\Models\Document;
-
+use App\Models\ForwardedDocument;
 
 class Dashboard extends Controller
 {
@@ -102,6 +102,13 @@ class Dashboard extends Controller
                         $documents[$mentee->id] = $doc;
                     }
                 }
+                $forwardedDocuments = ForwardedDocument::where('user_id',$user->id)->orderBy('created_at','desc')->get();
+                $forwardedDocuments->load('document');
+                $forwardedDocuments->load('document.document_status');
+                $documents['forwarded'] = [];
+                $forwardedDocuments->each(function($fdoc)use(&$documents){
+                    $documents['forwarded'][] = $fdoc->document;
+                });
 
                 if($role=='admin'||$role=='superadmin'){
                     return view('dashboard.staff', ['user' => $user, 'fields' => $fields, 'pillars'=>$pillars,'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token, 'notifications' => $notifications, 'notificationsPagination' => $notificationsPagination, 'unreadNotifications' => $unreadNotifications, 'unreadNotificationsPagination' => $unreadNotificationsPagination, 'updates' => $updates ]);

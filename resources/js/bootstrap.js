@@ -27,7 +27,7 @@ import { ShalemFormWrapper } from "./components/Form/form-wrapper.js";
 //Student Dashboard elements
 import { ShalemStudentDashboard } from "./components/Dashboard/shalem-student-dashboard.js";
 import { ShalemStudentDashboardHome } from "./components/Dashboard/shalem-student-dashboard-home.js";
-import { ShalemAvatarSelector } from "./components/Dashboard/shalem-avatar-selector.js";
+
 import { ShalemLoginRedirector } from "./components/LoginForm/shalem-login-redirector.js";
 import { ShalemUpdates } from "./components/Dashboard/shalem-updates.js";
 import { ShalemStudentDashboardDocuments } from "./components/Dashboard/shalem-student-dashboard-documents.js";
@@ -40,6 +40,7 @@ import { ShalemStudentDashboardCVSupport } from "./components/Dashboard/shalem-s
 import { ShalemStaffDashboard } from "./components/Dashboard/shalem-staff-dashboard.js";
 import { ShalemStaffDashboardHome } from "./components/Dashboard/shalem-staff-dashboard-home.js";
 import { ShalemStaffDashboardDocuments } from "./components/Dashboard/shalem-staff-dashboard-documents.js";
+
 
 //Documents
 import { ShalemStudentPanelDocumentUpload } from "./components/Dashboard/Panel/shalem-student-panel-document-upload.js";
@@ -74,6 +75,10 @@ import { ShalemNavNotifications } from "./components/Notifications/shalem-nav-no
 import { ShalemNavbar } from "./components/Nav/shalem-navbar.js";
 import { ShalemNavigation } from "./components/Nav/shalem-navigation.js";
 
+//Selectors
+import { ShalemAvatarSelector } from "./components/Selectors/shalem-avatar-selector.js";
+import { ShalemStaffSelector } from "./components/Selectors/shalem-staff-selector.js";
+
 //Base provider
 window.customElements.define("shalem-base-provider", ShalemBaseProvider);
 
@@ -97,7 +102,6 @@ window.customElements.define("shalem-form-wrapper", ShalemFormWrapper);
 //Student Dashboard elements
 window.customElements.define("shalem-student-dashboard", ShalemStudentDashboard);
 window.customElements.define("shalem-student-dashboard-home", ShalemStudentDashboardHome);
-window.customElements.define("shalem-avatar-selector", ShalemAvatarSelector);
 window.customElements.define("shalem-login-redirector", ShalemLoginRedirector);
 window.customElements.define("shalem-updates", ShalemUpdates);
 window.customElements.define("shalem-student-dashboard-documents", ShalemStudentDashboardDocuments);
@@ -143,3 +147,7 @@ window.customElements.define("shalem-dashboard-help", ShalemDashboardHelp);
 window.customElements.define("shalem-nav-notifications", ShalemNavNotifications);
 window.customElements.define("shalem-navbar", ShalemNavbar);
 window.customElements.define("shalem-navigation", ShalemNavigation);
+
+//Selectors
+window.customElements.define("shalem-avatar-selector", ShalemAvatarSelector);
+window.customElements.define("shalem-staff-selector", ShalemStaffSelector);

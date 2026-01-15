@@ -92,7 +92,17 @@ export class ShalemStaffDashboardDocuments extends BaseDashboardConsumer(BaseCla
         let count = 0;
         for(let mentee in this.documents){
             let docs = this.documents[mentee];
-            let menteeName = this.mentees.find(_mentee=>_mentee.id==mentee)
+            let menteeName = {};
+            if(mentee=='forwarded'){
+                menteeName.firstName = 'Forwarded'
+                menteeName.lastName = 'Documents';
+            }
+            else{
+                menteeName = this.mentees.find(_mentee=>_mentee.id==mentee);
+            }
+            if(!docs || docs.length == 0){
+                continue;
+            }
             let markup = html`
                 <details ?open="${count==0}">
                     <summary><h3>${menteeName.first_name} ${menteeName.last_name}</h3><div class="count bg_aqua white">${docs.length}</div></summary>

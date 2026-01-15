@@ -4,6 +4,7 @@ import editFormal from '../../icons/edit-formal.svg';
 import view from '../../icons/view.svg';
 import approve from '../../icons/approve.svg';
 import deleteicon from '../../icons/deleteicon.svg';
+import forward from '../../icons/forward.svg';
 import arrowLeft from '../../icons/arrow-left.svg';
 import { html } from 'lit';
 import { unsafeSVG } from 'lit/directives/unsafe-svg.js';
@@ -49,6 +50,31 @@ export const DocumentHelper = (superClass) => class extends superClass{
             buttons.push({name:'edit',html: html`
                 <button class="bg_blue" @click=${() => this._clickHandler('review-edit', document)}>${unsafeSVG(editFormal)}Edit</button>
             `});
+            buttons.push({name:'forward',html: html`
+                <shalem-dialog>
+                    <button slot="trigger" class="bg_blue" @click=${() => this._clickHandler('forward', document)}>${unsafeSVG(forward)}Forward</button>
+                    <h2 slot="title" class="white">Forward this document</h2>
+                    <div slot="body">
+                        <shalem-editable-field name="staff_document_forward_instructions" location="staff-dashboard" ?admin=${this.isAdmin}>
+                            <p class="white">${this.fields?.staff_document_forward_instructions ?? 'Forward a document to only if you don\'t recognise the document type'}</p>
+                        </shalem-editable-field>
+                        <shalem-form-wrapper identifier=${this.identifier}>
+                            <form class="white" id="approve_document_form" action="${this.restUrl}document/forward"}>
+                                <shalem-staff-selector resturl="${this.restUrl}" name="recipient" required filter="${JSON.stringify(['grade_head','systemic_head'])}">
+                                    <label class="white" for="recipient">Recipient*</label>
+                                </shalem-staff-selector>
+                                <label for="reason" class="white">Add a reason</label>
+                                <textarea name="reason" data-label="Reason" id="reason" placeholder="Add a reason for forwarding this document" aria-required="true"></textarea>
+                                <input type="hidden" name="document_id" value="${document.id}" />
+                                <div class="form_response white"></div>
+                                <div class="flex button-group">
+                                    <button class="bg_blue" type="submit" @click=${(e)=>{e.stopPropagation()}}>${unsafeSVG(approve)}Forward Document</button>
+                                </div>
+                            </form>
+                        </shalem-form-wrapper>
+                    </div>
+                </shalem-dialog>
+            `});
         }
         else if(this.action == 'review-edit'){
             buttons.push({name:'review',html: html`
@@ -56,11 +82,17 @@ export const DocumentHelper = (superClass) => class extends superClass{
             `});
         }
         else{
-            if (document.document_status.status === 'pending') {
+            if (document.document_status.status === 'pending'||document.document_status.status === 'forwarded'){ 
                 //compare document created time to current time, if more than 3 days have passed, allow help button
                 let createdDate = new Date(document.created_at);
                 let createdDatePlusAppTime =  new Date(createdDate);
-                createdDatePlusAppTime.setDate(createdDate.getDate() + this.documentApprovalTime);
+                if(document.document_status.status === 'pending'){
+                    createdDatePlusAppTime.setDate(createdDate.getDate() + this.documentApprovalTime);
+                }
+                else{
+                    //Double the time if forwarded
+                    createdDatePlusAppTime.setDate(createdDate.getDate() + this.documentApprovalTime + this.documentApprovalTime);
+                }
                 let currentDate = new Date();
                 
                 buttons.push({name:'view',html: html`
@@ -131,6 +163,9 @@ export const DocumentHelper = (superClass) => class extends superClass{
             }
         }
         else{
+            if(this.document.document_status.status == 'forwarded'){
+                statusMessage = 'Document has been forwarded for further review';
+            }
             statusMessage = this.document.document_status.status_message
         }
         return statusMessage;
@@ -171,6 +206,7 @@ export const DocumentHelper = (superClass) => class extends superClass{
         this._updateContext({dashboard:'help', panel: 'document', view: document.id, action:null});
     }
 
+    
    /*  _handleApproveSubmit(e){
         e.preventDefault();
         const formData = new FormData(e.target);

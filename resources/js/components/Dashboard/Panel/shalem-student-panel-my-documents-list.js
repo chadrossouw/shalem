@@ -73,7 +73,7 @@ export class ShalemStudentPanelMyDocumentsList extends DocumentHelper(BaseDashbo
                 grid-template-columns:1fr 1fr;
             }
         }
-        .pending .status{
+        .pending .status, .forwarded .status{
             color:var(--blue);
         }
         .approved .status{

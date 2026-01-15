@@ -60,6 +60,11 @@ class Document extends Model
             get: fn ($value) => Storage::temporaryUrl($value, now()->addMinutes(30)),
         );
     }
+
+    public function forwardedDocument(): HasOne
+    {
+        return $this->hasOne(ForwardedDocument::class, 'document_id', 'id')->latestOfMany();
+    }
     
     public function toSearchableArray(): array
     {

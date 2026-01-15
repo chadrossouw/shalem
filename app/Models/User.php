@@ -96,4 +96,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserBadge::class, 'user_id', 'id');
     }
+
+    public function forwardedDocuments(): HasMany
+    {
+        return $this->hasMany(ForwardedDocument::class, 'user_id', 'id');
+    }
+
+    //Only staff grade; Student grade is stored in Student model
+    public function grade(): HasOne
+    {
+        return $this->hasOne(Grade::class, 'user_id', 'id');
+    }
 }

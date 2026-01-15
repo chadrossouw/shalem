@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\User;
 use App\Models\StudentParent;
 use App\Models\Mentor;
+use App\Models\Grade;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 
@@ -145,7 +146,8 @@ class EdAdminFetch extends Controller
                 return $subject['SubjName'] === 'Mentor';
             });
             $this->mentorSubjects = array_map(function($subject) {
-                return $subject['ID'];
+                $grade = preg_replace('/[^0-9]/', '', $subject['Grade']);
+                return ['id'=>$subject['ID'],'grade'=>$grade];
             }, $mentorSubjects);
         }
     }
@@ -164,9 +166,28 @@ class EdAdminFetch extends Controller
             $xml = simplexml_load_string($staff_classes);
             $json = json_encode($xml);
             $staff_classes_array = json_decode($json,TRUE);
-            $this->mentors = array_filter($staff_classes_array['EducatorSubjects'], function($class) {
-                return in_array($class['SubjectID'], $this->mentorSubjects);
+            $mappedSubjectIDS = array_map(function($subject){
+                return $subject['id'];
+            }, $this->mentorSubjects);
+            $this->mentors = array_filter($staff_classes_array['EducatorSubjects'], function($class) use ($mappedSubjectIDS) {
+                return in_array($class['SubjectID'], $mappedSubjectIDS);
             });
+            foreach($this->mentors as $mentor){
+                $staffMember = User::where('edadmin_id', $mentor['StaffID'])->first();
+                if($staffMember){
+                   $subjectID = $mentor['SubjectID'];
+                   $grade = array_filter($this->mentorSubjects, function($subject) use ($subjectID) {
+                        return $subject['id'] == $subjectID;
+                   });
+                   $grade = array_values($grade)[0]['grade'] ?? null;
+                   if($grade){
+                        $staffGrade = Grade::updateOrCreate(
+                            ['user_id' => $staffMember->id],
+                            ['grade' => $grade]
+                        );
+                   }
+                }
+            }
         }
     }
 
@@ -319,8 +340,11 @@ class EdAdminFetch extends Controller
             $json = json_encode($xml);
             $student_subjects_array = json_decode($json,TRUE);
             $student_subjects = $student_subjects_array['StudentSubjects'];
-            $this->mentor_groups = array_filter($student_subjects,function($subject){
-                return in_array($subject['SubjectSetupID'], $this->mentorSubjects);
+            $mappedSubjectIDS = array_map(function($subject){
+                return $subject['id'];
+            }, $this->mentorSubjects);
+            $this->mentor_groups = array_filter($student_subjects,function($subject) use ($mappedSubjectIDS){
+                return in_array($subject['SubjectSetupID'], $mappedSubjectIDS);
             });
         }
     }   

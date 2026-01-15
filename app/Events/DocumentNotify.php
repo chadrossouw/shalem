@@ -11,7 +11,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
 use App\Models\Document;
-class DocumentUploaded
+class DocumentNotify
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
