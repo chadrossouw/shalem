@@ -40,6 +40,7 @@ import { ShalemStudentDashboardCVSupport } from "./components/Dashboard/shalem-s
 import { ShalemStaffDashboard } from "./components/Dashboard/shalem-staff-dashboard.js";
 import { ShalemStaffDashboardHome } from "./components/Dashboard/shalem-staff-dashboard-home.js";
 import { ShalemStaffDashboardDocuments } from "./components/Dashboard/shalem-staff-dashboard-documents.js";
+import { ShalemStaffDashboardPupils } from "./components/Dashboard/shalem-staff-dashboard-pupils.js";
 
 
 //Documents
@@ -114,6 +115,7 @@ window.customElements.define("shalem-student-dashboard-cv-support", ShalemStuden
 window.customElements.define("shalem-staff-dashboard", ShalemStaffDashboard);
 window.customElements.define("shalem-staff-dashboard-home", ShalemStaffDashboardHome);
 window.customElements.define("shalem-staff-dashboard-documents", ShalemStaffDashboardDocuments);
+window.customElements.define("shalem-staff-dashboard-pupils", ShalemStaffDashboardPupils);
 
 //Documents
 window.customElements.define("shalem-student-panel-document-upload", ShalemStudentPanelDocumentUpload);

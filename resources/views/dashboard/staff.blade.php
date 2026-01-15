@@ -17,8 +17,6 @@
                 view="{{ $view }}"
                 action="{{ $action }}"
                 pillars="{{ $pillars->toJson() }}"
-                documents="{{ json_encode($documents) }}"
-                mentees="{{ json_encode($mentees) }}"
                 @if(isset($token))
                     token="{{ $token }}"
                 @endif
