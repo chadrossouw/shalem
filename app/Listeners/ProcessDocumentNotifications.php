@@ -33,8 +33,7 @@ class ProcessDocumentNotifications
         $user = $document->user;
         $mentor = $user->mentor;
         $status = $document->document_status;
-        if($status->status == 'pending'||!$status){        $forwarded = $document->document_status->status === 'forwarded';
-        if($forwarded){
+        if($status->status === 'forwarded'){
             $forwardedDoc = $document->forwardedDocument;
             if($forwardedDoc){
                 $this->notificationService->createNotification(
@@ -56,8 +55,26 @@ class ProcessDocumentNotifications
                 );
             }
         }
+        elseif($status->status == 'changes_requested'){
+            $this->notificationService->createNotification(
+                user: $user,
+                message: $status->status_message,
+                subject: "Changes Requested on {$document->title}",
+                type: 'notification',
+                messageActions: [
+                    [
+                        'title' => 'View Document',
+                        'action' => 'view',
+                        'dashboard' => 'documents',
+                        'panel' => 'my-document',
+                        'view' => $document->id,
+                    ]
+                ],
+                senderId: $mentor?->user->id ?? null
+                );
+        }
         else{
-                if ($mentor) {
+            if ($mentor) {
                 $previousStatuses = $document->document_statuses;
                 if($previousStatuses->filter(function($ds){
                     return $ds->status == 'changes_requested' ;
@@ -82,41 +99,22 @@ class ProcessDocumentNotifications
                     );
                     return;
                 }
-                    $this->notificationService->createNotification(
-                        user: $mentor->user,
-                        message: "A new document '{$document->title}' has been uploaded by {$user->first_name} {$user->last_name}.",
-                        subject: 'New Document Uploaded',
-                        type: 'notification',
-                        messageActions: [
-                            [
-                                'title' => 'Approve Document',
-                                'action' => 'review',
-                                'dashboard' => 'documents',
-                                'panel' => 'documents',
-                                'view' => $document->id,
-                                'status' => 'pending',
-                            ]
-                        ],
-                        senderId: $user->id
-                );
-            }
-        }
-        elseif($status->status == 'changes_requested'){
-            $this->notificationService->createNotification(
-                user: $user,
-                message: $status->status_message,
-                subject: "Changes Requested on {$document->title}",
-                type: 'notification',
-                messageActions: [
-                    [
-                        'title' => 'View Document',
-                        'action' => 'view',
-                        'dashboard' => 'documents',
-                        'panel' => 'my-document',
-                        'view' => $document->id,
-                    ]
-                ],
-                senderId: $mentor?->user->id ?? null
+                $this->notificationService->createNotification(
+                    user: $mentor->user,
+                    message: "A new document '{$document->title}' has been uploaded by {$user->first_name} {$user->last_name}.",
+                    subject: 'New Document Uploaded',
+                    type: 'notification',
+                    messageActions: [
+                        [
+                            'title' => 'Approve Document',
+                            'action' => 'review',
+                            'dashboard' => 'documents',
+                            'panel' => 'documents',
+                            'view' => $document->id,
+                            'status' => 'pending',
+                        ]
+                    ],
+                    senderId: $user->id
                 );
             }
         }

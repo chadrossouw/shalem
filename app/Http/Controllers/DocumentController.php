@@ -205,7 +205,7 @@ class DocumentController extends Controller
             'status_message' => $status_message,
             'user_id' => $user->id,
         ]);
-        DocumentUploaded::dispatch($document);
+        DocumentNotify::dispatch($document);
         return response()->json(['message' => 'Corrections requested successfully','action'=>['dashboard'=>'documents','panel'=>'documents','view'=>'changes_requested_success']], 200);
     }
 
