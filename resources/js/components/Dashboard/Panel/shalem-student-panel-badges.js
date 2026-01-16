@@ -11,19 +11,39 @@ export class ShalemStudentPanelBadges extends BaseDashboardConsumer(BaseClass(Li
         ...super.properties,
         year: { type: String },
         badges: { type: Array, state: true },
+        mode: { type: String },
     }
 
     connectedCallback() {
         super.connectedCallback();
         ({ fields: this.fields, user: this.user, pillars: this.pillars } = this._dashboard);
+        if (this.mode === 'staff') {
+            this.user = this.pupil;
+            this.panel = this.view_panel;
+        }
+        console.log(this.panel);
         this._getBadges();
-        this.pillar = this.pillars.find(pillar => {
-            let slug = pillar.name.toLowerCase().replace(/\s+/g,'-');
-            return slug === this.panel;
-        });
+        if (this.panel){
+            
+            this.pillar = this.pillars.find(pillar => {
+                let slug = pillar.name.toLowerCase().replace(/\s+/g,'-');
+                return slug === this.panel;
+            });
+        }
+    }
+
+    updated(){
+        if (this.mode === 'staff') {
+            this.user = this.pupil;
+            this.panel = this.view_panel;
+        }
     }
 
     render() {
+        if (this.mode === 'staff') {
+            this.user = this.pupil;
+            this.panel = this.view_panel;
+        }
         if(!this.badges ){
             return html`<div class="margins"><shalem-loader>Digging in the back of the drawer...</shalem-loader></div>`;
         }
@@ -53,13 +73,13 @@ export class ShalemStudentPanelBadges extends BaseDashboardConsumer(BaseClass(Li
             });
         }
         return html`
-            <div class="header_with_icon margins">
+            <div class="header_with_icon ${this.mode!='staff'?'margins':''}">
                 <div class="icon" aria-hidden="true">${unsafeSVG(pointsIcon)}</div>
                 <h1>${title}</h1>
             </div>
-            <div class="margins">
+            <div class="${this.mode!='staff'?'margins':''}">
                <div class="badges_container flex">
-                    ${badges.map(badge => this._processBadgeToHtml(badge))}
+                    ${badges.length ? badges.map(badge => this._processBadgeToHtml(badge)) : html`No badges to see yet. Earn badges by getting points in different pillars!`}
                </div>
             </div>
         `;

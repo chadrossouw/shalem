@@ -15,6 +15,7 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
 
     static properties = {
         ...super.properties,
+        mode: { type: String },
         _year: {type: String, state: true},
         _goals: {type: Object, state: true},
         _removeGoal: {type: Object, state: true},
@@ -30,6 +31,10 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
     connectedCallback(){
         super.connectedCallback();
         ({fields: this.fields, user: this.user, pillars: this.pillars, selectableGoals: this.selectableGoals} = this._dashboard);
+        if(this.mode==='staff'){
+            this.user = this.pupil;
+            this.panel = null;
+        }
         this._eventManager.listen('dialog-closed-goal-remove', () => {
             this._removeGoal = null;
         });
@@ -38,6 +43,10 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
 
     updated(changedProperties){
         super.updated(changedProperties);
+        if(this.mode==='staff'){
+            this.user = this.pupil;
+            this.panel = null;
+        }
         if(changedProperties.has('_year')){
             this._goalsByPillar();
         }
@@ -50,34 +59,45 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
 
     render(){
         let body = '';
+        if(this.mode==='staff'){
+            this.user = this.pupil;
+            this.panel = null;
+        }
         if(this.panel){
             body = html`<shalem-student-panel-goals-panel
                 identifier="${this.identifier}"
             ></shalem-student-panel-goals-panel>`;
         }
         else{
-            body = html`
-            <div class="header_with_icon margins">
-                <div class="icon" aria-hidden="true">${unsafeSVG(goalsIcon)}</div>
-                ${this._year == 'this_year' ? html`
-                    <shalem-editable-field name="student_dashboard_goals_header" location="student-dashboard" ?admin=${this.isAdmin}>
-                        <h1>${this.fields?.student_dashboard_goals_header ?? 'My goals'}</h1>
+            let header = '';
+            if(this.mode!=='staff'){
+                header = html`
+                <div class="header_with_icon margins">
+                    <div class="icon" aria-hidden="true">${unsafeSVG(goalsIcon)}</div>
+                    ${this._year == 'this_year' ? html`
+                        <shalem-editable-field name="student_dashboard_goals_header" location="student-dashboard" ?admin=${this.isAdmin}>
+                            <h1>${this.fields?.student_dashboard_goals_header ?? 'My goals'}</h1>
+                        </shalem-editable-field>
+                    ` : html`
+                    <shalem-editable-field name="student_dashboard_goals_header_all_time" location="student-dashboard" ?admin=${this.isAdmin}>
+                        <h1>${this.fields?.student_dashboard_goals_header_all_time ?? 'All my goals'}</h1>
                     </shalem-editable-field>
-                ` : html`
-                <shalem-editable-field name="student_dashboard_goals_header_all_time" location="student-dashboard" ?admin=${this.isAdmin}>
-                    <h1>${this.fields?.student_dashboard_goals_header_all_time ?? 'All my goals'}</h1>
-                </shalem-editable-field>
-                `}
+                    `}
 
-            </div>
-            <div class="margins grid grid_50 cards">
+                </div>`;
+            }
+            body = html`
+            ${header}
+            <div class="${this.mode!=='staff' ? 'margins' : ''} grid grid_50 cards">
                 ${this.pillars.map( pillar => {
                     return html`
                     <div class="card radius-big shadow ${pillar.colour}">
                         <h3 class="h4">
                             ${pillar.name}
                         </h3>
-                        <button class="add bg_${pillar.colour}" @click=${() => this._handleAddGoal(pillar)}>+</button>
+                        ${this.mode!=='staff' ? html`
+                            <button class="add bg_${pillar.colour}" @click=${() => this._handleAddGoal(pillar)}>+</button>
+                        ` : ''}
                         ${this._goals[pillar.id].goals.length > 0 ? html`
                             <div class="goals_list grid">
                                 ${this._goals[pillar.id].goals.map( goal => html`
@@ -102,8 +122,10 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
                                                     </span>
                                                 </div>
                                             </div>
-                                            ${goal.needsDocuments ? html`<button class="bg_${pillar.colour}" @click=${()=>this._handleAction({dashboard: 'documents', panel: 'upload', view: null})}>Upload a document</button>` : html`<div></div>`}
-                                            ${goal.total!=goal.progress ? html`<button class="bg_${pillar.colour}" @click=${()=>this._handleRemoveGoal(goal)}>Remove</button>` : html`<div class="goal_complete">Goal complete!</div>`}
+                                            ${this.mode!=='staff' ? html`
+                                                ${goal.needsDocuments ? html`<button class="bg_${pillar.colour}" @click=${()=>this._handleAction({dashboard: 'documents', panel: 'upload', view: null})}>Upload a document</button>` : html`<div></div>`}
+                                                ${goal.total!=goal.progress ? html`<button class="bg_${pillar.colour}" @click=${()=>this._handleRemoveGoal(goal)}>Remove</button>` : html`<div class="goal_complete">Goal complete!</div>`}
+                                            ` : ''}
 
                                         </div>
                                     </shalem-anchor-modal>
@@ -117,7 +139,7 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
         
         return html`
         <slot></slot>
-        <div class="margins">
+        <div class="${this.mode!=='staff' ? 'margins' : ''}">
             <div class="toggle">
                 <input type="checkbox" id="year_toggle" name="year_toggle" @change=${this._handleYearToggle} ?checked=${this._year && this._year != 'this_year'}>
                 <label for="year_toggle" class="screen_reader_only">Toggle between viewing points for this year and all time</label>

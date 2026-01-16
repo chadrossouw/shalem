@@ -31,8 +31,10 @@ export const BaseDashboardConsumer = (superClass) => class extends superClass{
         panel: {type: String, state:true},
         pillars: { type: Array, state:true },
         view: {type: String, state:true},
+        view_panel: {type: String, state:true},
         action: {type: String, state:true},
         mentees: {type: Object, state:true},
+        pupil: {type: Object, state:true},
     }
     
     connectedCallback(){
@@ -82,9 +84,11 @@ export const BaseDashboardConsumer = (superClass) => class extends superClass{
             history: this.history, 
             panel: this.panel, 
             view: this.view, 
+            view_panel: this.view_panel,
             action: this.action, 
             documentApprovalTime: this.documentApprovalTime,
-            mentees: this.mentees
+            mentees: this.mentees,
+            pupil: this.pupil
         } = this._dashboard);
         this.requestUpdate();
     }
@@ -94,6 +98,9 @@ export const BaseDashboardConsumer = (superClass) => class extends superClass{
             ...this._dashboard,
             ...newValues
         };
+        if(newValues.panel||newValues.view){
+            window.scrollTo({top:0, behavior:'smooth'});
+        }
         this._eventManager.emit(`shalem-dashboard-${this.identifier}-update`, updatedContext);
     }
 

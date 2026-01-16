@@ -1,4 +1,4 @@
-import { html, LitElement } from "lit";
+import { html, LitElement, css } from "lit";
 import { BaseDashboardConsumer } from "../base-dashboard-consumer.js";
 import { BaseClass } from "../../BaseClass.js";
 import { BaseForm } from "../../Form/base-form.js";
@@ -91,4 +91,12 @@ export class ShalemStaffPanelDocumentReviewEdit extends BaseForm(BaseDashboardCo
         </form>
         `;
     }
+
+    static styles = [
+        ...super.styles,
+        css`
+        form{
+            margin-bottom:2rem;
+        }`
+    ];
 }

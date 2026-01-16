@@ -9,15 +9,22 @@ export class ShalemPointsIcon extends BaseDashboardConsumer(BaseClass(LitElement
     static properties = {
         ...super.properties,
         year: {type: String},
+        mode: { type: String },
     }
 
     connectedCallback(){
         super.connectedCallback();
         console.log(this.year);
         ({user: this.user,pillars: this.pillars} = this._dashboard);
+        if(this.mode === 'staff'){
+            this.user = this.pupil;
+        }
     }
 
     updated(){
+        if(this.mode === 'staff'){
+            this.user = this.pupil;
+        }
         this.points = this.user.user_points;
         if(!this.year||this.year == 'this_year'){
             this._filterPointsByYear();

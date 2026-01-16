@@ -13,6 +13,7 @@ export class ShalemStudentDashboardPoints extends BaseDashboardConsumer(BaseClas
 
     static properties = {
         ...super.properties,
+        mode: { type: String },
         _year: {type: String, state: true},
         _points: {type: Object, state: true},
     }
@@ -27,6 +28,10 @@ export class ShalemStudentDashboardPoints extends BaseDashboardConsumer(BaseClas
     connectedCallback(){
         super.connectedCallback();
         ({fields: this.fields, user: this.user, pillars: this.pillars} = this._dashboard);
+        if(this.mode === 'staff'){
+            this.user = this.pupil;
+            this.panel = null;
+        }
         let points = this.user.user_points;
         if(!this._year||this._year == 'this_year'){
             points = this._filterPointsByYear(points);
@@ -35,6 +40,10 @@ export class ShalemStudentDashboardPoints extends BaseDashboardConsumer(BaseClas
     }
 
     updated(changedProperties){
+        if(this.mode === 'staff'){
+            this.user = this.pupil;
+            this.panel = null;
+        }
         if(changedProperties.has('_year')){
             let points = this.user.user_points;
             if(!this._year||this._year == 'this_year'){
@@ -43,36 +52,47 @@ export class ShalemStudentDashboardPoints extends BaseDashboardConsumer(BaseClas
             this._points = pointsByPillar(points,this.pillars);
         }
         cardLinks(this.shadowRoot);
+        
     }
 
 
     render(){
         let body = '';
+        if(this.mode === 'staff'){
+            this.user = this.pupil;
+            this.panel = null;
+        }
         if(this.panel){
             body = html`<shalem-student-dashboard-points-panel
                 identifier="${this.identifier}"
                 year=${this._year}
+                mode=${this.mode}
             ></shalem-student-dashboard-points-panel>`;
         }
         else{
-            body = html`
-            <div class="header_with_icon margins">
-                <div class="icon" aria-hidden="true">${unsafeSVG(pointsIcon)}</div>
-                ${this._year == 'this_year' ? html`
-                    <shalem-editable-field name="student_dashboard_points_header" location="student-dashboard" ?admin=${this.isAdmin}>
-                        <h1>${this.fields?.student_dashboard_points_header ?? 'My points'}</h1>
+            let header = '';
+            if(this.mode !== 'staff'){
+                header = html`
+                <div class="header_with_icon ${this.mode!='staff'?'margins':''}">
+                    <div class="icon" aria-hidden="true">${unsafeSVG(pointsIcon)}</div>
+                    ${this._year == 'this_year' ? html`
+                        <shalem-editable-field name="student_dashboard_points_header" location="student-dashboard" ?admin=${this.isAdmin}>
+                            <h1>${this.fields?.student_dashboard_points_header ?? 'My points'}</h1>
+                        </shalem-editable-field>
+                    ` : html`
+                    <shalem-editable-field name="student_dashboard_points_header_all_time" location="student-dashboard" ?admin=${this.isAdmin}>
+                        <h1>${this.fields?.student_dashboard_points_header_all_time ?? 'All my points'}</h1>
                     </shalem-editable-field>
-                ` : html`
-                <shalem-editable-field name="student_dashboard_points_header_all_time" location="student-dashboard" ?admin=${this.isAdmin}>
-                    <h1>${this.fields?.student_dashboard_points_header_all_time ?? 'All my points'}</h1>
-                </shalem-editable-field>
-                `}
+                    `}
 
+                </div>
+            `}
+            body = html`
+            ${header}
+            <div class="${this.mode!='staff'?'margins':''} icon_holder">
+                <shalem-points-icon year=${this._year} mode=${this.mode}></shalem-points-icon>
             </div>
-            <div class="margins icon_holder">
-                <shalem-points-icon year=${this._year}></shalem-points-icon>
-            </div>
-            <div class="margins grid grid_50 cards">
+            <div class="${this.mode!='staff'?'margins':''} grid grid_50 cards">
                 ${this.pillars.map( pillar => {
                     let pointsData = this._points[pillar.id];
                     return html`
@@ -80,9 +100,13 @@ export class ShalemStudentDashboardPoints extends BaseDashboardConsumer(BaseClas
                         <h3 class="h4">
                             ${pillar.name}
                         </h3>
-                        <button class="card_target bg_${pillar.colour}"  @click=${() => this._handleAction({panel: pillar.slug})}>
-                            ${unsafeSVG(view)}View
-                        </button>
+                        ${this.mode !== 'staff' ? html`
+                            <button class="card_target bg_${pillar.colour}"  @click=${() => {
+                                this._handleAction({panel: pillar.slug});
+                            }}>
+                                ${unsafeSVG(view)}View
+                            </button>
+                        ` : ''}
                         <div class="points_total star bg_${pillar.colour} bg_shade_2">
                             ${pointsData.points}
                         </div>
@@ -90,10 +114,19 @@ export class ShalemStudentDashboardPoints extends BaseDashboardConsumer(BaseClas
                 })}
             `;
         }
-        
+        let badges = '';
+        if(this.mode !== 'staff'){
+            badges = html`
+            <shalem-student-panel-badges
+                identifier="${this.identifier}"
+                year=${this._year}
+                mode=${this.mode}
+            ></shalem-student-panel-badges>
+            `;
+        }
         return html`
         <slot></slot>
-        <div class="margins">
+        <div class="${this.mode!='staff'?'margins':''}">
             <div class="toggle">
                 <input type="checkbox" id="year_toggle" name="year_toggle" @change=${this._handleYearToggle} ?checked=${this._year && this._year != 'this_year'}>
                 <label for="year_toggle" class="screen_reader_only">Toggle between viewing points for this year and all time</label>
@@ -103,10 +136,7 @@ export class ShalemStudentDashboardPoints extends BaseDashboardConsumer(BaseClas
         </div>
         
         ${body}
-        <shalem-student-panel-badges
-            identifier="${this.identifier}"
-            year=${this._year}
-        ></shalem-student-panel-badges>
+        ${badges}
         `;
     }
 

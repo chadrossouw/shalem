@@ -12,15 +12,20 @@ import { safeFetch } from "../../../common/xsrf.js";
 export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationListener(BaseDashboardConsumer(BaseClass(LitElement)))){
     static properties = {
         ...super.properties,
-        
+        mode: { type: String },
+        _documents: { type: Object, state: true },
     }
 
     connectedCallback(){
         super.connectedCallback();
+        
         this.paginationID = `my-documents-${this.identifier}`;
         this.searchID = `my-documents-${this.identifier}`;
         this.query = '';
         this.document = null;
+        if(this.mode === 'staff'){
+            this.view = null;
+        }
         if(this.view && this.view != 'success'){
             //find document by id
             this._setDocumentFromView();
@@ -31,6 +36,13 @@ export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationList
         }
        
         super.connectedCallback();
+        if(this.mode === 'staff'){
+            this.user = this.pupil;
+            this.panel = 'my-documents';
+            this.view = null;
+            this.documents = this._documents;
+        }
+        console.log(this.documents);
         if(!this.documents||!this.documents.data){
             this._fetchDocuments();
         }
@@ -42,9 +54,16 @@ export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationList
 
     firstUpdated(){
         this._setDocumentTitle('My Documents');
+        
     }
 
     updated(changedProperties){
+        if(this.mode === 'staff'){
+            this.user = this.pupil;
+            this.panel = 'my-documents';
+            this.view = null;
+            this.documents = this._documents;
+        }
         if(changedProperties.has('view')){
             if(this.view && this.view != 'success'){
                 //find document by id
@@ -54,6 +73,12 @@ export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationList
     }
 
     render(){
+        if(this.mode === 'staff'){
+            this.user = this.pupil;
+            this.panel = 'my-documents';
+            this.view = null;
+            this.documents = this._documents;
+        }
         if(this.view == 'success'){
             let header = html`
                 <div class="header_with_icon margins">
@@ -92,12 +117,18 @@ export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationList
         else{
             render = html`
                 <div class="documents_container">
-                    <shalem-search-bar
-                        searchID="${this.searchID}"
-                        query="${this.query}"
-                    ></shalem-search-bar>
-                    <shalem-student-panel-my-documents-list identifier="${this.identifier}">
-                    </shalem-student-panel-my-documents-list>
+                    
+                    ${this.mode==='staff' ? 
+                        html`<shalem-student-panel-my-documents-list identifier="${this.identifier}" mode="${this.mode}" _documents='${JSON.stringify(this._documents)}' _documentsPagination='${JSON.stringify(this._documentsPagination)}'>
+                        </shalem-student-panel-my-documents-list>` 
+                        : html`
+                        <shalem-search-bar
+                            searchID="${this.searchID}"
+                            query="${this.query}"
+                        ></shalem-search-bar>
+                        <shalem-student-panel-my-documents-list identifier="${this.identifier}" mode="${this.mode}">
+                        </shalem-student-panel-my-documents-list>
+                    `}
                     <shalem-paginator 
                         currentPage=${this.documentsPagination.current_page}
                         paginationID=${this.paginationID}
@@ -106,14 +137,20 @@ export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationList
                 </div> 
             `;
         }
+        let h = '';
+        if(this.mode!=='staff'){
+            h =html`
+            <div class="header_with_icon margins">
+                ${unsafeSVG(archiveIcon)}
+                <shalem-editable-field name="student_dashboard_documents_my_documents_header" location="student-dashboard" ?admin=${this.isAdmin}>
+                    <h1>${this.fields?.student_dashboard_documents_my_documents_header ?? 'My Documents'}</h1>
+                </shalem-editable-field>
+            </div>
+            `;
+        }
         return html`
-        <div class="header_with_icon margins">
-            ${unsafeSVG(archiveIcon)}
-            <shalem-editable-field name="student_dashboard_documents_my_documents_header" location="student-dashboard" ?admin=${this.isAdmin}>
-                <h1>${this.fields?.student_dashboard_documents_my_documents_header ?? 'My Documents'}</h1>
-            </shalem-editable-field>
-        </div>
-        <div class="margins">
+        ${h}
+        <div class="${this.mode !== 'staff' ? 'margins' : ''}">
             ${render}
         </div>
         `;
@@ -128,6 +165,7 @@ export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationList
     }
 
     async _fetchDocuments(page=1,query=false,refresh=false){
+        console.log(this.documents);
         if(this.documents && this.documents[page] && !refresh && !query){
             this.documentsPagination.current_page = page;
             
@@ -138,6 +176,9 @@ export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationList
         if(query){
             fetchUrl += `&query=${encodeURIComponent(query)}`;
         }
+        if(this.mode === 'staff'){
+            fetchUrl += `&student_id=${this.pupil.id}`;
+        }
         const response = await safeFetch(fetchUrl);
         const data = await response.json();
         if(!this.documents){
@@ -146,7 +187,13 @@ export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationList
         this.documents[page] = data.documents.data;
         delete data.documents.data;
         this.documentsPagination = data.documents;
-        this._updateContext({documents: this.documents, documentsPagination: this.documentsPagination});
+        if(this.mode==='staff'){
+            this._documents = this.documents;
+            this._documentsPagination = this.documentsPagination;
+        }
+        else{
+            this._updateContext({documents: this.documents, documentsPagination: this.documentsPagination});
+        }
     }
 
     async _handlePaginationChange(e){

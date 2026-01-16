@@ -19,18 +19,19 @@ export class ShalemStaffDashboardDocuments extends BaseDashboardConsumer(BaseCla
 
     constructor(){
         super();
+        this.fetchingDocument = false;
     }
 
     firstUpdated(){
         this._setDocumentTitle('Verify documents');
     }
 
-    connectedCallback(){
+    async connectedCallback(){
         super.connectedCallback();
         ({fields: this.fields, user: this.user} = this._dashboard);
         if(this.view && (this.view != 'success'&& this.view != 'changes_requested_success')){
             //find document by id
-            this._setDocumentFromView();
+           await this._setDocumentFromView();
         }
         else if (this.view == 'success'||this.view=='changes_requested_success'){
             this.document = null;
@@ -50,11 +51,11 @@ export class ShalemStaffDashboardDocuments extends BaseDashboardConsumer(BaseCla
         super.disconnectedCallback();
     }
 
-    updated(changedProperties){
+    async updated(changedProperties){
         if(changedProperties.has('view')){
             if(this.view && this.view != 'success' && this.view != 'changes_requested_success'){
             //find document by id
-                this._setDocumentFromView();
+                await this._setDocumentFromView();
             }
             else if (this.view == 'success' || this.view == 'changes_requested_success'){
                 this.document = null;
@@ -104,6 +105,9 @@ export class ShalemStaffDashboardDocuments extends BaseDashboardConsumer(BaseCla
                 `;
             }
             this._setDocumentFromView();
+            if(!this.document){
+                return html`<div class="margins"><shalem-loader>Shuffling the pack...</shalem-loader></div>`;
+            }
             return html`
             <shalem-document identifier="${this.identifier}">
             </shalem-document>
@@ -182,23 +186,28 @@ export class ShalemStaffDashboardDocuments extends BaseDashboardConsumer(BaseCla
             user = page;
             if(foundDocument) break;
         }
-        if(!foundDocument){
+        if(!foundDocument&&!this.fetchingDocument){
             //fetch document from server
+            this.fetchingDocument = true;
             try{
                 const response = await safeFetch(`${this.restUrl}document/${this.view}`);
                 foundDocument = await response.json();
-                console.log('Fetched document from server', foundDocument);
+                user = foundDocument.user_id;
+                this.fetchingDocument = false;
             }
             catch(error){
                 console.error('Document not found', error);
+                this.fetchingDocument = false;
                 this._handleAction({dashboard: 'documents', panel:null, view:null, action:null});
                 return;
             }
         }
         this.document = foundDocument;
-        let menteeName = this.mentees.find(_mentee=>_mentee.id==user)
-        this.document.userName = `${menteeName.first_name} ${menteeName.last_name}`;
-        this._updateContext({document: this.document});
+        if(!this.fetchingDocument){
+            let menteeName = this.mentees.find(_mentee=>_mentee.id==user)
+            this.document.userName = `${menteeName.first_name} ${menteeName.last_name}`;
+            this._updateContext({document: this.document});
+        }
     }
 
     async _fetchDocuments(){

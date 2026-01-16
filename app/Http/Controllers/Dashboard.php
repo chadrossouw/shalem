@@ -74,23 +74,10 @@ class Dashboard extends Controller
                         $query->with('criteria');
                     },
                     'userGoals.progress']);
-                $pillars = Pillar::all(['id','name','description','colour']);
-                $pillars = $pillars->map(function($pillar){
-                    return [
-                        'id' => $pillar->id,
-                        'name' => $pillar->name,
-                        'description' => $pillar->description,
-                        'colour' => $pillar->colour,
-                        'slug' => strtolower(str_replace(' ', '-', $pillar->name)),
-                    ];
-                });
                 return view('dashboard.student', ['user' => $user, 'fields' => $fields, 'pillars' => $pillars, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token, 'notifications' => $notifications, 'notificationsPagination' => $notificationsPagination, 'unreadNotifications' => $unreadNotifications, 'unreadNotificationsPagination' => $unreadNotificationsPagination, 'updates' => $updates ]);
             case 'staff':
                 $role = $user->staffRole->role ?? 'staff';
-                $pillars = Pillar::all(['id','name','description','colour']);
                 $fields = Field::where('location','staff_dashboard')->get();
-                
-
                 if($role=='admin'||$role=='superadmin'){
                     return view('dashboard.staff', ['user' => $user, 'fields' => $fields, 'pillars'=>$pillars,'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token, 'notifications' => $notifications, 'notificationsPagination' => $notificationsPagination, 'unreadNotifications' => $unreadNotifications, 'unreadNotificationsPagination' => $unreadNotificationsPagination, 'updates' => $updates ]);
                 }
@@ -112,7 +99,7 @@ class Dashboard extends Controller
         $user  = Auth::user();
         $mentees = User::whereHas('mentor', function($query) use ($user){
                     $query->where('user_id', $user->id);
-                })->get();
+                })->orderBy('last_name')->get();
         $documents = [];
         foreach($mentees as $mentee){
             $mentee->load('student');

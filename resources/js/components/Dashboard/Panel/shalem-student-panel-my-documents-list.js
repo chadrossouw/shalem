@@ -7,8 +7,27 @@ import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { documentStatusMap } from "../../../common/document-status-map.js";
 
 export class ShalemStudentPanelMyDocumentsList extends DocumentHelper(BaseDashboardConsumer(BaseClass(LitElement))){
+    static properties = {
+        ...super.properties,
+        mode: { type: String },
+        _documents: { type: Object },
+       _documentsPagination: { type: Object },
+    }
+
     connectedCallback(){
         super.connectedCallback();
+        if(this.mode === 'staff'){
+            this.documents = this._documents;
+            console.log(this._documentsPagination);
+            this.documentsPagination = this._documentsPagination;
+        }
+    }
+
+    updated(changedProperties){
+        if(this.mode === 'staff'){
+            this.documents = this._documents;
+            this.documentsPagination = this._documentsPagination;
+        }
     }
 
     render(){
@@ -20,6 +39,7 @@ export class ShalemStudentPanelMyDocumentsList extends DocumentHelper(BaseDashbo
                     ${this.documents[page].map(document => {
                         let date = dateToString(document.created_at);
                         let buttons = this._renderActions(document);
+
                         return html`
                         <li class="${document.document_status.status} grid grid_50 shadow radius">
                             <div class='header'>
@@ -37,7 +57,12 @@ export class ShalemStudentPanelMyDocumentsList extends DocumentHelper(BaseDashbo
                 </ul>
             `;
         }
-        return html`<p>You don't have any documents yet. <a href="/upload" @click=${this._goToUpload}>Add one?</a></p>`;
+        if(this._documents){
+            return html`<p>This pupil has no documents yet.</p>`;
+        }
+        else{
+            return html`<p>You don't have any documents yet. <a href="/upload" @click=${this._goToUpload}>Add one?</a></p>`;
+        }
     }
 
     _goToUpload(e){

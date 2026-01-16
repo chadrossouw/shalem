@@ -7,6 +7,7 @@ import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { safeFetch } from "../../../common/xsrf.js";
 import { dateToString } from "../../../common/date.js";
 import { DocumentHelper } from "../../Helpers/document-helper.js";
+import { formStyles } from "../../../utilities/formStyles.js";
 export class ShalemDocument extends DocumentHelper(BaseDashboardConsumer(BaseClass(LitElement))){
     static properties = {
         ...super.properties,
@@ -30,6 +31,9 @@ export class ShalemDocument extends DocumentHelper(BaseDashboardConsumer(BaseCla
     }
 
     render(){
+        /* if(!this.document){
+            return html`<shalem-loader>Letting the mchine warm up...</shalem-loader>`;
+         }*/
         let pillar = this.document.pillar_id ? this.pillars.find(p => p.id == this.document.pillar_id) : null;
         let pillarHtml = pillar ? html`<dt>Pillar:</dt><dd>${pillar.name}</dd>` : '';
         let typeHtml = this.document.type ? html`<dt>Type:</dt><dd class="sc">${this.document.type}</dd>` : '';
@@ -178,6 +182,7 @@ export class ShalemDocument extends DocumentHelper(BaseDashboardConsumer(BaseCla
 
     static styles = [
         super.styles,
+        formStyles,
         css`
         .pending, .forwarded{
             color:var(--blue);
@@ -220,6 +225,11 @@ export class ShalemDocument extends DocumentHelper(BaseDashboardConsumer(BaseCla
         .margins:has(>shalem-student-panel-document-upload){
             margin-bottom:2rem;
         }
+        button.bg_blue:hover{
+            background-color: var(--aqua);
+
+        }
+        
         `
     ];
 }

@@ -9,11 +9,17 @@ export class ShalemStudentDashboardPointsPanel extends BaseDashboardConsumer(Bas
     static properties = {
         ...super.properties,
         year: { type: String },
+        mode: { type: String },
     }
 
     connectedCallback() {
         super.connectedCallback();
         ({ fields: this.fields, user: this.user, pillars: this.pillars } = this._dashboard);
+        if(this.mode === 'staff'){
+            this.user = this.pupil;
+            this.panel = this.view_panel;
+        }
+        console.log(this.panel);
         this.points = pointsByPillar(this.user.user_points,this.pillars);
         this.pillar = this.points ? Object.values(this.points).find(pillar => pillar.slug === this.panel) : null;
     }
@@ -22,12 +28,12 @@ export class ShalemStudentDashboardPointsPanel extends BaseDashboardConsumer(Bas
         return html`
             <div class="header_with_icon margins">
                 <div class="icon" aria-hidden="true">
-                    <div class="points_total star bg_${this.pillar.colour} bg_shade_2">
-                        ${this.pillar.points}
+                    <div class="points_total star bg_${this.pillar?.colour??'white'} bg_shade_2">
+                        ${this.pillar?.points}
                     </div>
                 </div>
                 ${this.year == 'this_year' ? html`
-                    <h1>My ${this.pillar.name} points</h1>
+                    <h1>My ${this.pillar?.name} points</h1>
                 ` : html`
                     <h1>All my ${this.pillar.name} points</h1>
                 `}

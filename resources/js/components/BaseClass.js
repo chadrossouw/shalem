@@ -87,10 +87,16 @@ export const BaseClass = (superClass) => class extends superClass {
     }
 
     get eyes(){ 
+        if(!this.shadowRoot){
+            return [];
+        }
         return this.shadowRoot.querySelectorAll('.eyes,[data-eyes]');
     }
 
     get throb(){
+        if(!this.shadowRoot){
+            return [];
+        }
         return this.shadowRoot.querySelectorAll('.throb,[data-throb]');
     }
 

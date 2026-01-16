@@ -8,7 +8,10 @@ import { BaseClass } from "../BaseClass.js";
 import { safeFetch } from "../../common/xsrf.js";
 
 export class ShalemAvatarSelector extends BaseDashboardConsumer(BaseClass(LitElement)) {
-
+    static properties = {
+        ...super.properties,
+        select: { type: Boolean },
+    }
     connectedCallback() {
         super.connectedCallback();
 
@@ -23,6 +26,13 @@ export class ShalemAvatarSelector extends BaseDashboardConsumer(BaseClass(LitEle
             args: () => [],
         });
         ({fields: this.fields, user: this.user} = this._dashboard);
+    }
+
+    createRenderRoot() {
+        if(this.select){
+            return this;
+        }
+        return super.createRenderRoot();
     }
 
     render() {
@@ -41,6 +51,21 @@ export class ShalemAvatarSelector extends BaseDashboardConsumer(BaseClass(LitEle
 
     _renderAvatarSelector(avatars) {
         avatars = avatars.avatars;
+        if(this.select){
+            return html`
+                <details>
+                    <summary>Select an emoji</summary>
+                    <div class="avatar-options">
+                        ${avatars.map(avatar => html`
+                            <div class="avatar-option">
+                                <input type="radio" name="avatar" id="avatar-${avatar.id}">
+                                <label for="avatar-${avatar.id}"><span class="screen-reader-text">${avatar.name}</span><span class="avatar-svg" aria-hidden="true">${unsafeSVG(avatar.svg)}</span></label>
+                            </div>
+                        `)}
+                    </div>
+                </details>
+            `;
+        }
         let currentAvatar = this.user.student.avatar;
         let avatarDeclaration = '';
         let backButton = html`<button @click=${() => this._goBack()}><span aria-hidden="true">${unsafeSVG(arrowLeftSvg)}</span>Back</button>`;
@@ -52,6 +77,7 @@ export class ShalemAvatarSelector extends BaseDashboardConsumer(BaseClass(LitEle
             let avatarSVG = avatars.find(avatar => avatar.id === currentAvatar.id).svg;
             avatarDeclaration = html`<h3>I'm <span class="screen-reader-text">${currentAvatar.name}</span>${unsafeSVG(avatarSVG)}</h3>`;
         }
+        
 
         return html`
             <slot></slot>

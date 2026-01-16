@@ -13,6 +13,7 @@ export class ShalemStudentDashboardDocuments extends BaseDashboardConsumer(BaseC
 
     static properties = {
         ...super.properties,
+        mode: { type: String },
     }
 
     constructor(){
@@ -30,19 +31,33 @@ export class ShalemStudentDashboardDocuments extends BaseDashboardConsumer(BaseC
             confettiNumber: 1500,
         };
         ({fields: this.fields, user: this.user} = this._dashboard);
+        if(this.mode === 'staff'){
+            this.user = this.pupil;
+            this.panel = 'my-documents';
+        }
     }
 
     disconnectedCallback(){
         super.disconnectedCallback();
-        this.jsConfetti.removeCanvas();
+        if(this.jsConfetti&&this.jsConfetti.removeCanvas){
+            this.jsConfetti?.removeCanvas();
+        }
     }
 
     updated(changedProperties){
+        if(this.mode === 'staff'){
+            this.user = this.pupil;
+            this.panel ='my-documents';
+        }
         cardLinks(this.shadowRoot);
     }
 
 
     render(){
+        if(this.mode === 'staff'){
+            this.user = this.pupil;
+            this.panel = 'my-documents';
+        }
         let panel = '';
         if(this.panel == 'upload'){
             let header = '';
@@ -109,6 +124,7 @@ export class ShalemStudentDashboardDocuments extends BaseDashboardConsumer(BaseC
             panel = html`
                 <shalem-student-panel-my-documents
                     identifier="${this.identifier}"
+                    mode=${this.mode}
                 >
                 </shalem-student-panel-my-documents>
             `

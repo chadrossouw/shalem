@@ -7,6 +7,7 @@ import close from '../../icons/close-icon.svg';
 export class ShalemTooltip extends  BaseClass(LitElement) {
     static properties = {
         buttonText: { type: String },
+        compact: { type: Boolean }
     }
     constructor() {
         super();
@@ -38,7 +39,7 @@ export class ShalemTooltip extends  BaseClass(LitElement) {
         return html`
             <div class="tooltip_wrapper">
                 <button class="tooltip trigger" aria-label="Opens a modal showing more information" @click=${this.openClose}><span aria-hidden="true">${unsafeSVG(tooltipIcon)}</span>${this.buttonText}</button>
-                <div class="tooltip_modal" id="" role="dialog" aria-label="Tooltip" aria-describedby="${this.id}"><h4>${this.buttonText}</h4><p id="${this.id}"><slot></slot></p><button class="close" @click=${this.openClose}><span aria-hidden="true">${unsafeSVG(close)}</span><span class="screen-reader-text">Close Tooltip</span></button></div>
+                <div class="tooltip_modal ${this.compact ? 'compact' : ''}" id="" role="dialog" aria-label="Tooltip" aria-describedby="${this.id}"><h4>${this.buttonText}</h4><p id="${this.id}"><slot></slot></p><button class="close" @click=${this.openClose}><span aria-hidden="true">${unsafeSVG(close)}</span><span class="screen-reader-text">Close Tooltip</span></button></div>
             </div>
         `;
     }
@@ -153,16 +154,25 @@ export class ShalemTooltip extends  BaseClass(LitElement) {
                 transition: opacity calc(var(--transition) / 2) ease,
                     transform var(--move-transition) ease, display var(--transition) ease;
                 transform-origin: 100% 0;
+                border-radius: 0.5rem;
+                box-shadow: var(--box-shadow); ;
                 display: none;
                 z-index:100;
                 scroll-margin-top: var(--header-height);
                 position: absolute;
+                &.compact{
+                    transform: scale(0) translate(0,-50%);
+                }
             }
             .tooltip_modal.open  {
                 margin-top:1rem;
                 opacity: 1;
                 transform: scale(1) translate(50%,-50%);
                 display: block;
+                
+                &.compact{
+                    transform: scale(1) translate(0,-50%);
+                }
             }
             @media (min-width: 1200px){
                 .tooltip_modal {
@@ -170,6 +180,9 @@ export class ShalemTooltip extends  BaseClass(LitElement) {
                 }
                 .tooltip_modal.open{
                     transform: scale(1) translate(50%,-50%);
+                    &.compact{
+                        transform: scale(1) translate(0,-50%);
+                    }
                 }
             }
             button.close {

@@ -60,4 +60,24 @@ class NotificationController extends Controller
         $archived_notifications = Notification::where('user_id', $user->id)->where('archived', true)->paginate(12);
         return response()->json(['message' => 'Notification status updated successfully.', 'notifications' => $notifications, 'unread_notifications' => $unread_notifications, 'archived_notifications' => $archived_notifications], 200);
     }
+
+    public function sendMessage(Request $request, $id){
+        $user = $request->user();
+        $request->validate([
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string',
+            'avatar' => 'nullable|int|max:255',
+        ]);
+        Notification::create(
+            [
+                'user_id' => $id,
+                'subject' => $request->input('subject'),
+                'message' => $request->input('message'),
+                'type' => 'notification',
+                'sender_id' => $user->id,
+                'avatar_id' => $request->input('avatar', null),
+            ]
+        );
+        return response()->json(['message' => 'Message sent successfully.'], 200);
+    }
 }

@@ -94,4 +94,20 @@ export const formStyles = css`
     div:has(>input[type="checkbox"],>input[type="radio"]){
         position:relative;
     }
+    .form-response{
+        padding:1rem;
+        border-radius:var(--border-radius);
+        margin-top:1rem;
+        &.error{
+            border:2px solid var(--red);
+            color:var(--red);
+        }
+        &.success{
+            border:2px solid var(--green);
+            color:var(--green);
+        }
+    }
+    .error, .error_message{
+        color:var(--red);
+    }
 `;

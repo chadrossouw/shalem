@@ -24,8 +24,10 @@ export class ShalemBaseProvider extends LitElement {
         pillars: { type: Array },
         panel: {type: String},
         view: {type: String},
+        view_panel: {type: String},
         action: {type: String},
         mentees: {type: Array },
+        pupil: {type: Object },
         staff: {type: Array },
         token: {type: String, reflect: true},
     };
@@ -68,8 +70,10 @@ export class ShalemBaseProvider extends LitElement {
             updates: this.updates,
             panel: this.panel,
             view: this.view,
+            view_panel: this.view_panel,
             action: this.action,
             mentees: this.mentees,
+            pupil: this.pupil,
             staff: this.staff,
             breadcrumb: this._setBreadcrumb(),
             title: this._setTitle(),
@@ -157,8 +161,10 @@ export class ShalemBaseProvider extends LitElement {
             history: this.history, 
             panel: this.panel, 
             view: this.view, 
+            view_panel: this.view_panel,
             action: this.action,
             mentees: this.mentees,
+            pupil: this.pupil,
             staff:  this.staff
         } = this.dashboardContext);
         this.history = [...this.history, ...newHistory];

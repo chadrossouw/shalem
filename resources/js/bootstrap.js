@@ -81,6 +81,10 @@ import { ShalemNavigation } from "./components/Nav/shalem-navigation.js";
 import { ShalemAvatarSelector } from "./components/Selectors/shalem-avatar-selector.js";
 import { ShalemStaffSelector } from "./components/Selectors/shalem-staff-selector.js";
 
+//Pupils
+import { ShalemStaffPanelPupilDetails } from "./components/Dashboard/Panel/shalem-staff-panel-pupil-details.js";
+import { ShalemStaffMessages } from "./components/Dashboard/View/shalem-staff-messages.js";
+
 //Base provider
 window.customElements.define("shalem-base-provider", ShalemBaseProvider);
 
@@ -155,3 +159,7 @@ window.customElements.define("shalem-navigation", ShalemNavigation);
 //Selectors
 window.customElements.define("shalem-avatar-selector", ShalemAvatarSelector);
 window.customElements.define("shalem-staff-selector", ShalemStaffSelector);
+
+//Pupils
+window.customElements.define("shalem-staff-panel-pupil-details", ShalemStaffPanelPupilDetails);
+window.customElements.define("shalem-staff-messages", ShalemStaffMessages);
