@@ -134,6 +134,7 @@ export const BaseForm = (superClass) => class extends superClass{
                 let message = field.dataset.error_message;
                 if(!message){
                     let label ='';
+                    console.log('field for error', field.labels);
                     if(field.labels?.length>0){
                         label = field.labels[0]?.innerText;
                         if(label){

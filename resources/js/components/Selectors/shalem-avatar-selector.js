@@ -1,4 +1,4 @@
-import { BaseDashboardConsumer } from "./base-dashboard-consumer.js";
+import { BaseDashboardConsumer } from "../Dashboard/base-dashboard-consumer.js";
 import { LitElement,html, css } from "lit";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { Task } from "@lit/task";

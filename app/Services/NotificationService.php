@@ -17,7 +17,7 @@ class NotificationService
      * @param int|null $senderId
      * @return void
      */
-    public function createNotification(User $user, string $message, string $subject, string $type, array $messageActions, ?int $senderId = null, ?int $avatarId = null): void
+    public function createNotification(User $user, string $message, string $subject, string $type, array $messageActions, ?string $senderId = null, ?int $avatarId = null): void
     {
         // Logic to send update notification to the user
         $notification = Notification::create([

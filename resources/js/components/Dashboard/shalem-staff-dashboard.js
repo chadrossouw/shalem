@@ -1,20 +1,28 @@
 import {  html,css, LitElement } from "lit";
 import { BaseDashboardConsumer } from "./base-dashboard-consumer";
 import { BaseClass } from "../BaseClass";
+import { safeFetch } from "../../common/xsrf.js";
 
 export class ShalemStaffDashboard extends BaseDashboardConsumer(BaseClass(LitElement)) {
     static properties = {
         ...super.properties,
+        loading: { type: Boolean, state: true },
     }
 
-    connectedCallback(){
+    async connectedCallback(){
         super.connectedCallback();
         this.isAdmin = this.user?.roles?.includes('admin') || false;
+        this.loading = false;
+        console.log(this.mentees,this.documents);
+        if(!this.mentees&&!this.documents.length){
+            this.loading = true;
+            await this._fetchData();
+        }
     }
 
     render(){
-        if(!this._dashboard){
-            return html`<p>Loading dashboard...</p>`;
+        if(!this._dashboard||this.loading){
+            return html`<div class="margins"><shalem-loader>Finding parking...</shalem-loader></div>`;
         }
         
         let nav = html`
@@ -65,6 +73,23 @@ export class ShalemStaffDashboard extends BaseDashboardConsumer(BaseClass(LitEle
                     ${nav}
                 </shalem-staff-dashboard-home>`;
         }
+    }
+
+    async _fetchData(){
+        try{
+            const request =await safeFetch(`/api/staff/dashboard-data`,{method: 'GET'});
+            const data = await request.json();
+            this.mentees = data.mentees;
+            this.documents = data.documents;
+            this._updateContext({mentees: this.mentees, documents: this.documents});
+        }
+        catch(error){
+            console.error('Error fetching staff dashboard data:', error);
+        }
+        finally{
+            this.loading = false;
+        }
+        
     }
     
     static styles = [

@@ -10,7 +10,7 @@ use App\Models\Notification;
 use App\Models\User;
 use App\Models\UserGoal;
 use App\Models\Document;
-
+use App\Models\ForwardedDocument;
 
 class Dashboard extends Controller
 {
@@ -89,19 +89,7 @@ class Dashboard extends Controller
                 $role = $user->staffRole->role ?? 'staff';
                 $pillars = Pillar::all(['id','name','description','colour']);
                 $fields = Field::where('location','staff_dashboard')->get();
-                $mentees = User::whereHas('mentor', function($query) use ($user){
-                    $query->where('user_id', $user->id);
-                })->get();
-                $documents = [];
-                foreach($mentees as $mentee){
-                    $doc =  Document::where('user_id',$mentee->id)->whereHas('document_status', function($query){
-                        $query->where('status', 'pending');
-                    })->orderBy('created_at','asc')->get();
-                    $doc->load('document_status');
-                    if($doc->count()>0){
-                        $documents[$mentee->id] = $doc;
-                    }
-                }
+                
 
                 if($role=='admin'||$role=='superadmin'){
                     return view('dashboard.staff', ['user' => $user, 'fields' => $fields, 'pillars'=>$pillars,'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token, 'notifications' => $notifications, 'notificationsPagination' => $notificationsPagination, 'unreadNotifications' => $unreadNotifications, 'unreadNotificationsPagination' => $unreadNotificationsPagination, 'updates' => $updates ]);
@@ -110,7 +98,7 @@ class Dashboard extends Controller
                     $fields = Field::where('location','staff_dashboard')->get();
                     return view('dashboard.grade_head', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token]);
                 }
-                return view('dashboard.staff', ['user' => $user, 'fields' => $fields, 'pillars'=>$pillars,'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token,'notifications' => $notifications, 'notificationsPagination' => $notificationsPagination, 'unreadNotifications' => $unreadNotifications, 'unreadNotificationsPagination' => $unreadNotificationsPagination, 'updates' => $updates , 'documents'=>$documents, 'mentees'=>$mentees]);
+                return view('dashboard.staff', ['user' => $user, 'fields' => $fields, 'pillars'=>$pillars,'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action, 'token' => $token,'notifications' => $notifications, 'notificationsPagination' => $notificationsPagination, 'unreadNotifications' => $unreadNotifications, 'unreadNotificationsPagination' => $unreadNotificationsPagination, 'updates' => $updates ]);
             case 'parent':
                 $fields = Field::where('location','parent_dashboard')->get();
                 return view('dashboard.parent', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action ]);
@@ -118,6 +106,32 @@ class Dashboard extends Controller
                 $fields = Field::where('location','dashboard')->get();
                 return view('dashboard', ['user' => $user, 'fields' => $fields, 'dashboard' => $dashboard, 'panel' => $panel, 'view' => $view, 'action'=>$action ]);
         }
+    }
+
+    public function staffDashboardData(Request $request){
+        $user  = Auth::user();
+        $mentees = User::whereHas('mentor', function($query) use ($user){
+                    $query->where('user_id', $user->id);
+                })->get();
+        $documents = [];
+        foreach($mentees as $mentee){
+            $mentee->load('student');
+            $doc =  Document::where('user_id',$mentee->id)->whereHas('document_status', function($query){
+                $query->where('status', 'pending');
+            })->orderBy('created_at','asc')->get();
+            $doc->load('document_status');
+            if($doc->count()>0){
+                $documents[$mentee->id] = $doc;
+            }
+        }
+        $forwardedDocuments = ForwardedDocument::where('user_id',$user->id)->orderBy('created_at','desc')->get();
+        $forwardedDocuments->load('document');
+        $forwardedDocuments->load('document.document_status');
+        $documents['forwarded'] = [];
+        $forwardedDocuments->each(function($fdoc)use(&$documents){
+            $documents['forwarded'][] = $fdoc->document;
+        });
+        return response()->json(['mentees' => $mentees, 'documents' => $documents], 200);
     }
 
     public function login(Request $request){

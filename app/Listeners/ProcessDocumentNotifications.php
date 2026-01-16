@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Events\DocumentUploaded;
+use App\Events\DocumentNotify;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Services\NotificationService;
@@ -23,7 +23,7 @@ class ProcessDocumentNotifications
     /**
      * Handle the event.
      */
-    public function handle(DocumentUploaded $event): void
+    public function handle(DocumentNotify $event): void
     {
         // Access the uploaded document using $event->document
         $document = $event->document;
@@ -33,8 +33,31 @@ class ProcessDocumentNotifications
         $user = $document->user;
         $mentor = $user->mentor;
         $status = $document->document_status;
-        if($status->status == 'pending'||!$status){
-            if ($mentor) {
+        if($status->status == 'pending'||!$status){        $forwarded = $document->document_status->status === 'forwarded';
+        if($forwarded){
+            $forwardedDoc = $document->forwardedDocument;
+            if($forwardedDoc){
+                $this->notificationService->createNotification(
+                    user: $forwardedDoc->user,
+                    message: "A document '{$document->title}' has been forwarded to you by {$forwardedDoc->forwardedBy->first_name} {$forwardedDoc->forwardedBy->last_name}.",
+                    subject: 'Document Needs Review',
+                    type: 'notification',
+                    messageActions: [
+                        [
+                            'title' => 'Review Document',
+                            'action' => 'review',
+                            'dashboard' => 'documents',
+                            'panel' => 'documents',
+                            'view' => $document->id,
+                            'status' => 'forwarded',
+                        ]
+                    ],
+                    senderId: $forwardedDoc->forwardedBy->id
+                );
+            }
+        }
+        else{
+                if ($mentor) {
                 $previousStatuses = $document->document_statuses;
                 if($previousStatuses->filter(function($ds){
                     return $ds->status == 'changes_requested' ;
@@ -59,22 +82,22 @@ class ProcessDocumentNotifications
                     );
                     return;
                 }
-                $this->notificationService->createNotification(
-                    user: $mentor->user,
-                    message: "A new document '{$document->title}' has been uploaded by {$user->first_name} {$user->last_name}.",
-                    subject: 'New Document Uploaded',
-                    type: 'notification',
-                    messageActions: [
-                        [
-                            'title' => 'Approve Document',
-                            'action' => 'review',
-                            'dashboard' => 'documents',
-                            'panel' => 'documents',
-                            'view' => $document->id,
-                            'status' => 'pending',
-                        ]
-                    ],
-                    senderId: $user->id
+                    $this->notificationService->createNotification(
+                        user: $mentor->user,
+                        message: "A new document '{$document->title}' has been uploaded by {$user->first_name} {$user->last_name}.",
+                        subject: 'New Document Uploaded',
+                        type: 'notification',
+                        messageActions: [
+                            [
+                                'title' => 'Approve Document',
+                                'action' => 'review',
+                                'dashboard' => 'documents',
+                                'panel' => 'documents',
+                                'view' => $document->id,
+                                'status' => 'pending',
+                            ]
+                        ],
+                        senderId: $user->id
                 );
             }
         }
@@ -94,7 +117,8 @@ class ProcessDocumentNotifications
                     ]
                 ],
                 senderId: $mentor?->user->id ?? null
-            );
+                );
+            }
         }
     }
 }
