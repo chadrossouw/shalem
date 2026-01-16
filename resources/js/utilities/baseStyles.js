@@ -131,7 +131,12 @@ export const baseStyles = css`
             outline: 2px solid;
         }
     }
-
+    textarea{
+        min-height:8rem;
+        font-family:var(--font-sans);
+        padding: 0.5rem;
+        resize:vertical;
+    }
     .margins{
         margin: 0 var(--margins);
     }

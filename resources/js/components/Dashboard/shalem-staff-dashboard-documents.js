@@ -21,14 +21,18 @@ export class ShalemStaffDashboardDocuments extends BaseDashboardConsumer(BaseCla
         super();
     }
 
+    firstUpdated(){
+        this._setDocumentTitle('Verify documents');
+    }
+
     connectedCallback(){
         super.connectedCallback();
         ({fields: this.fields, user: this.user} = this._dashboard);
-        if(this.view && this.view != 'success'){
+        if(this.view && (this.view != 'success'&& this.view != 'changes_requested_success')){
             //find document by id
             this._setDocumentFromView();
         }
-        else if (this.view == 'success'){
+        else if (this.view == 'success'||this.view=='changes_requested_success'){
             this.document = null;
             this._fetchDocuments();
         }
@@ -48,11 +52,11 @@ export class ShalemStaffDashboardDocuments extends BaseDashboardConsumer(BaseCla
 
     updated(changedProperties){
         if(changedProperties.has('view')){
-            if(this.view && this.view != 'success'){
+            if(this.view && this.view != 'success' && this.view != 'changes_requested_success'){
             //find document by id
                 this._setDocumentFromView();
             }
-            else if (this.view == 'success'){
+            else if (this.view == 'success' || this.view == 'changes_requested_success'){
                 this.document = null;
                 this._fetchDocuments();
             }
@@ -76,6 +80,23 @@ export class ShalemStaffDashboardDocuments extends BaseDashboardConsumer(BaseCla
                     </shalem-editable-field>
                 </div>
                 <div class="margins">
+                    <button class="bg_blue white" @click=${()=>this._handleAction({dashboard: 'documents', panel:null, view:null, action:null})}>
+                        ${unsafeSVG(backArrow)}Back to Documents
+                    </button>
+                </div>
+                `;
+            }
+            else if(this.view == 'changes_requested_success'){
+                return html`
+                <slot></slot>
+                <div class="header_with_icon margins">
+                    ${unsafeSVG(verifyIcon)}
+                    <shalem-editable-field name="staff_dashboard_documents_changes_requested_success_message" location="staff-dashboard" ?admin=${this.isAdmin}>
+                        <h2>${this.fields?.staff_dashboard_documents_changes_requested_success_message ?? 'Changes requested.'}</h2>
+                    </shalem-editable-field>
+                </div>
+                <div class="margins">
+                    <p>Your request for changes has been sent to the pupil. The document will appear in your dashboard again when they have made the necessary updates.</p>
                     <button class="bg_blue white" @click=${()=>this._handleAction({dashboard: 'documents', panel:null, view:null, action:null})}>
                         ${unsafeSVG(backArrow)}Back to Documents
                     </button>

@@ -21,7 +21,6 @@ export class ShalemStudentDashboardHome extends BaseDashboardConsumer(BaseClass(
         super.connectedCallback();
         
         ({fields: this.fields, user: this.user} = this._dashboard);
-        console.log(this.user);
     } 
 
     updated(changedProperties){

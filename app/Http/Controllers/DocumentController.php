@@ -19,7 +19,18 @@ class DocumentController extends Controller
             'document_description' => 'required|string',
         ]);
         if($request->has('document_id')){
-            $document = Document::where('id', intval($request->input('document_id')))->where('user_id', $user->id)->first();
+            $is_review_edit = $request->input('review_edit', false);
+            if($is_review_edit){
+                $user->tokenCan('staff') || abort(403, 'Unauthorized action.');
+                $request->validate([
+                    'approval_message' => 'nullable|string',
+                    'type' => 'required|string',
+                ]);
+                $document = Document::where('id', intval($request->input('document_id')))->first();
+            }
+            else{
+                $document = Document::where('id', intval($request->input('document_id')))->where('user_id', $user->id)->first();
+            }
             if(!$document){
                 return response()->json(['error' => 'Document not found'], 404);
             }
@@ -32,14 +43,30 @@ class DocumentController extends Controller
             $document->pillar_id = strip_tags($request->input('document_pillar'));
             $document->description = strip_tags($request->input('document_description'));
             $document->save();
-            DocumentStatus::create([
-                'document_id' => $document->id,
-                'status' => 'pending',
-                'status_message' => 'Your document has been updated and is waiting for approval.',
-                'user_id' => '',
-            ]);
-            DocumentUploaded::dispatch($document);
-            return response()->json(['view' => 'success'], 200);
+            if($is_review_edit){
+                $document_type = strip_tags($request->input('type'));
+                $document->type = $document_type;
+                $document->save();
+                $status_message = $request->input('approval_message', 'Your document has been approved.');
+                DocumentStatus::create([
+                    'document_id' => $document->id,
+                    'status' => 'approved',
+                    'status_message' => strip_tags($status_message),
+                    'user_id' => $user->id,
+                ]);
+                DocumentProcessed::dispatch($document);
+                return response()->json(['view' => 'success'], 200);
+            }
+            else{
+                DocumentStatus::create([
+                    'document_id' => $document->id,
+                    'status' => 'pending',
+                    'status_message' => 'Your document has been updated and is waiting for approval.',
+                    'user_id' => '',
+                ]);
+                DocumentUploaded::dispatch($document);
+                return response()->json(['view' => 'success'], 200);
+            }
         }
         $file = $request->file('document_file');
         $title = strip_tags($request->input('document_title'));
@@ -156,5 +183,53 @@ class DocumentController extends Controller
         ]);
         DocumentProcessed::dispatch($document);
         return response()->json(['message' => 'Document approved successfully','action'=>['dashboard'=>'documents','panel'=>'document','view'=>'success']], 200);
+    }
+
+    public function requestCorrections(Request $request){
+        $request->validate([
+            'document_id' => 'required|integer|exists:documents,id',
+            'changes_message' => 'required|string',
+        ]);
+        $user = $request->user();
+        $document = Document::where('id', intval($request->input('document_id')))->first();
+        if(!$document){
+            return response()->json(['error' => 'Document not found'], 404);
+        }
+        $status_message = strip_tags($request->input('changes_message'));
+        if(!$status_message){
+            $status_message = 'Please make the requested changes to your document.';
+        }
+        DocumentStatus::create([
+            'document_id' => $document->id,
+            'status' => 'changes_requested',
+            'status_message' => $status_message,
+            'user_id' => $user->id,
+        ]);
+        DocumentUploaded::dispatch($document);
+        return response()->json(['message' => 'Corrections requested successfully','action'=>['dashboard'=>'documents','panel'=>'documents','view'=>'changes_requested_success']], 200);
+    }
+
+    public function reject(Request $request){
+        $request->validate([
+            'document_id' => 'required|integer|exists:documents,id',
+            'status_message' => 'nullable|string',
+        ]);
+        $user = $request->user();
+        $document = Document::where('id', intval($request->input('document_id')))->first();
+        if(!$document){
+            return response()->json(['error' => 'Document not found'], 404);
+        }
+        $status_message = strip_tags($request->input('status_message'));
+        if(!$status_message){
+            $status_message = 'Your document has been rejected.';
+        }
+        DocumentStatus::create([
+            'document_id' => $document->id,
+            'status' => 'rejected',
+            'status_message' => $status_message,
+            'user_id' => $user->id,
+        ]);
+        DocumentProcessed::dispatch($document);
+        return response()->json(['message' => 'Document rejected successfully','action'=>['dashboard'=>'documents','panel'=>'documents','view'=>'success']], 200);
     }
 }

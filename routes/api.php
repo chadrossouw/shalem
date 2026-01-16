@@ -106,6 +106,7 @@ Route::middleware(['auth:sanctum','abilities:staff'])->group(function(){
     Route::get('/staff/documents', [DocumentController::class, 'staffList'])->name('api.staff.documents.list');
     Route::post('/document/approve', [DocumentController::class, 'approve'])->name('api.document.approve');
     Route::post('/document/reject', [DocumentController::class, 'reject'])->name('api.document.reject');
+    Route::post('/document/request-corrections', [DocumentController::class, 'requestCorrections'])->name('api.document.request-corrections');
 });
 
 //Badges Routes

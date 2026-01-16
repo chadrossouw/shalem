@@ -5,6 +5,8 @@ import view from '../../icons/view.svg';
 import approve from '../../icons/approve.svg';
 import deleteicon from '../../icons/deleteicon.svg';
 import arrowLeft from '../../icons/arrow-left.svg';
+import requestCorrections from '../../icons/request-corrections.svg';
+import reject from '../../icons/reject.svg';
 import { html } from 'lit';
 import { unsafeSVG } from 'lit/directives/unsafe-svg.js';
 
@@ -33,8 +35,14 @@ export const DocumentHelper = (superClass) => class extends superClass{
                                     <option value="internal">Internal</option>
                                     <option value="external">External</option>
                                 </select>
-                                <label for="status_message" class="white">Optional message to the student</label>
-                                <textarea name="status_message" placeholder="Enter a message to the student (optional)"></textarea>
+                                <label for="status_message" class="white">Optional message to the student
+                                    <shalem-tooltip>
+                                        <shalem-editable-field name="staff_document_approval_message_tooltip" location="staff-dashboard" ?admin=${this.isAdmin}>
+                                            <p>${this.fields?.staff_document_approval_message_tooltip ?? 'When a document is approved it sends a notification to the pupil. You can customize this message to give the pupil encouragement.'}</p>
+                                        </shalem-editable-field>
+                                    </shalem-tooltip>
+                                </label>
+                                <textarea name="status_message" placeholder="Enter a message to the pupil (optional)"></textarea>
                                 <input type="hidden" name="document_id" value="${document.id}" />
                                 <div class="form_response white"></div>
                                 <div class="flex button-group">
@@ -48,6 +56,60 @@ export const DocumentHelper = (superClass) => class extends superClass{
             `});
             buttons.push({name:'edit',html: html`
                 <button class="bg_blue" @click=${() => this._clickHandler('review-edit', document)}>${unsafeSVG(editFormal)}Edit</button>
+            `});
+            buttons.push({name:'request-corrections',html: html`
+                <shalem-dialog>
+                  <button class="bg_blue" slot="trigger">${unsafeSVG(requestCorrections)}Request Corrections</button>
+                  <h2 slot="title" class="white">Request corrections</h2>
+                    <div slot="body">
+                        <shalem-form-wrapper identifier=${this.identifier}>
+                            <form id="approve_document_form" action="${this.restUrl}document/request-corrections"}>
+                                <label for="changes_message" class="white">Message to the pupil
+                                    <shalem-tooltip>
+                                        <shalem-editable-field name="staff_document_request_corrections_message_tooltip" location="staff-dashboard" ?admin=${this.isAdmin}>
+                                            <p>${this.fields?.staff_document_request_corrections_message_tooltip ?? 'Describe the changes you want the pupil to make to this document.'}</p>
+                                        </shalem-editable-field>
+                                    </shalem-tooltip>
+                                </label>
+                                <textarea name="changes_message" placeholder="Enter a message to the pupil" aria-required="true"></textarea>
+                                <input type="hidden" name="document_id" value="${document.id}" />
+                                <div class="form_response white"></div>
+                                <div class="flex button-group">
+                                    <button class="bg_blue" type="submit" @click=${(e)=>{e.stopPropagation()}}>${unsafeSVG(requestCorrections)}Request Corrections</button>
+                                </div>
+                                
+                            </form>
+                        </shalem-form-wrapper>
+                    </div>
+                </shalem-dialog>
+            `});
+            buttons.push({name:'reject',html: html`
+                <shalem-dialog>
+                  <button class="bg_blue" slot="trigger">${unsafeSVG(reject)}Reject</button>
+                  <h2 slot="title" class="white">Reject this document</h2>
+                    <div slot="body">
+                        <shalem-form-wrapper identifier=${this.identifier}>
+                            <shalem-editable-field name="staff_document_reject_warning" location="staff-dashboard" ?admin=${this.isAdmin}>
+                                <p class="white">${this.fields?.staff_document_reject_warning ?? 'Are you sure you want to reject this document? Make sure to give the pupil an opportunity to make amends first.'}</p>
+                            </shalem-editable-field>
+                            <form id="reject_document_form" action="${this.restUrl}document/reject"}>
+                                <label for="status_message" class="white">Optional message to the student
+                                    <shalem-tooltip>
+                                        <shalem-editable-field name="staff_document_reject_message_tooltip" location="staff-dashboard" ?admin=${this.isAdmin}>
+                                            <p>${this.fields?.staff_document_reject_message_tooltip ?? 'When a document is rejected it sends a notification to the pupil. You can customize this message to explain why the document is rejected.'}</p>
+                                        </shalem-editable-field>
+                                    </shalem-tooltip>
+                                </label>
+                                <textarea name="status_message" placeholder="Enter a message to the pupil (optional)"></textarea>
+                                <input type="hidden" name="document_id" value="${document.id}" />
+                                <div class="form_response white"></div>
+                                <div class="flex button-group">
+                                    <button class="bg_blue" type="submit" @click=${(e)=>{e.stopPropagation()}}>${unsafeSVG(reject)}Reject Document</button>
+                                </div>   
+                            </form>
+                        </shalem-form-wrapper>
+                    </div>
+                </shalem-dialog>
             `});
         }
         else if(this.action == 'review-edit'){

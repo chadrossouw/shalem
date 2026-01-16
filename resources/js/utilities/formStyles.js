@@ -11,6 +11,8 @@ export const formStyles = css`
     textarea{
         min-height:8rem;
         font-family:var(--font-sans);
+        padding: 0.5rem;
+        resize:vertical;
     }
     input:focus,textarea:focus,select:focus{
         outline:2px solid var(--purple-shade-2)

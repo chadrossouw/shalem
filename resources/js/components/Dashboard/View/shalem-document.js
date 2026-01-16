@@ -119,13 +119,23 @@ export class ShalemDocument extends DocumentHelper(BaseDashboardConsumer(BaseCla
                 </div>
                 `;
             }
-            body = html`
-            <div class="margins">
-                <shalem-student-panel-document-upload document="${JSON.stringify(this.document)}"></shalem-student-panel-document-upload>
-                
-            </div>  
-            ${preview}
-            `;
+            if(this.action == 'edit'){
+                body = html`
+                <div class="margins">
+                    <shalem-student-panel-document-upload document="${JSON.stringify(this.document)}" identifier="${this.identifier}"></shalem-student-panel-document-upload>
+                    
+                </div>  
+                ${preview}
+                `;
+            }
+            else if(this.action == 'review-edit'){
+                body = html`
+                <div class="margins">
+                    <shalem-staff-panel-document-review-edit document="${JSON.stringify(this.document)}" identifier="${this.identifier}"></shalem-staff-panel-document-review-edit>  
+                </div>  
+                ${preview}
+                `;
+            }
         }
         let actions = this._renderActions(this.document);
         let footer = html`

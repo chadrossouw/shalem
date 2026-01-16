@@ -46,6 +46,7 @@ import { ShalemStudentPanelDocumentUpload } from "./components/Dashboard/Panel/s
 import { ShalemStudentPanelMyDocuments } from "./components/Dashboard/Panel/shalem-student-panel-my-documents.js";
 import { ShalemStudentPanelMyDocumentsList } from "./components/Dashboard/Panel/shalem-student-panel-my-documents-list.js";
 import { ShalemDocument } from "./components/Dashboard/View/shalem-document.js";
+import { ShalemStaffPanelDocumentReviewEdit } from "./components/Dashboard/Panel/shalem-staff-panel-document-review-edit.js";
 
 //Notifications
 import { ShalemPanelNotificationsList } from "./components/Dashboard/Panel/shalem-panel-notifications-list.js";
@@ -116,6 +117,7 @@ window.customElements.define("shalem-student-panel-document-upload", ShalemStude
 window.customElements.define("shalem-student-panel-my-documents", ShalemStudentPanelMyDocuments);
 window.customElements.define("shalem-student-panel-my-documents-list", ShalemStudentPanelMyDocumentsList);
 window.customElements.define("shalem-document", ShalemDocument);
+window.customElements.define("shalem-staff-panel-document-review-edit", ShalemStaffPanelDocumentReviewEdit);
 
 //Notifications
 window.customElements.define("shalem-panel-notifications-list", ShalemPanelNotificationsList);
