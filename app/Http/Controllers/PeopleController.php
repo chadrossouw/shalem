@@ -63,6 +63,7 @@ class PeopleController extends Controller
         $user = $request->user();
         $notifications = Notification::where('sender_id', $user->id)
             ->where('user_id', $id)
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
         return response()->json(['messages' => $notifications], 200);
     }

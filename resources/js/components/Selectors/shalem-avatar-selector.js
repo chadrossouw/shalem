@@ -11,6 +11,7 @@ export class ShalemAvatarSelector extends BaseDashboardConsumer(BaseClass(LitEle
     static properties = {
         ...super.properties,
         select: { type: Boolean },
+        _selectedAvatar: { type: Object, state: true },
     }
     connectedCallback() {
         super.connectedCallback();
@@ -53,15 +54,19 @@ export class ShalemAvatarSelector extends BaseDashboardConsumer(BaseClass(LitEle
         avatars = avatars.avatars;
         if(this.select){
             return html`
-                <details>
-                    <summary>Select an emoji</summary>
+                <details .open=${!this._selectedAvatar}>
+                    <summary>${this._selectedAvatar ? html`<span class="screen-reader-text">${this._selectedAvatar.name}</span><span class="avatar-svg" aria-hidden="true">${unsafeSVG(this._selectedAvatar.svg)}</span>` : html`Select an emoji`}</summary>
                     <div class="avatar-options">
                         ${avatars.map(avatar => html`
                             <div class="avatar-option">
-                                <input type="radio" name="avatar" id="avatar-${avatar.id}">
+                                <input type="radio" name="avatar" id="avatar-${avatar.id}" value="${avatar.id}"} @change=${() => this._selectedAvatar=avatar}>
                                 <label for="avatar-${avatar.id}"><span class="screen-reader-text">${avatar.name}</span><span class="avatar-svg" aria-hidden="true">${unsafeSVG(avatar.svg)}</span></label>
                             </div>
                         `)}
+                        ${this._selectedAvatar ? html`<div class="avatar-option">
+                                <input type="radio" name="avatar" id="avatar-empty" value=""} @change=${() => this._selectedAvatar=null}>
+                                <label for="avatar-empty">No emoji</label>
+                            </div>` : ''}
                     </div>
                 </details>
             `;

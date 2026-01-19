@@ -165,7 +165,6 @@ export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationList
     }
 
     async _fetchDocuments(page=1,query=false,refresh=false){
-        console.log(this.documents);
         if(this.documents && this.documents[page] && !refresh && !query){
             this.documentsPagination.current_page = page;
             

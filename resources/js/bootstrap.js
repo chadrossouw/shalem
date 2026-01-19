@@ -23,6 +23,7 @@ import { ShalemPointsIcon } from "./components/Points/shalem-points-icon.js";
 import { ShalemTooltip } from "./components/Tooltip/shalem-tooltip.js";
 import { ShalemAnchorModal } from "./components/Modal/shalem-anchor-modal.js";
 import { ShalemFormWrapper } from "./components/Form/form-wrapper.js";
+import { ShalemBreadcrumbs } from "./components/Nav/shalem-breadcrumbs.js";
 
 //Student Dashboard elements
 import { ShalemStudentDashboard } from "./components/Dashboard/shalem-student-dashboard.js";
@@ -104,6 +105,7 @@ window.customElements.define("shalem-points-icon", ShalemPointsIcon);
 window.customElements.define("shalem-tooltip", ShalemTooltip);
 window.customElements.define("shalem-anchor-modal", ShalemAnchorModal);
 window.customElements.define("shalem-form-wrapper", ShalemFormWrapper);
+window.customElements.define("shalem-breadcrumbs", ShalemBreadcrumbs);
 
 //Student Dashboard elements
 window.customElements.define("shalem-student-dashboard", ShalemStudentDashboard);

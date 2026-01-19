@@ -120,7 +120,7 @@ Route::middleware(['auth:sanctum','ability:staff,grade_head,admin,super_admin'])
     Route::get('/students/{mentee}',[PeopleController::class,'listStudents'])->name('api.students.list');
     Route::get('/student/{id}',[PeopleController::class,'getStudent'])->name('api.parents.list');
     Route::get('/student/{id}/messages',[PeopleController::class,'getStudentMessages'])->name('api.student.messages.list');
-    Route::post('/student/{id}/message',[NotificationController::class,'sendMessageToStudent'])->name('api.student.message.send');
+    Route::post('/student/{id}/message',[NotificationController::class,'sendMessage'])->name('api.student.message.send');
 });
 
 //Badges Routes

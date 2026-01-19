@@ -40,6 +40,7 @@ export class ShalemDocument extends DocumentHelper(BaseDashboardConsumer(BaseCla
         let statusMessage = this._getStatusMessage();
         
         let header = html`
+        
         <div class="header_with_icon header_with_document_status margins">
             <div class="left">
                 ${unsafeSVG(archiveIcon)}

@@ -66,7 +66,7 @@ export class ShalemStaffDashboardPupils extends BaseDashboardConsumer(BaseClass(
                                         ${unsafeSVG(view)}
                                         View
                                     </button>
-                                    <button class="bg_blue" @click=${() => this._handleAction({dashboard: 'pupils', panel: mentee.id, view: message})}>
+                                    <button class="bg_blue" @click=${() => this._handleAction({dashboard: 'pupils', panel: mentee.id, view: 'messages'})}>
                                         ${unsafeSVG(message)}
                                         Message
                                     </button>

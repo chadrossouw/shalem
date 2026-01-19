@@ -64,10 +64,14 @@ class NotificationController extends Controller
     public function sendMessage(Request $request, $id){
         $user = $request->user();
         $request->validate([
-            'subject' => 'required|string|max:255',
+            'subject' => 'required|string',
             'message' => 'required|string',
-            'avatar' => 'nullable|int|max:255',
+            'avatar' => 'nullable|string',
         ]);
+        $avatarId = null;
+        if($request->has('avatar')){
+            $avatarId = intval($request->input('avatar'));
+        }
         Notification::create(
             [
                 'user_id' => $id,
@@ -75,7 +79,7 @@ class NotificationController extends Controller
                 'message' => $request->input('message'),
                 'type' => 'notification',
                 'sender_id' => $user->id,
-                'avatar_id' => $request->input('avatar', null),
+                'avatar_id' => $avatarId,
             ]
         );
         return response()->json(['message' => 'Message sent successfully.'], 200);

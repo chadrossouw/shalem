@@ -83,6 +83,7 @@ export class ShalemUpdates extends BaseDashboardConsumer(BaseClass(LitElement)) 
             left:0;
             width:100vw;
             height:100dvh;
+            z-index:5;
             &>div{
                 height:100dvh;
                 display:grid;

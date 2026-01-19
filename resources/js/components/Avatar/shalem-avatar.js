@@ -46,7 +46,7 @@ export class ShalemAvatar extends LitElement{
             initial: () => html`<shalem-loader spinner></shalem-loader>`,
             pending: () => html`<shalem-loader spinner></shalem-loader>`,
             complete: (value) => this._renderAvatar(value),
-            error: (error) => html`<p>Oops, something went wrong: ${error}</p>`,
+            error: (error) => '',
         })}
     `;
     }

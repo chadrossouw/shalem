@@ -109,6 +109,7 @@ export class ShalemStaffDashboardDocuments extends BaseDashboardConsumer(BaseCla
                 return html`<div class="margins"><shalem-loader>Shuffling the pack...</shalem-loader></div>`;
             }
             return html`
+            <slot></slot>
             <shalem-document identifier="${this.identifier}">
             </shalem-document>
             `;
