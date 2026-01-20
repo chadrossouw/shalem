@@ -53,87 +53,90 @@ export class ShalemStudentPanelCVSupportCreate extends SearchListener(Pagination
         let form = '';
         if(this._step == 3){
             form = html`<div class="success_message flex column align_center">
-                ${unsafeSVG(fredParty)}
-                <h3>${this._cvSupport.name} has been created!</h3>
-                <a href="${this._cvSupport.public_file_path}" class="bg_aqua white" download target="_blank" rel="noopener">Download your CV Support</a>
-                <button class="bg_aqua white" @click=${()=>this._handleAction({dashboard:'cv-support', panel:'cv-support'})}>Go to my CV Supports</button>
+                <div class="success_header header_with_icon">
+                    ${unsafeSVG(fredParty)}
+                    <h3>${this._cvSupport?.name} has been created!</h3>
+                </div>
+                <a href="${this._cvSupport?.public_file_path}" class="bg_aqua white button" download target="_blank" rel="noopener">Download your CV Support</a>
+                <button class="bg_aqua white" @click=${()=>this._handleAction({dashboard:'cv-support', panel:''})}>Go to my CV Supports</button>
             </div>`;
         }
-
+        else{
         form = html`
-            <form id="cv-support-create-form" class="cv-support-create-form" @submit=${this._handleSubmit} action="${this.restUrl}cvs/create">
+                <form id="cv-support-create-form" class="cv-support-create-form" @submit=${this._handleSubmit} action="${this.restUrl}cvs/create">
 
-                <div class="form_group" style="display: ${this._step == 0 ? 'block' : 'none'};">
-                    <div class="input_group">
-                        <label for="name">Name</label>
-                        <input type="text" id="name" name="name" aria-required="true" @blur=${(e)=>{this._name = e.target.value}}/>
-                    </div>
-                    <div class="input_group">
-                        <label for="description">Description</label>
-                        <textarea id="description" name="description" @blur=${(e)=>{this._description = e.target.value}}></textarea>
-                    </div>
-                    <button class="bg_aqua white" @click=${(e)=>this._handleNextStep(e)}>Let's build it</button>
-                </div>
-                <div class="form_group" style="display: ${this._step == 1 ? 'block' : 'none'};">
-                    <input type="hidden" name="document_ids" .value="${this._docs ? this._docs.map(doc => doc.id).join(',') : ''}" aria-required="true" data-error_message="You must select at least one document."/>
-                    ${this._docs && this._docs.length > 0 ? html`
-                        <div class="selected_documents inner_padding radius bg_yellow bg_shade_2">
-                            <h3>Selected Documents:</h3>
-                            <ul class="documents_list cards">
-                                ${this._docs.map(doc => {
-                                    let date = dateToString(doc.created_at);
-                                    let pillar = this.pillars.find(pillar => {
-                                        return pillar.id === doc.pillar_id;
-                                    });
-                                    return html`
-                                        <li class="grid grid_50 shadow radius bg_white">
-                                            <div class='header'>
-                                                <h4>${doc.title}</h4>
-                                                <h5 class="${pillar.colour}">${pillar?.name ?? 'General'}</h5>
-                                                <p class="description">${doc.description}</p>
-                                                <p class="uploaded_on">${date}</p>
-                                            </div>
-                                            <div class="action">
-                                                <button @click=${(e)=>this._handleDocumentRemove(e, doc.id)}>${unsafeSVG(closeIcon)}<span class="screen-reader-text">Remove</span></button>
-                                            </div>
-                                        </li>
-                                    `
-                                })}
-                            </ul>
+                    <div class="form_group" style="display: ${this._step == 0 ? 'block' : 'none'};">
+                        <div class="input_group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" aria-required="true" @blur=${(e)=>{this._name = e.target.value}}/>
                         </div>
-                    ` : ''}
-                    <shalem-student-panel-cv-support-document-selector identifier="${this.identifier}" documents="${JSON.stringify(this._docs)}" selector></shalem-student-panel-cv-support-document-selector>
-                    <button class="bg_aqua white" @click=${(e)=>this._handleNextStep(e)}>Ok. Let's go.</button>
-                </div>
-                <div class="form_group" style="display: ${this._step == 2 ? 'block' : 'none'};">
-                    <p>Please confirm that the information you've provided is correct.</p>
-                    <h3>${this._name}</h3>
-                    <p><em>${this._description}</em></p>
-                    <h4>Documents:</h4>
-                    <ul class="documents_list cards">
-                        ${this._docs.map(doc => {
-                            let date = dateToString(doc.created_at);
-                            let pillar = this.pillars.find(pillar => {
-                                return pillar.id === doc.pillar_id;
-                            });
-                            return html`
-                                <li class="grid grid_50 shadow radius">
-                                    <div class='header'>
-                                        <h4>${doc.title}</h4>
-                                        <h5 class="${pillar.colour}">${pillar?.name ?? 'General'}</h5>
-                                        <p class="description">${doc.description}</p>
-                                        <p class="uploaded_on">${date}</p>
-                                    </div>
-                                </li>
-                            `
-                        })}
-                    </ul>
-                    <button class="bg_aqua white" type="submit">Confirm and Create CV Support</button>
-                </div>
-                <div class="form-response"></div>
-                <button @click=${(e)=>this._handlePreviousStep(e)} style="display: ${this._step > 0 ? 'block' : 'none'};">< Wait! Go back a step</button>
-            </form>
-        `
+                        <div class="input_group">
+                            <label for="description">Description</label>
+                            <textarea id="description" name="description" @blur=${(e)=>{this._description = e.target.value}}></textarea>
+                        </div>
+                        <button class="bg_aqua white" @click=${(e)=>this._handleNextStep(e)}>Let's build it</button>
+                    </div>
+                    <div class="form_group" style="display: ${this._step == 1 ? 'block' : 'none'};">
+                        <input type="hidden" name="document_ids" .value="${this._docs ? this._docs.map(doc => doc.id).join(',') : ''}" aria-required="true" data-error_message="You must select at least one document."/>
+                        ${this._docs && this._docs.length > 0 ? html`
+                            <div class="selected_documents inner_padding radius bg_yellow bg_shade_2">
+                                <h3>Selected Documents:</h3>
+                                <ul class="documents_list cards">
+                                    ${this._docs.map(doc => {
+                                        let date = dateToString(doc.created_at);
+                                        let pillar = this.pillars.find(pillar => {
+                                            return pillar.id === doc.pillar_id;
+                                        });
+                                        return html`
+                                            <li class="grid grid_50 shadow radius bg_white">
+                                                <div class='header'>
+                                                    <h4>${doc.title}</h4>
+                                                    <h5 class="${pillar.colour}">${pillar?.name ?? 'General'}</h5>
+                                                    <p class="description">${doc.description}</p>
+                                                    <p class="uploaded_on">${date}</p>
+                                                </div>
+                                                <div class="action">
+                                                    <button @click=${(e)=>this._handleDocumentRemove(e, doc.id)}>${unsafeSVG(closeIcon)}<span class="screen-reader-text">Remove</span></button>
+                                                </div>
+                                            </li>
+                                        `
+                                    })}
+                                </ul>
+                            </div>
+                        ` : ''}
+                        <shalem-student-panel-cv-support-document-selector identifier="${this.identifier}" documents="${JSON.stringify(this._docs)}" selector></shalem-student-panel-cv-support-document-selector>
+                        <button class="bg_aqua white" @click=${(e)=>this._handleNextStep(e)}>Ok. Let's go.</button>
+                    </div>
+                    <div class="form_group" style="display: ${this._step == 2 ? 'block' : 'none'};">
+                        <p>Please confirm that the information you've provided is correct.</p>
+                        <h3>${this._name}</h3>
+                        <p><em>${this._description}</em></p>
+                        <h4>Documents:</h4>
+                        <ul class="documents_list cards">
+                            ${this._docs.map(doc => {
+                                let date = dateToString(doc.created_at);
+                                let pillar = this.pillars.find(pillar => {
+                                    return pillar.id === doc.pillar_id;
+                                });
+                                return html`
+                                    <li class="grid grid_50 shadow radius">
+                                        <div class='header'>
+                                            <h4>${doc.title}</h4>
+                                            <h5 class="${pillar.colour}">${pillar?.name ?? 'General'}</h5>
+                                            <p class="description">${doc.description}</p>
+                                            <p class="uploaded_on">${date}</p>
+                                        </div>
+                                    </li>
+                                `
+                            })}
+                        </ul>
+                        <button class="bg_aqua white" type="submit">Confirm and Create CV Support</button>
+                    </div>
+                    <div class="form-response"></div>
+                    <button @click=${(e)=>this._handlePreviousStep(e)} style="display: ${this._step > 0 ? 'block' : 'none'};">< Wait! Go back a step</button>
+                </form>
+            `;
+        }
         return html`
             <div class="header_with_icon margins">
                 ${unsafeSVG(cvSupportIcon)}
@@ -154,6 +157,7 @@ export class ShalemStudentPanelCVSupportCreate extends SearchListener(Pagination
             return;
         }
         this._step = this._step + 1;
+        window.scrollTo(0,0);
     }
 
     _handlePreviousStep(e){
@@ -176,7 +180,7 @@ export class ShalemStudentPanelCVSupportCreate extends SearchListener(Pagination
 
     _beforeHandleSuccess(response){
         this._step = 3;
-        this._cvSupport = response.data; 
+        this._cvSupport = response; 
     }
 
     static styles = [
@@ -224,6 +228,19 @@ export class ShalemStudentPanelCVSupportCreate extends SearchListener(Pagination
 
         .selected_documents{
             margin-bottom:1rem;
+        }
+
+        .success_message{
+            flex-wrap:wrap;
+            gap:2rem;
+            align-items:space-between;
+            .success_header{
+                flex-basis:100%;
+            }
+            a.button{
+                color:var(--white);
+                text-decoration:none;
+            }
         }
          `
     ];

@@ -25,6 +25,7 @@ class PdfService{
         $this->dompdf->setPaper('A4','portrait');
         $this->dompdf->render();
         $output = $this->dompdf->output();
-        Storage::put('pdfs/'.$this->uid.'/'.$this->document_id.'.pdf', $output);    
+        $currentYear = date('Y');
+        Storage::put('pdfs/'.$currentYear.'/'.$this->document_id.'.pdf', $output);    
     }
 }

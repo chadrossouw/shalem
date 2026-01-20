@@ -128,19 +128,28 @@ export class ShalemBreadcrumbs extends BaseDashboardConsumer(BaseClass(LitElemen
                         breadcrumbs.dashboard.title = 'My documents'
                         breadcrumbs.dashboard.link = `/dashboard/documents`;
                         breadcrumbs.dashboard.current = true;
-                        if(breadcrumbs.panel.slug){
+                        if(breadcrumbs.panel?.slug){
+                            if(breadcrumbs.panel.slug=='my-documents'){
+                                breadcrumbs.panel = breadcrumbs.view;
+                                delete breadcrumbs.view;
+                            }
                             breadcrumbs.dashboard.current = false;
-                            breadcrumbs.panel.title = `${this.document?.title}`;
+                            if(breadcrumbs.panel.slug=='upload'){
+                                breadcrumbs.panel.title = `Upload document`;
+                            }
+                            else{
+                                breadcrumbs.panel.title = `${this.document?.title}`;
+                            }
                             breadcrumbs.panel.link = `/dashboard/documents/document/${breadcrumbs.panel.slug}`;
                             breadcrumbs.panel.current = true;
-                            if(!breadcrumbs.view.slug){
-                                breadcrumbs.view.slug = 'view';
-                            }
-                            if(breadcrumbs.view.slug){
+                            if(breadcrumbs.view?.slug){
                                 breadcrumbs.panel.current = false;
                                 breadcrumbs.view.title = breadcrumbs.view.slug.charAt(0).toUpperCase() + breadcrumbs.view.slug.slice(1);
                                 breadcrumbs.view.link = `/dashboard/documents/document/${breadcrumbs.panel.slug}/${breadcrumbs.view.slug}`;
                                 breadcrumbs.view.current = true;
+                            }
+                            else{
+                                delete breadcrumbs.view;
                             }
                         }
                     }
@@ -164,6 +173,45 @@ export class ShalemBreadcrumbs extends BaseDashboardConsumer(BaseClass(LitElemen
                             breadcrumbs.panel.current = true;
                         }
                     }
+                    else if(breadcrumbs.dashboard.slug=='goals'){
+                        breadcrumbs.dashboard.title = 'My goals'
+                        breadcrumbs.dashboard.link = `/dashboard/goals`;
+                        breadcrumbs.dashboard.current = true;
+                        delete breadcrumbs.view;
+                        if(breadcrumbs.panel?.slug){
+                            breadcrumbs.dashboard.current = false;
+                            let pillar = this.pillars.find(pillar => {
+                                return pillar.slug === this.panel;
+                            });
+                            breadcrumbs.panel.title = pillar?`Set a${pillar.name.startsWith('A') || pillar.name.startsWith('E') || pillar.name.startsWith('I') || pillar.name.startsWith('O') || pillar.name.startsWith('U') ? 'n' : ''} ${pillar.name} goal`:'';
+                            breadcrumbs.panel.link = `/dashboard/goals/${breadcrumbs.panel.slug}`;
+                            breadcrumbs.panel.current = true;
+                        }
+                    }
+                    else if(breadcrumbs.dashboard?.slug=='cv-support'){
+                        breadcrumbs.dashboard.title = 'My CV supports'
+                        breadcrumbs.dashboard.link = `/dashboard/cv-support`;
+                        breadcrumbs.dashboard.current = true;
+                        if(breadcrumbs.panel?.slug){
+                            breadcrumbs.dashboard.current = false;
+                            if(breadcrumbs.panel.slug=='create'){
+                                breadcrumbs.panel.title = `Create CV support`;
+                                delete breadcrumbs.view;
+                            }
+                            else if(breadcrumbs.panel.slug=='cv-support'){
+                                breadcrumbs.panel = breadcrumbs.view;
+                                delete breadcrumbs.view;
+                            }
+                            let foundCv = null;
+                            for(let page in this.cvs){
+                                foundCv = this.cvs[page].find(cv => cv.id == this.view);
+                                if(foundCv) break;
+                            }
+                            breadcrumbs.panel.title = foundCv?`${foundCv.name}`:'';
+                            breadcrumbs.panel.link = `/dashboard/cv-support/${breadcrumbs.panel.slug}`;
+                            breadcrumbs.panel.current = true;
+                        }
+                    }
                 }
             }
             else{
@@ -177,6 +225,30 @@ export class ShalemBreadcrumbs extends BaseDashboardConsumer(BaseClass(LitElemen
     static styles = [
         ...super.styles,
         css`
+            ul{
+                list-style:none;
+                display:flex;
+                flex-wrap:wrap;
+                gap:0.5rem;
+                padding:0;
+                margin:1rem 0;
+                li{
+                    &::after{
+                        content:'|';
+                        margin-left:0.5rem;
+                    }
+                    &:last-child::after{
+                        content:'';
+                    }
+                    a{
+                        text-decoration:none;
+                        color:var(--black);
+                        &.current{
+                            font-weight:bold;
+                        }
+                    }
+                }
+            }
         `
     ];
 }

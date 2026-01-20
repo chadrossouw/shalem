@@ -51,7 +51,8 @@ class CVSupportController extends Controller
         }
         $cvSupport->load('documents')->orderBy('created_at','desc');
         $this->generateCVPdf($cvSupport,$user);
-        $cvSupport->file_path = 'pdfs/'.$cvSupport->id.'.pdf';
+        $currentYear = date('Y');
+        $cvSupport->file_path = 'pdfs/'.$currentYear.'/'.$cvSupport->id.'.pdf';
         $cvSupport->save();
         return response()->json($cvSupport, 201);
     }
@@ -74,7 +75,7 @@ class CVSupportController extends Controller
         $id = $request->input('id');
         $user = $request->user();
         $cvSupport = CVSupport::where('id', $id)->get();
-        $cvSupport->makeVisible('public_file_path');
+        $cvSupport->load('filePath');
 
         return response()->json($cvSupport, 200);
     }

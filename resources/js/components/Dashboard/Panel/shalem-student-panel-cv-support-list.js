@@ -36,7 +36,7 @@ export class ShalemStudentPanelCVSupportList extends BaseDashboardConsumer(BaseC
                                 <button class="close bg_aqua" @click=${() => this._handleDeleteCV(cv)}><span aria-hidden="true">${unsafeSVG(closeIcon)}</span><span class="screen-reader-text">Close</span></button>
                             </div>
                             <button class="bg_aqua" @click=${() => this._goToViewCV(cv.id)}>${unsafeSVG(view)}View</button>
-                            <a class="button bg_aqua" href="${cv.file_path}" download="${cv.name}">${unsafeSVG(download)}Download</button>
+                            <a class="button bg_aqua" href="${cv.file_path}" download>${unsafeSVG(download)}Download</button>
                         </li>`
                     })}
                 </ul>
