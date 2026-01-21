@@ -12,6 +12,7 @@ import notificationsIconClosed from '../../icons/notification-icon-closed.svg';
 import fredExhaustedIcon from '../../icons/fred-exhausted.svg';
 import verifyIcon from '../../icons/verify-icon.svg';
 import pupilsIcon from '../../icons/pupils-icon.svg';
+import helpIcon from '../../icons/help-icon.svg';
 
 
 export class ShalemNavigation extends BaseClass(LitElement) {
@@ -100,6 +101,7 @@ export class ShalemNavigation extends BaseClass(LitElement) {
                     <li><a href="/dashboard/documents" aria-current="${this._dashboard=='documents'?'true':'false'}">${unsafeSVG(documentsIcon)}My documents</a></li>
                     <li><a href="/dashboard/cv-support" aria-current="${this._dashboard=='cv-support'?'true':'false'}">${unsafeSVG(cvSupportIcon)}Build a CV support</a></li>
                     <li><a href="/dashboard/notifications${this._notifications && this._notifications.length ? '/unread' : '/all'}" aria-current="${this._dashboard=='notifications'?'true':'false'}">${unsafeSVG(notificationsIcon)}Notifications</a></li>
+                    <li><a href="/dashboard/help" aria-current="${this._dashboard=='help'?'true':'false'}">${unsafeSVG(helpIcon)}Help & Support</a></li>
                     <li><a href="/logout">${unsafeSVG(fredExhaustedIcon)}Log out</a></li>
                 </ul>
             </nav>

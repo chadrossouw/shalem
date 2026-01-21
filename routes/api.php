@@ -101,6 +101,7 @@ Route::middleware(['auth:sanctum'])->group(function(){
     Route::get('/documents', [DocumentController::class, 'list'])->name('api.documents.list');
     Route::get('/documents/approved', [DocumentController::class, 'listApproved'])->name('api.documents.approved.list');
     Route::get('/document/{id}', [DocumentController::class, 'get'])->name('api.document.get');
+    Route::delete('/documents/{id}', [DocumentController::class, 'delete'])->name('api.document.delete');
 });
 
 //Staff Document Review Routes

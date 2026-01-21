@@ -3,13 +3,14 @@ import { SearchListener } from "../../Search/search-listener.js";
 import { PaginationListener } from "../../Pagination/pagination-listener.js";
 import { BaseDashboardConsumer } from "../base-dashboard-consumer.js";
 import { BaseClass } from "../../BaseClass.js";
+import { DocumentHelper } from "../../Helpers/document-helper.js";
 import archiveIcon from "../../../icons/archive-icon.svg";
 import archiveHappyIcon from "../../../icons/archive-happy-icon.svg";
 import fredParty from "../../../icons/fred-party.svg";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { safeFetch } from "../../../common/xsrf.js";
 
-export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationListener(BaseDashboardConsumer(BaseClass(LitElement)))){
+export class ShalemStudentPanelMyDocuments extends DocumentHelper(SearchListener(PaginationListener(BaseDashboardConsumer(BaseClass(LitElement))))){
     static properties = {
         ...super.properties,
         mode: { type: String },
@@ -42,10 +43,12 @@ export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationList
             this.view = null;
             this.documents = this._documents;
         }
-        console.log(this.documents);
         if(!this.documents||!this.documents.data){
             this._fetchDocuments();
         }
+        this._eventManager.listen('refresh-documents', async ()=>{
+            await this._fetchDocuments(this.documentsPagination?.current_page ?? 1, this.query, true);
+        });
     }
 
     get documentContainer(){
@@ -164,55 +167,11 @@ export class ShalemStudentPanelMyDocuments extends SearchListener(PaginationList
         this.documentContainer?.classList.remove('loading');
     }
 
-    async _fetchDocuments(page=1,query=false,refresh=false){
-        if(this.documents && this.documents[page] && !refresh && !query){
-            this.documentsPagination.current_page = page;
-            
-            this._updateContext({documentsPagination: this.documentsPagination});
-            return;
-        }
-        let fetchUrl =`${this.restUrl}documents?page=${page}`;
-        if(query){
-            fetchUrl += `&query=${encodeURIComponent(query)}`;
-        }
-        if(this.mode === 'staff'){
-            fetchUrl += `&student_id=${this.pupil.id}`;
-        }
-        const response = await safeFetch(fetchUrl);
-        const data = await response.json();
-        if(!this.documents){
-            this.documents = {};
-        }
-        this.documents[page] = data.documents.data;
-        delete data.documents.data;
-        this.documentsPagination = data.documents;
-        if(this.mode==='staff'){
-            this._documents = this.documents;
-            this._documentsPagination = this.documentsPagination;
-        }
-        else{
-            this._updateContext({documents: this.documents, documentsPagination: this.documentsPagination});
-        }
-    }
+    
 
     async _handlePaginationChange(e){
         this.documentContainer?.classList.add('loading');
         await this._fetchDocuments(e.detail.page);
         this.documentContainer?.classList.remove('loading');
-    }
-
-    async _setDocumentFromView(){
-        let foundDocument = null;
-        for(let page in this.documents){
-            foundDocument = this.documents[page].find(doc => doc.id == this.view);
-            if(foundDocument) break;
-        }
-        if(!foundDocument){
-            //fetch document from server
-            const response = await safeFetch(`${this.restUrl}document/${this.view}`);
-            foundDocument = await response.json();
-        }
-        this.document = foundDocument;
-        this._updateContext({document: this.document});
     }
 }

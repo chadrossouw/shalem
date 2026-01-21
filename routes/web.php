@@ -35,10 +35,16 @@ Route::get('/', function (Request $request) {
 });
 
 Route::get('/help', function () {
+    if(Auth::user()){
+        return redirect('/dashboard/help');
+    }
     return view('help');
 })->name('help');
 
 Route::get('/faqs', function () {
+    if(Auth::user()){
+        return redirect('/dashboard/help/faqs');
+    }
     return view('faqs');
 })->name('faqs');
 

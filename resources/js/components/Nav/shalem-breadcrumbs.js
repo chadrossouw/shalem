@@ -18,7 +18,6 @@ export class ShalemBreadcrumbs extends BaseDashboardConsumer(BaseClass(LitElemen
     }
 
     updated(changedProperties){
-        console.log('breadcrumbs updated',changedProperties);
         if(!changedProperties.has('_breadcrumbs')){
             this._setCrumbs();
         }
@@ -28,7 +27,6 @@ export class ShalemBreadcrumbs extends BaseDashboardConsumer(BaseClass(LitElemen
         if(!this._dashboard){
             return html`<shalem-loader>Putting pins in the map...</shalem-loader>`;
         }
-        console.log('rendering breadcrumbs', this._breadcrumbs);
         if(!this._breadcrumbs||Object.keys(this._breadcrumbs).length==0){
             return html``;
         }
@@ -211,6 +209,13 @@ export class ShalemBreadcrumbs extends BaseDashboardConsumer(BaseClass(LitElemen
                             breadcrumbs.panel.link = `/dashboard/cv-support/${breadcrumbs.panel.slug}`;
                             breadcrumbs.panel.current = true;
                         }
+                    }
+                    else if(breadcrumbs.dashboard?.slug=='help'){
+                        breadcrumbs.dashboard.title = 'Help & Support'
+                        breadcrumbs.dashboard.link = `/dashboard/help`;
+                        breadcrumbs.dashboard.current = true;
+                        delete breadcrumbs.panel;
+                        delete breadcrumbs.view;
                     }
                 }
             }

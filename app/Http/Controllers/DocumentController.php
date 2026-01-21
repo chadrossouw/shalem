@@ -8,6 +8,8 @@ use App\Models\DocumentStatus;
 use App\Events\DocumentNotify;
 use App\Events\DocumentProcessed;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
+
 class DocumentController extends Controller
 {
     public function upload(Request $request){
@@ -100,7 +102,7 @@ class DocumentController extends Controller
         if($request->has('query')){
             return $this->search($request);
         }
-        $documents = Document::where('user_id',$user->id)->orderBy('created_at','desc')->paginate(4);
+        $documents = Document::where('user_id',$user->id)->orderBy('created_at','desc')->paginate(12);
         $documents->load('document_status');
         $documents->map(function($document) {
             $document->document_status->load('user');
@@ -270,5 +272,16 @@ class DocumentController extends Controller
         $forwardedDocument->save();
         DocumentNotify::dispatch($document);
         return response()->json(['message' => 'Document forwarded successfully','action'=>['dashboard'=>'documents','panel'=>'document','view'=>'success-forwarded']], 200);
+    }
+
+    public function delete(Request $request, $id){
+        $user = $request->user();
+        $document = Document::where('id', $id)->where('user_id', $user->id)->first();
+        if(!$document){
+            return response()->json(['error' => 'Document not found'], 404);
+        }
+        Storage::delete($document->file_path);
+        $document->delete();
+        return response()->json(['message' => 'Document deleted successfully'], 200);
     }
 }

@@ -328,7 +328,7 @@ export const baseStyles = css`
         gap:1rem;
         margin-bottom:2rem;
         margin-top:2rem;
-        h1:not(.h3){
+        h1:not(.h3,.full){
             width:min-content;
         }
         h1,h2{

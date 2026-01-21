@@ -14,6 +14,7 @@ import forwardIcon from '../../icons/forward-icon.svg';
 import reject from '../../icons/reject.svg';
 import { html } from 'lit';
 import { unsafeSVG } from 'lit/directives/unsafe-svg.js';
+import { safeFetch } from '../../common/xsrf';
 
 export const DocumentHelper = (superClass) => class extends superClass{
 
@@ -213,10 +214,15 @@ export const DocumentHelper = (superClass) => class extends superClass{
                 }
                 if(document.document_status.status === 'rejected'){
                     buttons.push({name:'delete',html: html`
-                        <button @click=${() => this._clickHandler('delete', document)}>${unsafeSVG(deleteicon)}Delete</button>
+                        <button @click=${(e) => this._clickHandler('delete', document, e)}>${unsafeSVG(deleteicon)}Delete</button>
                     `});
                     buttons.push({name:'help',html: html`   
                         <button @click=${() => this._clickHandler('help', document)}>${unsafeSVG(help)}Help</button>
+                    `});
+                }
+                if(document.document_status.status === 'rejected_final'){
+                    buttons.push({name:'delete',html: html`
+                        <button @click=${(e) => this._clickHandler('delete', document, e)}>${unsafeSVG(deleteicon)}Delete</button>
                     `});
                 }
             }
@@ -255,7 +261,7 @@ export const DocumentHelper = (superClass) => class extends superClass{
         return statusMessage;
     }
 
-    _clickHandler(action, document){
+    _clickHandler(action, document, e = null){
         switch(action){
             case 'edit':
                 this._editDocument(document);
@@ -265,6 +271,9 @@ export const DocumentHelper = (superClass) => class extends superClass{
                 break;
             case 'view':
                 this._viewDocument(document);
+                break;
+            case 'delete':
+                this._deleteDocument(document, e);
                 break;
             case 'return':
                 if(this.view_panel){
@@ -299,7 +308,70 @@ export const DocumentHelper = (superClass) => class extends superClass{
         this._updateContext({dashboard:'help', panel: 'document', view: document.id, action:null});
     }
 
-    
+    async _deleteDocument(document, e){
+        e.target.classList.add('loading');
+        try{
+            const request = await safeFetch(`/api/documents/${document.id}`, {
+                method: 'DELETE'
+            });
+            if (!request.ok) {
+                throw new Error('Something went wrong.');
+            }
+            this._eventManager.emit('refresh-documents');
+        }
+        catch(error){
+            console.error('Error deleting document:', error);
+        }
+        finally{
+            e.target.classList.remove('loading');  
+        }
+    }
+
+    async _setDocumentFromView(){
+        let foundDocument = null;
+        for(let page in this.documents){
+            foundDocument = this.documents[page].find(doc => doc.id == this.view);
+            if(foundDocument) break;
+        }
+        if(!foundDocument){
+            //fetch document from server
+            const response = await safeFetch(`${this.restUrl}document/${this.view}`);
+            foundDocument = await response.json();
+        }
+        this.document = foundDocument;
+        this._updateContext({document: this.document});
+    }
+
+    async _fetchDocuments(page=1,query=false,refresh=false){
+        if(this.documents && this.documents[page] && !refresh && !query){
+            this.documentsPagination.current_page = page;
+            
+            this._updateContext({documentsPagination: this.documentsPagination});
+            return;
+        }
+        let fetchUrl =`${this.restUrl}documents?page=${page}`;
+        if(query){
+            fetchUrl += `&query=${encodeURIComponent(query)}`;
+        }
+        if(this.mode === 'staff'){
+            fetchUrl += `&student_id=${this.pupil.id}`;
+        }
+        const response = await safeFetch(fetchUrl);
+        const data = await response.json();
+        if(!this.documents){
+            this.documents = {};
+        }
+        this.documents[page] = data.documents.data;
+        delete data.documents.data;
+        this.documentsPagination = data.documents;
+        if(this.mode==='staff'){
+            this._documents = this.documents;
+            this._documentsPagination = this.documentsPagination;
+        }
+        else{
+            this._updateContext({documents: this.documents, documentsPagination: this.documentsPagination});
+        }
+    }
    /*  _handleApproveSubmit(e){
         e.preventDefault();
         const formData = new FormData(e.target);
