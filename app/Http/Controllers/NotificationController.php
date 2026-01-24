@@ -4,6 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Notification;
+use App\Models\NotificationAction;
+use App\Models\User;
+use App\Models\Document;
+use App\Models\ForwardedDocument;
+use App\Models\DocumentStatus;
+use App\Models\StaffRole;
 
 class NotificationController extends Controller
 {
@@ -83,5 +89,96 @@ class NotificationController extends Controller
             ]
         );
         return response()->json(['message' => 'Message sent successfully.'], 200);
+    }
+
+    public function sendHelpMessage(Request $request){
+        $user = $request->user();
+        $request->validate([
+            'help_message' => 'required|string',
+        ]);
+        // Send message to admin users
+        $admins = User::whereHas('staffRole', function($query){
+            $query->where('role', 'admin');
+        })->get();
+        foreach($admins as $admin){
+            $notification = Notification::create(
+                [
+                    'user_id' => $admin->id,
+                    'subject' => "Help & Support request from {$user->first_name} {$user->last_name}",
+                    'message' => $request->input('help_message'),
+                    'type' => 'notification',
+                    'sender_id' => $user->id,
+                ]
+            );
+            NotificationAction::create([
+                'notification_id' => $notification->id,
+                'title' => 'Send a reply',
+                'dashboard' => 'pupils',
+                'panel' => $user->id,
+                'view' => 'message',
+            ]);
+
+        }
+        return response()->json(['message' => 'Help & Support message sent successfully.'], 200);
+    }
+
+    public function sendDocumentHelpRequest(Request $request){
+        $user = $request->user();
+        $request->validate([
+            'document_id' => 'required|integer|exists:documents,id',
+            'help_message' => 'required|string',
+        ]);
+        $documentId = $request->input('document_id');
+        $grade = $user->student->grade;
+        $grade_head = null;
+        if($grade){
+             $grade_head = User::where('type','staff')->whereHas('staffRole', function($query){
+                $query->where('role', 'grade_head');
+            }) 
+            ->whereHas('grade', function($query) use ($grade){
+                $query->where('grade', $grade);
+            })
+            ->first();
+        }
+        if(!$grade_head){
+            $grade_head = User::whereHas('staffRole', function($query){
+                $query->where('role', 'admin');
+            })->first();
+        }
+        /*)*/
+        if(!$grade_head){
+            return response()->json(['error' => 'Grade head not found'], 404);
+        }
+        DocumentStatus::create([
+            'document_id' => $documentId,
+            'status' => 'forwarded',
+            'status_message' => 'Help request: '.strip_tags($request->input('help_message')),
+            'user_id' => $user->id,
+        ]);
+        $forwardedDocument = new ForwardedDocument();
+        $forwardedDocument->user_id = $grade_head->id;
+        $forwardedDocument->document_id = $documentId;
+        $forwardedDocument->forwarded_by = $user->id;
+        $forwardedDocument->save();
+        $document = Document::find($documentId);
+        $notification = Notification::create(
+            [
+                'user_id' => $grade_head->id,
+                'subject' => "Document Help & Support request from {$user->first_name} {$user->last_name}",
+                'message' => "Document: {$document->title}\n\n".$request->input('help_message'),
+                'type' => 'notification',
+                'sender_id' => $user->id,
+            ]
+        );
+        NotificationAction::create([
+            'notification_id' => $notification->id,
+            'title' => 'View Document',
+            'action' => 'review',
+            'dashboard' => 'documents',
+            'panel' => 'documents',
+            'view' => $documentId,
+            'status' => 'forwarded',
+        ]);
+        return response()->json(['message' => 'Document Help & Support request sent successfully.'], 200);
     }
 }

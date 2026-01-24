@@ -143,3 +143,9 @@ Route::middleware(['auth:sanctum'])->group(function(){
     Route::post('/cvs/create', [\App\Http\Controllers\CVSupportController::class, 'create'])->name('api.cvs.create');
     Route::post('/cvs/delete', [\App\Http\Controllers\CVSupportController::class, 'delete'])->name('api.cvs.delete');
 });
+
+//Help & Support Routes
+Route::middleware(['auth:sanctum'])->group(function(){
+    Route::get('/help/message', [NotificationController::class, 'sendHelpMessage'])->name('api.help.message');
+    Route::post('/help/document', [NotificationController::class, 'sendDocumentHelpRequest'])->name('api.help.document');
+});

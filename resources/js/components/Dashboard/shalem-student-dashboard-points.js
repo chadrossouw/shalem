@@ -55,6 +55,10 @@ export class ShalemStudentDashboardPoints extends BaseDashboardConsumer(BaseClas
         
     }
 
+    firstUpdated(){
+        this._setDocumentTitle('My Points');
+    }
+
 
     render(){
         let body = '';

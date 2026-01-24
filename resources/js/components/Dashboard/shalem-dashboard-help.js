@@ -37,28 +37,28 @@ export class ShalemDashboardHelp extends DocumentHelper(BaseForm(BaseDashboardCo
             if(this.panel == 'document'){
                 
                 if(this.document){
-                header = html`
-                    <h1 class="full">Help with ${this.document?.title?this.document.title:'my document'}</h1>
-                `;    
-                let placeholder = `I need help with ${this.document?.title?this.document.title:'this document'}. It hasn't been approved yet`;
-                if(this.document.document_status.status == 'rejected'){
-                    placeholder = `I have a question about ${this.document?.title?this.document.title:'this document. I think it was rejected in error'}`;
-                }
-                panel = html`
-                    <div class="bg_yellow bg_shade_2 radius-big inner_padding">
-                        <form @submit=${this._handleSubmit} action="${this.restUrl}help/document/escalate">
-                            
-                            <input type="hidden" name="document_id" .value=${this.document.id} />
-                            <div class="input_group">
-                                <label for="help_message">Please describe the issue you are having with ${this.document?.title?this.document.title:'this document'}</label>
-                                <textarea id="help_message" name="help_message" rows="6" required>${placeholder}</textarea>
-                            </div>
-                            <div class="form-response"></div>
-                            <button type="submit">Let's get you sorted</button>
-                        </form>
-                    </div>
-                `;    
-                    
+                    header = html`
+                        <h1 class="full">Help with ${this.document?.title?this.document.title:'my document'}</h1>
+                    `;    
+                    let placeholder = `I need help with ${this.document?.title?this.document.title:'this document'}. It hasn't been approved yet`;
+                    if(this.document.document_status.status == 'rejected'){
+                        placeholder = `I have a question about ${this.document?.title?this.document.title:'this document. I think it was rejected in error'}`;
+                    }
+                    panel = html`
+                        <div class="bg_yellow bg_shade_2 radius-big inner_padding">
+                            <form @submit=${this._handleSubmit} action="${this.restUrl}help/document">
+                                
+                                <input type="hidden" name="document_id" .value=${this.document.id} />
+                                <div class="input_group">
+                                    <label for="help_message">Please describe the issue you are having with ${this.document?.title?this.document.title:'this document'}</label>
+                                    <textarea id="help_message" name="help_message" rows="6" required>${placeholder}</textarea>
+                                </div>
+                                <div class="form-response"></div>
+                                <button type="submit">Let's get you sorted</button>
+                            </form>
+                        </div>
+                    `;    
+                        
                 }
                 else{
                     panel = html`<shalem-loader>Holding me back. Gravity is holding me back...</shalem-loader>`;

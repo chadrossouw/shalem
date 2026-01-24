@@ -210,6 +210,13 @@ export class ShalemBreadcrumbs extends BaseDashboardConsumer(BaseClass(LitElemen
                             breadcrumbs.panel.current = true;
                         }
                     }
+                    else if(breadcrumbs.dashboard?.slug=='avatar'){
+                        breadcrumbs.dashboard.title = 'My Avatar'
+                        breadcrumbs.dashboard.link = `/dashboard/avatar`;
+                        breadcrumbs.dashboard.current = true;
+                        delete breadcrumbs.panel;
+                        delete breadcrumbs.view;
+                    }
                     else if(breadcrumbs.dashboard?.slug=='help'){
                         breadcrumbs.dashboard.title = 'Help & Support'
                         breadcrumbs.dashboard.link = `/dashboard/help`;

@@ -56,6 +56,9 @@ export class ShalemStudentDashboardGoals extends BaseDashboardConsumer(BaseClass
         cardLinks(this.shadowRoot);
     }
 
+    firstUpdated(){
+        this._setDocumentTitle('My Goals');
+    }
 
     render(){
         let body = '';

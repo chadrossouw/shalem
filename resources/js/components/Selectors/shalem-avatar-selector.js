@@ -11,18 +11,25 @@ export class ShalemAvatarSelector extends BaseDashboardConsumer(BaseClass(LitEle
     static properties = {
         ...super.properties,
         select: { type: Boolean },
+        _avatars: { type: Array, state: true },
         _selectedAvatar: { type: Object, state: true },
+        _status: { type: String, state: true },
     }
     connectedCallback() {
         super.connectedCallback();
 
         this._getAvatars = new Task(this,{
             task: async () => {
+                if(this._avatars){
+                    return this._avatars;
+                }
                 const response = await safeFetch(`${this.restUrl}avatars`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch avatars');
                 }
-                return await response.json();
+                const json = await response.json();
+                this._avatars = json.avatars;
+                return json.avatars;
             },
             args: () => [],
         });
@@ -37,9 +44,20 @@ export class ShalemAvatarSelector extends BaseDashboardConsumer(BaseClass(LitEle
     }
 
     render() {
-        return html`
-        
+        if(this._status === 'success'){
+            let currentAvatar = this.user.student.avatar;
+            let avatarSVG = this._avatars.find(avatar => avatar.id == currentAvatar).svg;
+            let avatarDeclaration = html`<h3>You are now <span class="screen-reader-text">${currentAvatar.name}</span>${unsafeSVG(avatarSVG)}</h3>`;
 
+            return html`
+                ${avatarDeclaration} 
+                <div class="button-group flex">
+                    <a href="/" class="button bg_green white">Go back to your dashboard</a>
+                    <button @click=${() => {this._status = null}}>Not so sure about this one... Let me start over</button>
+                </div>
+            `;
+        }
+        return html`
         ${this._getAvatars.render({
             initial: () => html`<shalem-loader>Fetching avatars...</shalem-loader>`,
             pending: () => html`<shalem-loader>Assembling the troops...</shalem-loader>`,
@@ -51,7 +69,6 @@ export class ShalemAvatarSelector extends BaseDashboardConsumer(BaseClass(LitEle
 
 
     _renderAvatarSelector(avatars) {
-        avatars = avatars.avatars;
         if(this.select){
             return html`
                 <details .open=${!this._selectedAvatar}>
@@ -79,7 +96,7 @@ export class ShalemAvatarSelector extends BaseDashboardConsumer(BaseClass(LitEle
             backButton = '';
         }
         else {
-            let avatarSVG = avatars.find(avatar => avatar.id === currentAvatar.id).svg;
+            let avatarSVG = avatars.find(avatar => avatar.id == currentAvatar).svg;
             avatarDeclaration = html`<h3>I'm <span class="screen-reader-text">${currentAvatar.name}</span>${unsafeSVG(avatarSVG)}</h3>`;
         }
         
@@ -87,11 +104,12 @@ export class ShalemAvatarSelector extends BaseDashboardConsumer(BaseClass(LitEle
         return html`
             <slot></slot>
             ${avatarDeclaration}
+            <p>Your avatar shows up in the app and in any messages you send. You can change it anytime.</p>
+            <p>Select your avatar:</p>
             <form class="avatar-options">
-                <p>Select your avatar:</p>
                 ${avatars.map(avatar => html`
-                    <div class="avatar-option">
-                        <input type="radio" name="avatar" id="avatar-${avatar.id}" ?checked=${currentAvatar && avatar.id === currentAvatar.id} @change=${() => this._updateAvatar(avatar)}>
+                    <div class="avatar-option">    
+                        <input type="radio" name="avatar" id="avatar-${avatar.id}" .checked=${currentAvatar && avatar.id == currentAvatar} @change=${() => this._updateAvatar(avatar)}>
                         <label for="avatar-${avatar.id}"><span class="screen-reader-text">${avatar.name}</span><span class="avatar-svg" aria-hidden="true">${unsafeSVG(avatar.svg)}</span></label>
                     </div>
                 `)}
@@ -113,7 +131,66 @@ export class ShalemAvatarSelector extends BaseDashboardConsumer(BaseClass(LitEle
             console.error('Failed to update avatar:', response.message);
             return;
         }
-        this.user.student.avatar = {id: avatar.id, name: avatar.name, path: avatar.svg};
+        let currentAvatar = this.user.student.avatar;
+        if(currentAvatar){
+            this._status = 'success';
+        }
+        this.user.student.avatar = avatar.id;
         this._updateContext({user: this.user});
     }
+
+    static styles = [
+        super.styles,
+        css`
+            h3{
+                display: flex;
+                gap:1rem;
+                align-items: center;
+                margin:2rem 0;
+                svg{
+                    width:3rem;
+                    height:auto;
+                }
+            }
+            .avatar-options{
+                display:grid;
+                grid-template-columns:1fr 1fr 1fr 1fr 1fr;
+                gap:1rem;
+            }
+            @media (min-width:1000px){
+                .avatar-options{
+                    gap:2rem;
+                }
+            }
+            .avatar-option{
+                position:relative;
+                padding:0.5rem;
+                input[type="radio"]{
+                    position:absolute;
+                    opacity:0;
+                    width:100%;
+                    height:100%;
+                    z-index:-1;
+                }
+                label{
+                    cursor:pointer;
+                }
+                &:hover,&:has(>:hover),&:has(input[type="radio"]:checked){
+                    background-color:var(--green-shade-2);
+                    border-radius:var(--border-radius);
+                }
+                
+            }
+            .button-group{
+                .button,button{
+                    text-decoration:none;
+                    width:fit-content;
+                    &:visited{
+                        color:white;
+                    }
+                }
+            }
+        `
+    ]
 }
+

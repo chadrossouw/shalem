@@ -89,6 +89,21 @@ export class ShalemStudentDashboard extends BaseDashboardConsumer(BaseClass(LitE
                     >
                         ${nav}
                     </shalem-dashboard-notifications>`;
+                case 'avatar':
+                    this._setDocumentTitle('Change my avatar');
+                    return html`
+                    ${nav}
+                    <h1 class="margins">
+                        <shalem-editable-field name="student_dashboard_change_avatar" location="student-dashboard" ?admin=${this.isAdmin}>
+                            ${this.fields?.student_dashboard_change_avatar ?? 'Change my avatar' }
+                        </shalem-editable-field>
+                    </h1>
+                    
+                    <div class="margins">
+                        <shalem-avatar-selector
+                            identifier="${this.identifier}"
+                        ></shalem-avatar-selector>
+                    </div>`;
                 case 'help':
                     return html`
                     <shalem-dashboard-help
